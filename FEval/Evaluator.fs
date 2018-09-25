@@ -1,44 +1,47 @@
 ﻿namespace FEval
 
-open System.Collections
 open Microsoft.FSharp.Quotations
-open System.Collections.Generic
 
 type EvaluationState =
     {
-        Stack : Stack
-        Variables : Dictionary<string, obj>
-        EvalFunc : EvaluationState -> Expr -> unit
+        LastValue : obj
+        Variables : Map<string, obj>
+        EvalFunc :  Expr -> EvaluationState -> EvaluationState
     }
 
 [<RequireQualifiedAccess>]
 module Evaluator =
+    
+    let getLastValue state =
+        state.LastValue
 
-    let pop state =
-        state.Stack.Pop()
+    let setLastValue state value =
+        {
+            state with LastValue = value
+        }
 
-    let push state item =
-        state.Stack.Push(item)
+    let setLastValueAsVar (variable : Var) state =
+        {
+            state with Variables = Map.add variable.Name state.LastValue state.Variables
+        }
 
-    let setVar state (variable : Var) value =
-        state.Variables.Add(variable.Name, value)
-
-    let getVar state (variable : Var) =
+    let getVar (variable : Var) state =
         state.Variables.Item variable.Name
 
-    let evalExpr state expr =
-        state.EvalFunc state expr
-        state |> pop 
+    let evalExpr expr state =
+        state.EvalFunc expr state
 
-    let evalExprs state exprs =
-        exprs |> List.toArray |> Array.map (evalExpr state) 
+    let evalExprs exprs state =
+        exprs 
+        |> List.toArray 
+        |> Array.map (fun expr -> evalExpr expr state |> getLastValue) 
 
     let createNew evalFunc =
         {
-            Stack = new Stack()
-            Variables = new Dictionary<string, obj>()
+            LastValue = ()
+            Variables = Map.empty<string, obj>
             EvalFunc = evalFunc
         }
 
-    let eval evalFunc =
-        createNew evalFunc |> evalExpr 
+    let eval evalFunc expr =
+        evalExpr expr <| createNew evalFunc
