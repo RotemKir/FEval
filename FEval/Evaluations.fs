@@ -7,10 +7,20 @@ module Evaluations =
     
     // Private functions
 
-    let private evalMethodCall state (instance, methodInfo, parameterExprs) =
-        Evaluator.evalExprs parameterExprs state
-        |> invokeMethod methodInfo
-        |> Evaluator.setLastValue state
+    let private evalMethodCallInstance state instanceExpr =
+        match instanceExpr with
+        | None -> 
+            (null, state)
+        | Some expr -> 
+            Evaluator.evalExpr expr state 
+            |> Evaluator.getLastValueAndState
+
+    let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
+        let (instance, newState) = evalMethodCallInstance state instanceExpr
+
+        Evaluator.evalExprs parameterExprs newState
+        |> invokeMethod instance methodInfo
+        |> Evaluator.setLastValue newState
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 

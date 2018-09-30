@@ -6,9 +6,9 @@ module Reflection =
     open Microsoft.FSharp.Reflection
 
     // Public functions
-
-    let invokeMethod (methodInfo : MethodInfo) parameters =
-        methodInfo.Invoke (null, parameters)
+    
+    let invokeMethod instance (methodInfo : MethodInfo) parameters =
+        methodInfo.Invoke (instance, parameters)
 
     let makeUnion unionCaseInfo args =
         FSharpValue.MakeUnion (unionCaseInfo, args)

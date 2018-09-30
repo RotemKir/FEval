@@ -14,6 +14,9 @@ module Evaluator =
     
     let getLastValue state =
         state.LastValue
+        
+    let getLastValueAndState state =
+        (getLastValue state, state)
 
     let setLastValue state value =
         {

@@ -108,3 +108,11 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate new list``() = 
         listAssertEval <@ [1;2;3;4;5] @> [1;2;3;4;5]
+
+    [<TestMethod>]
+    member this.``Evaluate instance method call with no parameters``() = 
+        assertEval <@ let x = 3 in x.ToString() @> "3"
+
+    [<TestMethod>]
+    member this.``Evaluate instance method call one parameter``() = 
+        assertEval <@ let x = 1738 in x.ToString("0,000 USD") @> "1,738 USD"
