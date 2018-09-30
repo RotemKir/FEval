@@ -4,6 +4,7 @@ open System
 open FEval.Evaluations
 open FEval.Tests.TestHelpers
 open Microsoft.VisualStudio.TestTools.UnitTesting
+open Microsoft.FSharp.Quotations
 
 [<TestClass>]
 type EvaluationsTest() =
@@ -12,6 +13,9 @@ type EvaluationsTest() =
 
     let collectionAssertEval expr expectedResult =
         CollectionAssert.AreEqual(expectedResult, eval expr)
+
+    let listAssertEval expr expectedResult =
+        CollectionAssert.AreEqual(expectedResult |> List.toArray, eval expr |> List.toArray)
 
     [<TestMethod>]
     member this.``Evaluate Const Int32``() = 
@@ -100,3 +104,7 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate new array``() = 
         collectionAssertEval <@ [|1;2;3;4;5|] @> [|1;2;3;4;5|]
+    
+    [<TestMethod>]
+    member this.``Evaluate new list``() = 
+        listAssertEval <@ [1;2;3;4;5] @> [1;2;3;4;5]
