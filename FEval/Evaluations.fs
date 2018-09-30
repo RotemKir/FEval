@@ -5,50 +5,48 @@ module Evaluations =
     open Microsoft.FSharp.Quotations.Patterns
     open Microsoft.FSharp.Reflection
     open System.Reflection
+    open FEval.Reflection
     
     // Private functions
 
     let private evalMethodCall state (instance, methodInfo : MethodInfo, parameterExprs) =
-        let parameters = Evaluator.evalExprs parameterExprs state
-        methodInfo.Invoke(null, parameters)
+        Evaluator.evalExprs parameterExprs state
+        |> invokeMethod methodInfo
         |> Evaluator.setLastValue state
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
-        let parameters = Evaluator.evalExprs exprs state 
-        FSharpValue.MakeUnion (unionCaseInfo, parameters)
+        Evaluator.evalExprs exprs state 
+        |> makeUnion unionCaseInfo
         |> Evaluator.setLastValue state
 
     let private evalNewRecord state (recordType, exprs) = 
-        let parameters = Evaluator.evalExprs exprs state 
-        FSharpValue.MakeRecord (recordType, parameters)
+        Evaluator.evalExprs exprs state 
+        |> makeRecord recordType
         |> Evaluator.setLastValue state
 
     let private evalNewTuple state exprs tupleType =
-        let parameters = Evaluator.evalExprs exprs state
-        FSharpValue.MakeTuple (parameters, tupleType)
+        Evaluator.evalExprs exprs state
+        |> makeTuple tupleType
         |> Evaluator.setLastValue state
 
     let private evalLet state (letVariable, letExpr, body) =
-        state
-        |> Evaluator.evalExpr letExpr 
+        Evaluator.evalExpr letExpr state
         |> Evaluator.setLastValueAsVar letVariable
         |> Evaluator.evalExpr body
 
     let private evalVar state variable = 
-        state
-        |> Evaluator.getVar variable 
+        Evaluator.getVar variable state
         |> Evaluator.setLastValue state
 
-    let private createLambdBody state variable expr (value : obj) =
+    let private createLambdaBody state variable expr (value : obj) =
         Evaluator.setLastValue state value
         |> Evaluator.setLastValueAsVar variable
         |> Evaluator.evalExpr expr
         |> Evaluator.getLastValue
 
     let private evalLambda state (variable : Var, expr : Expr) =
-        let funcType = FSharpType.MakeFunctionType (variable.Type, expr.Type)
-        let funcBody = createLambdBody state variable expr
-        FSharpValue.MakeFunction (funcType, funcBody)   
+        createLambdaBody state variable expr
+        |> makeFunction variable.Type expr.Type 
         |> Evaluator.setLastValue state
 
     let rec private evalRec expr state =
@@ -74,4 +72,6 @@ module Evaluations =
     // Public functions
 
     let eval<'a> (expr : Expr<'a>) : 'a =
-        Evaluator.eval evalRec expr |> Evaluator.getLastValue :?> 'a
+        Evaluator.eval evalRec expr 
+        |> Evaluator.getLastValue 
+        :?> 'a
