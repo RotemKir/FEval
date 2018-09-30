@@ -1,6 +1,7 @@
 ﻿namespace FEval
 
 module Reflection =
+    open System
     open System.Reflection
     open Microsoft.FSharp.Reflection
 
@@ -17,6 +18,11 @@ module Reflection =
 
     let makeTuple tupleType elements =
         FSharpValue.MakeTuple (elements, tupleType)
+
+    let makeArray arrayType (elements : obj[]) =
+        let typedArray = Array.CreateInstance(arrayType, elements.Length)
+        Array.iteri (fun index item -> typedArray.SetValue(item, index)) elements
+        typedArray
 
     let makeFunction domain range body =
         let funcType = FSharpType.MakeFunctionType (domain, range)

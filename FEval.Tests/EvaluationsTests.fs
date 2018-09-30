@@ -92,7 +92,11 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate a statement with right pipeline``() = 
         collectionAssertEval <@ 3 |> Array.create 5 @> [| 3 ; 3 ; 3 ; 3 ; 3 |]
-        
+         
     [<TestMethod>]
     member this.``Evaluate a statement with left pipeline``() = 
         collectionAssertEval <@ Array.create 5 <| true @> [| true ; true; true ; true ; true |]
+    
+    [<TestMethod>]
+    member this.``Evaluate new array``() = 
+        collectionAssertEval <@ [|1;2;3;4;5|] @> [|1;2;3;4;5|]

@@ -3,13 +3,11 @@
 module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
-    open Microsoft.FSharp.Reflection
-    open System.Reflection
     open FEval.Reflection
     
     // Private functions
 
-    let private evalMethodCall state (instance, methodInfo : MethodInfo, parameterExprs) =
+    let private evalMethodCall state (instance, methodInfo, parameterExprs) =
         Evaluator.evalExprs parameterExprs state
         |> invokeMethod methodInfo
         |> Evaluator.setLastValue state
@@ -27,6 +25,11 @@ module Evaluations =
     let private evalNewTuple state exprs tupleType =
         Evaluator.evalExprs exprs state
         |> makeTuple tupleType
+        |> Evaluator.setLastValue state
+    
+    let private evalNewArray state (arrayType, exprs) =
+        Evaluator.evalExprs exprs state
+        |> makeArray arrayType
         |> Evaluator.setLastValue state
 
     let private evalLet state (letVariable, letExpr, body) =
@@ -61,6 +64,8 @@ module Evaluations =
             evalNewRecord state newRecordState
         | NewTuple exprs ->
             evalNewTuple state exprs expr.Type
+        | NewArray newArrayState ->
+            evalNewArray state newArrayState 
         | Call callState -> 
             evalMethodCall state callState
         | Let letState -> 
