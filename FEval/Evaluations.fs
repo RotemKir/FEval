@@ -39,6 +39,18 @@ module Evaluations =
         |> Evaluator.getVar variable 
         |> Evaluator.setLastValue state
 
+    let private createLambdBody state variable expr (value : obj) =
+        Evaluator.setLastValue state value
+        |> Evaluator.setLastValueAsVar variable
+        |> Evaluator.evalExpr expr
+        |> Evaluator.getLastValue
+
+    let private evalLambda state (variable : Var, expr : Expr) =
+        let funcType = FSharpType.MakeFunctionType (variable.Type, expr.Type)
+        let funcBody = createLambdBody state variable expr
+        FSharpValue.MakeFunction (funcType, funcBody)   
+        |> Evaluator.setLastValue state
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _) -> 
@@ -54,7 +66,9 @@ module Evaluations =
         | Call callState -> 
             evalMethodCall state callState
         | Let letState -> 
-            evalLet state letState 
+            evalLet state letState
+        | Lambda lambdaState ->
+            evalLambda state lambdaState 
         | _ -> failwithf "Expression %O is not supported" expr
         
     // Public functions

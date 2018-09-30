@@ -10,6 +10,9 @@ type EvaluationsTest() =
     let assertEval expr expectedResult =
         Assert.AreEqual(expectedResult, eval expr)
 
+    let collectionAssertEval expr expectedResult =
+        CollectionAssert.AreEqual(expectedResult, eval expr)
+
     [<TestMethod>]
     member this.``Evaluate Const Int32``() = 
         assertEval <@ 4 @> 4
@@ -85,3 +88,11 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate a let statement with addition``() = 
         assertEval <@ let x = 3 in x + 5 @> 8
+
+    [<TestMethod>]
+    member this.``Evaluate a statement with right pipeline``() = 
+        collectionAssertEval <@ 3 |> Array.create 5 @> [| 3 ; 3 ; 3 ; 3 ; 3 |]
+        
+    [<TestMethod>]
+    member this.``Evaluate a statement with left pipeline``() = 
+        collectionAssertEval <@ Array.create 5 <| true @> [| true ; true; true ; true ; true |]
