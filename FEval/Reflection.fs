@@ -10,6 +10,10 @@ module Reflection =
     let invokeMethod instance (methodInfo : MethodInfo) parameters =
         methodInfo.Invoke (instance, parameters)
 
+    let getMethodInfo instance methodName =
+        let instanceType = instance.GetType()
+        instanceType.GetMethod(methodName)
+
     let makeUnion unionCaseInfo args =
         FSharpValue.MakeUnion (unionCaseInfo, args)
 

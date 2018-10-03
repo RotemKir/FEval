@@ -7,6 +7,9 @@ module Evaluations =
     
     // Private functions
 
+    let private evalValue =
+        Evaluator.setLastValue
+
     let private evalMethodCallInstance state instanceExpr =
         match instanceExpr with
         | None -> 
@@ -62,10 +65,18 @@ module Evaluations =
         |> makeFunction variable.Type expr.Type 
         |> Evaluator.setLastValue state
 
+    let private evalApplication state (funcExpr, valueExpr) =
+        let funcAndValue = Evaluator.evalExprs [funcExpr ; valueExpr] state
+        let func = funcAndValue.[0]
+        let value = funcAndValue.[1]
+        let method = getMethodInfo func "Invoke"
+        invokeMethod func method [|value|]
+        |> Evaluator.setLastValue state 
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _) -> 
-            Evaluator.setLastValue state value
+            evalValue state value
         | Var variable ->
             evalVar state variable
         | NewUnionCase newUnionCaseState -> 
@@ -81,7 +92,9 @@ module Evaluations =
         | Let letState -> 
             evalLet state letState
         | Lambda lambdaState ->
-            evalLambda state lambdaState 
+            evalLambda state lambdaState
+        | Application applicationState ->
+            evalApplication state applicationState
         | _ -> failwithf "Expression %O is not supported" expr
         
     // Public functions
