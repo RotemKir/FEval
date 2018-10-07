@@ -4,7 +4,6 @@ open System
 open FEval.Evaluations
 open FEval.Tests.TestHelpers
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open Microsoft.FSharp.Quotations
 
 [<TestClass>]
 type EvaluationsTest() =
@@ -79,21 +78,21 @@ type EvaluationsTest() =
     *)
     [<TestMethod>]
     member this.``Evaluate static method call with one parameter``() = 
-        assertEval <@ Math.Abs(-3) @> 3
+        assertEval <@ abs(-3) @> 3
 
     (*
     Call (None, Ceiling, [Call (None, Abs, [Value (-5.67)])])
     *)
     [<TestMethod>]
     member this.``Evaluate 2 static method calls with one parameter``() = 
-        assertEval <@ Math.Ceiling(Math.Abs(-5.67)) @> <| double 6
+        assertEval <@ ceil(abs(-5.67)) @> <| double 6
         
     (*
     Call (None, Max, [Value (10), Value (75)])
     *)
     [<TestMethod>]
     member this.``Evaluate static method call with 2 parameters of same type``() = 
-        assertEval <@ Math.Max(10, 75) @> 75
+        assertEval <@ max 10 75 @> 75
 
     (*
     Call (None, Round, [Value (0.1234), Value (2)])
@@ -231,4 +230,101 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate function application with two parameters``() = 
         assertEval <@ let f x y = x + y + 1 in f 3 8 @> 12
+          
+    (*
+    Call (None, ToString, [Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to string``() = 
+        assertEval <@ string 3 @> "3"
         
+    (*
+    Call (None, ToByte, [Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to byte``() = 
+        assertEval <@ byte 3 @> 3uy
+        
+    (*
+    Call (None, ToChar, [Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to char``() = 
+        assertEval <@ char 51 @> '3'
+        
+    (*
+    Call (None, ToDecimal, [Value (13)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to decimal``() = 
+        assertEval <@ decimal 13 @> 13m
+        
+    (*
+    Call (None, ToDouble, [Value (12)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to float``() = 
+        assertEval <@ float 12 @> 12.0
+    
+    (*
+    Call (None, ToSingle, [Value (12)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to float32``() = 
+        assertEval <@ float32 12 @> 12.0f
+        
+    (*
+    Call (None, ToInt, [Value ("82")])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert string to int``() = 
+        assertEval <@ int "82" @> 82
+        
+    (*
+    Call (None, ToInt16, [Value ("17")])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert string to int16``() = 
+        assertEval <@ int16 "17" @> 17s
+
+    (*
+    Call (None, ToInt32, [Value ("29")])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert string to int32``() = 
+        assertEval <@ int32 "29" @> 29
+        
+    (*
+    Call (None, ToInt64, [Value ("18")])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert string to int64``() = 
+        assertEval <@ int64 "18" @> 18L
+         
+    (*
+    Call (None, ToSByte, [Value (65)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to sbyte``() = 
+        assertEval <@ sbyte 65 @> 65y
+        
+    (*
+    Call (None, ToUInt16, [Value (28)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to uint16``() = 
+        assertEval <@ uint16 28 @> (uint16 28)
+        
+    (*
+    Call (None, ToUInt32, [Value (34)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to uint32``() = 
+        assertEval <@ uint32 34 @> 34u
+        
+    (*
+    Call (None, ToUInt64, [Value (91)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate convert int to uint64``() = 
+        assertEval <@ uint64 91 @> 91UL

@@ -36,8 +36,12 @@ module Evaluator =
 
     let evalExprs exprs state =
         exprs 
-        |> List.toArray 
+        |> Seq.toArray 
         |> Array.map (fun expr -> evalExpr expr state |> getLastValue) 
+        
+    let evalSingleExpr exprs state =
+        evalExpr <| Seq.head exprs <| state 
+        |> getLastValue
 
     let createNew evalFunc =
         {

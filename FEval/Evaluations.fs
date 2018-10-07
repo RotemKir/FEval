@@ -4,6 +4,7 @@ module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open FEval.Reflection
+    open System
     
     // Private functions
 
@@ -18,12 +19,33 @@ module Evaluations =
             Evaluator.evalExpr expr state 
             |> Evaluator.getLastValueAndState
 
-    let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
+    let private evalRegularMethodCall state instanceExpr methodInfo parameterExprs =
         let (instance, newState) = evalMethodCallInstance state instanceExpr
-
         Evaluator.evalExprs parameterExprs newState
         |> invokeMethod instance methodInfo
         |> Evaluator.setLastValue newState
+
+    let private evalSingleExprMethod state exprs method =
+        Evaluator.evalSingleExpr exprs state
+        |> method
+        |> Evaluator.setLastValue state
+
+    let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
+        match methodInfo with
+        | MethodFullName Methods.Byte    -> evalSingleExprMethod state parameterExprs Convert.ToByte
+        | MethodFullName Methods.Char    -> evalSingleExprMethod state parameterExprs Convert.ToChar
+        | MethodFullName Methods.Decimal -> evalSingleExprMethod state parameterExprs Convert.ToDecimal
+        | MethodFullName Methods.Float   -> evalSingleExprMethod state parameterExprs Convert.ToDouble
+        | MethodFullName Methods.Float32 -> evalSingleExprMethod state parameterExprs Convert.ToSingle
+        | MethodFullName Methods.Int     -> evalSingleExprMethod state parameterExprs Convert.ToInt32
+        | MethodFullName Methods.Int16   -> evalSingleExprMethod state parameterExprs Convert.ToInt16
+        | MethodFullName Methods.Int32   -> evalSingleExprMethod state parameterExprs Convert.ToInt32
+        | MethodFullName Methods.Int64   -> evalSingleExprMethod state parameterExprs Convert.ToInt64
+        | MethodFullName Methods.SByte   -> evalSingleExprMethod state parameterExprs Convert.ToSByte
+        | MethodFullName Methods.UInt16  -> evalSingleExprMethod state parameterExprs Convert.ToUInt16
+        | MethodFullName Methods.UInt32  -> evalSingleExprMethod state parameterExprs Convert.ToUInt32
+        | MethodFullName Methods.UInt64  -> evalSingleExprMethod state parameterExprs Convert.ToUInt64
+        | _ -> evalRegularMethodCall state instanceExpr methodInfo parameterExprs
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 

@@ -32,3 +32,5 @@ module Reflection =
         let funcType = FSharpType.MakeFunctionType (domain, range)
         FSharpValue.MakeFunction (funcType, body)   
 
+    let (|MethodFullName|_|) (methodInfo : MethodInfo) =
+        Some <| sprintf "%s.%s" methodInfo.DeclaringType.FullName methodInfo.Name
