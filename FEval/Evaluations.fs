@@ -95,29 +95,29 @@ module Evaluations =
         invokeMethod func method [|value|]
         |> Evaluator.setLastValue state 
 
+    let private evalCoerce state (expr, _) =
+        Evaluator.evalExpr expr state
+
+    let private evalNewObject state (constructorInfo, parameterExprs) =
+        Evaluator.evalExprs parameterExprs state
+        |> invokeCtor constructorInfo
+        |> Evaluator.setLastValue state
+
     let rec private evalRec expr state =
         match expr with
-        | Value (value, _) -> 
-            evalValue state value
-        | Var variable ->
-            evalVar state variable
-        | NewUnionCase newUnionCaseState -> 
-            evalNewUnionCase state newUnionCaseState
-        | NewRecord newRecordState ->
-            evalNewRecord state newRecordState
-        | NewTuple exprs ->
-            evalNewTuple state exprs expr.Type
-        | NewArray newArrayState ->
-            evalNewArray state newArrayState 
-        | Call callState -> 
-            evalMethodCall state callState
-        | Let letState -> 
-            evalLet state letState
-        | Lambda lambdaState ->
-            evalLambda state lambdaState
-        | Application applicationState ->
-            evalApplication state applicationState
-        | _ -> failwithf "Expression %O is not supported" expr
+        | Value (value, _)               -> evalValue state value
+        | Var variable                   -> evalVar state variable
+        | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
+        | NewRecord newRecordState       -> evalNewRecord state newRecordState
+        | NewTuple exprs                 -> evalNewTuple state exprs expr.Type
+        | NewArray newArrayState         -> evalNewArray state newArrayState 
+        | NewObject newObjectState       -> evalNewObject state newObjectState
+        | Call callState                 -> evalMethodCall state callState
+        | Let letState                   -> evalLet state letState
+        | Lambda lambdaState             -> evalLambda state lambdaState
+        | Application applicationState   -> evalApplication state applicationState
+        | Coerce coerceState             -> evalCoerce state coerceState
+        | _                              -> failwithf "Expression %O is not supported" expr
         
     // Public functions
 

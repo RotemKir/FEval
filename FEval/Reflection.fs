@@ -7,8 +7,11 @@ module Reflection =
 
     // Public functions
     
-    let invokeMethod instance (methodInfo : MethodInfo) parameters =
-        methodInfo.Invoke (instance, parameters)
+    let invokeMethod instance (methodInfo : MethodBase) parameters =
+        methodInfo.Invoke(instance, parameters)
+    
+    let invokeCtor (constructorInfo : ConstructorInfo) parameters =
+        constructorInfo.Invoke(parameters)
 
     let getMethodInfo instance methodName =
         let instanceType = instance.GetType()

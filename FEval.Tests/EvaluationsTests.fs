@@ -328,3 +328,44 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate convert int to uint64``() = 
         assertEval <@ uint64 91 @> 91UL
+           
+    (*
+    Let (x, Value ("Hello"), Coerce (x, Object))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate cast string to obj``() = 
+        assertEval <@ let x = "Hello" in x :> obj @> ("Hello" :> obj)
+         
+    (*
+    Let (child, NewObject (ChildClass, Value ("Hello")),
+     Let (base1, Coerce (child, BaseClass), base1))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate upcasting child class to base class``() = 
+        assertEval 
+            <@ 
+            let child = new ChildClass("Hello") 
+            let base1 = child :> BaseClass
+            base1 @> 
+            (new BaseClass("Hello"))
+
+    (*
+    Let (child, Coerce (NewObject (ChildClass, Value ("Hello")), Object),
+     Let (base1, Call (None, UnboxGeneric, [child]), base1))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate downcasting child class to base class``() = 
+        assertEval 
+            <@ 
+            let child = new ChildClass("Hello") :> obj
+            let base1 = child :?> BaseClass 
+            base1 @> 
+            (new BaseClass("Hello"))
+
+    (*
+    Let (x, Call (None, ToEnum, [Value (2)]), x)
+    *)
+    [<TestMethod>]
+    member this.``Evaluate cast int to enum``() = 
+        assertEval <@ let x : ConsoleColor = enum 2 in x @> ConsoleColor.DarkGreen
+         
