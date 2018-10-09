@@ -13,6 +13,14 @@ module Reflection =
     let invokeCtor (constructorInfo : ConstructorInfo) parameters =
         constructorInfo.Invoke(parameters)
 
+    let invokeGetProperty instance (propertyinfo : PropertyInfo) parameters =
+        let getPropertyMethod = propertyinfo.GetGetMethod()
+        invokeMethod instance getPropertyMethod parameters
+
+    let invokeSetProperty instance (propertyinfo : PropertyInfo) value indexerParameters = 
+        let setPropertyMethod = propertyinfo.GetSetMethod()
+        invokeMethod instance setPropertyMethod <| Array.append indexerParameters [|value|]
+        
     let getMethodInfo instance methodName =
         let instanceType = instance.GetType()
         instanceType.GetMethod(methodName)

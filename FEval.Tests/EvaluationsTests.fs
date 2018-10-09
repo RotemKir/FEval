@@ -368,4 +368,57 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate cast int to enum``() = 
         assertEval <@ let x : ConsoleColor = enum 2 in x @> ConsoleColor.DarkGreen
-         
+    
+    (*
+    Let (child, NewObject (ChildClass, Value ("Hello")),
+     PropertyGet (Some (child), NameProperty, []))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate get property``() = 
+        assertEval 
+            <@ 
+            let child = new ChildClass("Hello")
+            child.NameProperty
+            @> "Hello"
+    
+    (*
+    Let (child, NewObject (ChildClass, Value ("Hello")),
+     Sequential (PropertySet (Some (child), NameProperty, [Value ("World")]),
+                 PropertyGet (Some (child), NameProperty, [])))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate set property``() = 
+        assertEval 
+            <@ 
+            let child = new ChildClass("Hello")
+            child.NameProperty <- "World"
+            child.NameProperty 
+            @> "World"
+    
+    (*
+    Let (indexerClass, NewObject (IndexerClass),
+     PropertyGet (Some (indexerClass), Item, [Value (2)]))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate get indexer property``() = 
+        assertEval 
+            <@ 
+            let indexerClass = new IndexerClass()
+            indexerClass.[2]
+            @> "three"
+
+    (*
+    Let (indexerClass, NewObject (IndexerClass),
+     Sequential (PropertySet (Some (indexerClass), Item,
+                              [Value (2), Value ("Lovely Two")]),
+                 PropertyGet (Some (indexerClass), Item, [Value (2)])))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate set indexer property``() = 
+        assertEval 
+            <@ 
+            let indexerClass = new IndexerClass()
+            indexerClass.[2] <- "Lovely Two"
+            indexerClass.[2]
+            @> "Lovely Two"
+    

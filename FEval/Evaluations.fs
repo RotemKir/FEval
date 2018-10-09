@@ -103,6 +103,25 @@ module Evaluations =
         |> invokeCtor constructorInfo
         |> Evaluator.setLastValue state
 
+    let private evalSequential state (firstExpr, secondExpr) = 
+        let newState = Evaluator.evalExpr firstExpr state
+        Evaluator.evalExpr secondExpr newState
+
+    let private evalPropertyGet state (instanceExpr, propertyInfo, parameterExprs) =
+        let (instance, newState) = evalMethodCallInstance state instanceExpr
+        Evaluator.evalExprs parameterExprs newState
+        |> invokeGetProperty instance propertyInfo
+        |> Evaluator.setLastValue newState
+
+    let private evalPropertySet state (instanceExpr, propertyInfo, indexerExprs, valueExpr) =
+        let (instance, newState1) = evalMethodCallInstance state instanceExpr
+        let (value, newState2) = 
+            Evaluator.evalExpr valueExpr newState1
+            |> Evaluator.getLastValueAndState
+        Evaluator.evalExprs indexerExprs newState2
+        |> invokeSetProperty instance propertyInfo value
+        |> Evaluator.setLastValue newState2
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _)               -> evalValue state value
@@ -117,6 +136,9 @@ module Evaluations =
         | Lambda lambdaState             -> evalLambda state lambdaState
         | Application applicationState   -> evalApplication state applicationState
         | Coerce coerceState             -> evalCoerce state coerceState
+        | Sequential sequentialState     -> evalSequential state sequentialState
+        | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
+        | PropertySet propertySetState   -> evalPropertySet state propertySetState
         | _                              -> failwithf "Expression %O is not supported" expr
         
     // Public functions
