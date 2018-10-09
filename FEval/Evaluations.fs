@@ -104,8 +104,8 @@ module Evaluations =
         |> Evaluator.setLastValue state
 
     let private evalSequential state (firstExpr, secondExpr) = 
-        let newState = Evaluator.evalExpr firstExpr state
-        Evaluator.evalExpr secondExpr newState
+        Evaluator.evalExpr firstExpr state
+        |> Evaluator.evalExpr secondExpr
 
     let private evalPropertyGet state (instanceExpr, propertyInfo, parameterExprs) =
         let (instance, newState) = evalMethodCallInstance state instanceExpr
