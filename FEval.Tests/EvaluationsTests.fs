@@ -422,3 +422,10 @@ type EvaluationsTest() =
             indexerClass.[2]
             @> "Lovely Two"
     
+    (*
+    Let (struct1, DefaultValue (Struct), struct1)
+    *)
+    [<TestMethod>]
+    member this.``Evaluate struct default value``() = 
+        assertEval <@ let struct1 = new Struct() in struct1 @> (new Struct())
+    

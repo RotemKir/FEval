@@ -29,3 +29,9 @@ module TestHelpers =
         member this.Item
             with get(index) = ordinals.[index]
             and set index value = ordinals.[index] <- value
+
+    type Struct =
+        struct
+            val StructName : string
+           // new (name : string) = { StructName = name }
+        end

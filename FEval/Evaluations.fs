@@ -122,6 +122,10 @@ module Evaluations =
         |> invokeSetProperty instance propertyInfo value
         |> Evaluator.setLastValue newState2
 
+    let private evalDefaultValue state defaultType =
+        createNewInstance defaultType
+        |> Evaluator.setLastValue state
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _)               -> evalValue state value
@@ -131,6 +135,7 @@ module Evaluations =
         | NewTuple exprs                 -> evalNewTuple state exprs expr.Type
         | NewArray newArrayState         -> evalNewArray state newArrayState 
         | NewObject newObjectState       -> evalNewObject state newObjectState
+        | DefaultValue defaultType       -> evalDefaultValue state defaultType
         | Call callState                 -> evalMethodCall state callState
         | Let letState                   -> evalLet state letState
         | Lambda lambdaState             -> evalLambda state lambdaState
