@@ -35,3 +35,7 @@ module TestHelpers =
             val StructName : string
            // new (name : string) = { StructName = name }
         end
+
+    type FieldClass =
+        val mutable number : int
+        new (num) = {number = num}

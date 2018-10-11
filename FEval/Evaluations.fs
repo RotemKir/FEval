@@ -11,7 +11,7 @@ module Evaluations =
     let private evalValue =
         Evaluator.setLastValue
 
-    let private evalMethodCallInstance state instanceExpr =
+    let private evalInstanceExpr state instanceExpr =
         match instanceExpr with
         | None -> 
             (null, state)
@@ -20,7 +20,7 @@ module Evaluations =
             |> Evaluator.getLastValueAndState
 
     let private evalRegularMethodCall state instanceExpr methodInfo parameterExprs =
-        let (instance, newState) = evalMethodCallInstance state instanceExpr
+        let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.evalExprs parameterExprs newState
         |> invokeMethod instance methodInfo
         |> Evaluator.setLastValue newState
@@ -108,13 +108,13 @@ module Evaluations =
         |> Evaluator.evalExpr secondExpr
 
     let private evalPropertyGet state (instanceExpr, propertyInfo, parameterExprs) =
-        let (instance, newState) = evalMethodCallInstance state instanceExpr
+        let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.evalExprs parameterExprs newState
         |> invokeGetProperty instance propertyInfo
         |> Evaluator.setLastValue newState
 
     let private evalPropertySet state (instanceExpr, propertyInfo, indexerExprs, valueExpr) =
-        let (instance, newState1) = evalMethodCallInstance state instanceExpr
+        let (instance, newState1) = evalInstanceExpr state instanceExpr
         let (value, newState2) = 
             Evaluator.evalExpr valueExpr newState1
             |> Evaluator.getLastValueAndState
@@ -125,6 +125,19 @@ module Evaluations =
     let private evalDefaultValue state defaultType =
         createNewInstance defaultType
         |> Evaluator.setLastValue state
+
+    let private evalFieldGet state (instanceExpr, fieldInfo) =
+        let (instance, newState1) = evalInstanceExpr state instanceExpr
+        invokeGetField instance fieldInfo
+        |> Evaluator.setLastValue newState1
+        
+    let private evalFieldSet state (instanceExpr, fieldInfo, valueExpr) =
+        let (instance, newState1) = evalInstanceExpr state instanceExpr
+        let (value, newState2) = 
+            Evaluator.evalExpr valueExpr newState1
+            |> Evaluator.getLastValueAndState
+        invokeSetField instance fieldInfo value
+        |> Evaluator.setLastValue newState2
 
     let rec private evalRec expr state =
         match expr with
@@ -144,6 +157,8 @@ module Evaluations =
         | Sequential sequentialState     -> evalSequential state sequentialState
         | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
         | PropertySet propertySetState   -> evalPropertySet state propertySetState
+        | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
+        | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
         | _                              -> failwithf "Expression %O is not supported" expr
         
     // Public functions

@@ -20,7 +20,13 @@ module Reflection =
     let invokeSetProperty instance (propertyinfo : PropertyInfo) value indexerParameters = 
         let setPropertyMethod = propertyinfo.GetSetMethod()
         invokeMethod instance setPropertyMethod <| Array.append indexerParameters [|value|]
+    
+    let invokeGetField instance (fieldinfo : FieldInfo) =
+        fieldinfo.GetValue(instance)
         
+    let invokeSetField instance (fieldinfo : FieldInfo) value =
+        fieldinfo.SetValue(instance, value)
+
     let getMethodInfo instance methodName =
         let instanceType = instance.GetType()
         instanceType.GetMethod(methodName)

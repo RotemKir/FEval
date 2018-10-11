@@ -429,3 +429,26 @@ type EvaluationsTest() =
     member this.``Evaluate struct default value``() = 
         assertEval <@ let struct1 = new Struct() in struct1 @> (new Struct())
     
+    (*
+    Let (field, NewObject (FieldClass, Value (54)), FieldGet (Some (field), number))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate get field``() = 
+        assertEval <@ let field = new FieldClass(54) in field.number @> 54
+
+    (*
+    Let (field, NewObject (FieldClass, Value (54)),
+     Sequential (FieldSet (Some (field), number, Value (37)),
+                 FieldGet (Some (field), number)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate set field``() = 
+        assertEval 
+            <@ 
+            let field = new FieldClass(54)
+            field.number <- 37
+            field.number 
+            @> 37
+
+
+    
