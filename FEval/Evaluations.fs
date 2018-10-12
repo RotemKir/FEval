@@ -3,6 +3,7 @@
 module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
+    open FEval.Loops
     open FEval.Reflection
     open System
     
@@ -72,9 +73,13 @@ module Evaluations =
         |> Evaluator.setLastValueAsVar letVariable
         |> Evaluator.evalExpr body
 
-    let private evalVar state variable = 
+    let private evalVarGet state variable = 
         Evaluator.getVar variable state
         |> Evaluator.setLastValue state
+
+    let private evalVarSet state (variable, valueExpr) = 
+        Evaluator.evalExpr valueExpr state
+        |> Evaluator.setLastValueAsVar variable
 
     let private createLambdaBody state variable expr (value : obj) =
         Evaluator.setLastValue state value
@@ -139,10 +144,19 @@ module Evaluations =
         invokeSetField instance fieldInfo value
         |> Evaluator.setLastValue newState2
 
+    let private evalFor state (loopVar, startExpr, endExpr, bodyExpr) =
+        let startIndex = Evaluator.evalExprAndGetLastValue startExpr state :?> int
+        let endIndex =  Evaluator.evalExprAndGetLastValue endExpr state :?> int
+        
+        runLoop 
+        <| createForLoopConfiguration loopVar startIndex endIndex bodyExpr
+        <| Evaluator.setVar loopVar startIndex state
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _)               -> evalValue state value
-        | Var variable                   -> evalVar state variable
+        | Var variable                   -> evalVarGet state variable
+        | VarSet varSetState             -> evalVarSet state varSetState
         | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
         | NewRecord newRecordState       -> evalNewRecord state newRecordState
         | NewTuple exprs                 -> evalNewTuple state exprs expr.Type
@@ -159,6 +173,7 @@ module Evaluations =
         | PropertySet propertySetState   -> evalPropertySet state propertySetState
         | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
         | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
+        | ForIntegerRangeLoop forState   -> evalFor state forState
         | _                              -> failwithf "Expression %O is not supported" expr
         
     // Public functions

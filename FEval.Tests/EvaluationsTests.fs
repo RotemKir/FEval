@@ -20,28 +20,28 @@ type EvaluationsTest() =
     Value (4)
     *)
     [<TestMethod>]
-    member this.``Evaluate Const Int32``() = 
+    member this.``Evaluate const Int32``() = 
         assertEval <@ 4 @> 4
 
     (*
     Value ("Hello World")
     *)
     [<TestMethod>]
-    member this.``Evaluate Const string``() = 
+    member this.``Evaluate const string``() = 
         assertEval <@ "Hello World" @> "Hello World"
 
     (*
     Value (true)
     *)
     [<TestMethod>]
-    member this.``Evaluate Const bool``() = 
+    member this.``Evaluate const bool``() = 
         assertEval <@ true @> true
 
     (*
     Value (0.87)
     *)
     [<TestMethod>]
-    member this.``Evaluate Const float``() = 
+    member this.``Evaluate const float``() = 
         assertEval <@ 0.87 @> 0.87
  
     (*
@@ -49,28 +49,28 @@ type EvaluationsTest() =
       [Value (87), Value (0), Value (0), Value (false), Value (2uy)])
     *)
     [<TestMethod>]
-    member this.``Evaluate Const decimal``() = 
+    member this.``Evaluate const decimal``() = 
         assertEval <@ 0.87m @> 0.87m
 
     (*
     NewUnionCase (None)
     *)
     [<TestMethod>]
-    member this.``Evaluate None``() = 
+    member this.``Evaluate none``() = 
         assertEval <@ None @> None
 
     (*
     NewUnionCase (Some, Value (4))
     *)
     [<TestMethod>]
-    member this.``Evaluate Some number``() = 
+    member this.``Evaluate some number``() = 
         assertEval <@ Some 4 @> <| Some 4
     
     (*
     NewUnionCase (Some, Call (None, op_Addition, [Value (6), Value (9)]))
     *)
     [<TestMethod>]
-    member this.``Evaluate Some simple addition``() = 
+    member this.``Evaluate some simple addition``() = 
         assertEval <@ Some (6 + 9) @> <| Some 15
 
     (*
@@ -450,5 +450,52 @@ type EvaluationsTest() =
             field.number 
             @> 37
 
+    (*
+    Let (x, Value (3), Sequential (VarSet (x, Value (4)), x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate set mutable variable``() = 
+        assertEval 
+            <@ 
+            let mutable x = 3
+            x <- 4
+            x
+            @> 4
 
-    
+    (*
+    Let (x, Value (0),
+     Sequential (ForIntegerRangeLoop (i, Value (1), Value (10),
+                                      VarSet (x,
+                                              Call (None, op_Addition, [x, i]))),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate for up to loop``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            for i = 1 to 10 do
+                x <- x + i
+
+            x
+            @> 55
+
+    (*
+    Let (x, Value (0),
+     Sequential (ForIntegerRangeLoop (i, Value (8), Value (3),
+                                      VarSet (x,
+                                              Call (None, op_Addition, [x, i]))),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate for down to loop``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            for i = 8 to 3 do
+                x <- x + i
+
+            x
+            @> 33

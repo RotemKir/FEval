@@ -23,25 +23,35 @@ module Evaluator =
             state with LastValue = value
         }
 
-    let setLastValueAsVar (variable : Var) state =
+    let setVar (variable : Var) value state =
         {
-            state with Variables = Map.add variable.Name state.LastValue state.Variables
+            state with Variables = Map.add variable.Name value state.Variables
         }
 
     let getVar (variable : Var) state =
         state.Variables.Item variable.Name
 
+    let setLastValueAsVar (variable : Var) state =
+        setVar variable state.LastValue state
+    
+    let updateVar (variable : Var) newValueFunc state =
+        let newValue = getVar variable state |> newValueFunc
+        setVar variable newValue state
+
     let evalExpr expr state =
         state.EvalFunc expr state
 
+    let evalExprAndGetLastValue expr state =
+        evalExpr expr state
+        |> getLastValue 
+        
     let evalExprs exprs state =
         exprs 
         |> Seq.toArray 
-        |> Array.map (fun expr -> evalExpr expr state |> getLastValue) 
-        
+        |> Array.map (fun expr -> evalExprAndGetLastValue expr state) 
+    
     let evalSingleExpr exprs state =
-        evalExpr <| Seq.head exprs <| state 
-        |> getLastValue
+        evalExprAndGetLastValue <| Seq.head exprs <| state 
 
     let createNew evalFunc =
         {
