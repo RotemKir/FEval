@@ -499,3 +499,80 @@ type EvaluationsTest() =
 
             x
             @> 33
+
+    (*
+    Let (x, Value (0),
+     Sequential (ForIntegerRangeLoop (i, Value (1), Value (6),
+                                      VarSet (x,
+                                              Call (None, op_Addition, [x, i]))),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate for in loop``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            for i in 1 .. 6 do
+                x <- x + i
+
+            x
+            @> 21
+    
+    (*
+    Let (x, Value (6),
+     Sequential (IfThenElse (Value (true), VarSet (x, Value (5)), Value (<null>)),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate if is true``() = 
+        assertEval 
+            <@ 
+            let mutable x = 6
+            
+            if true then x <- 5
+
+            x
+            @> 5
+    
+    (*
+    Let (x, Value (6),
+     Sequential (IfThenElse (Value (false), VarSet (x, Value (5)),
+                             Value (<null>)), x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate if is false``() = 
+        assertEval 
+            <@ 
+            let mutable x = 6
+            
+            if false then x <- 5
+
+            x
+            @> 6
+
+    (*
+    IfThenElse (Value (false), Value (5), Value (7))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate if else``() = 
+        assertEval <@ if false then 5 else 7 @> 7
+
+    (*
+    Let (x, Value (4),
+     IfThenElse (Call (None, op_Equality, [x, Value (6)]), Value (1),
+                 IfThenElse (Call (None, op_Equality, [x, Value (4)]), Value (9),
+                             Value (12))))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate if else if``() = 
+        assertEval 
+            <@ 
+            let x = 4
+            
+            if x = 6 then 1 elif x = 4 then 9 else 12 
+            @> 9
+
+
+
+
