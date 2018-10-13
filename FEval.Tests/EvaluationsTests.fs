@@ -580,3 +580,209 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate tuple get``() = 
         assertEval <@ let (a, b) = (1, 2) in a @> 1
+
+    (*
+    Let (matchValue, Value (true), IfThenElse (matchValue, Value (1), Value (2)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bool pattern matching``() = 
+        assertEval 
+            <@ 
+            match true with 
+            | true -> 1
+            | false -> 2
+            @> 1
+
+    (*
+    Let (u, NewUnionCase (UnionB),
+     IfThenElse (UnionCaseTest (u, UnionB), Value (2),
+                 IfThenElse (UnionCaseTest (u, UnionC), Value (3), Value (1))))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate union pattern matching``() = 
+        assertEval 
+            <@ 
+            let u = UnionB
+            match u with
+            | UnionA -> 1
+            | UnionB -> 2
+            | UnionC -> 3
+            @> 2
+
+    (*
+    Let (x, NewUnionCase (Some, Value (4)),
+     IfThenElse (UnionCaseTest (x, None), Value (0),
+                 Let (n, PropertyGet (Some (x), Value, []), n)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate identifier pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = Some 4
+            match x with
+            | Some n -> n
+            | None -> 0
+            @> 4
+
+    (*
+    Let (u, NewUnionCase (UnionB),
+     IfThenElse (UnionCaseTest (u, UnionB), Value (1),
+                 IfThenElse (UnionCaseTest (u, UnionC), Value (2), Value (1))))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate or pattern matching``() = 
+        assertEval 
+            <@ 
+            let u = UnionB
+            match u with
+            | UnionA | UnionB -> 1
+            | UnionC -> 2
+            @> 1
+
+    (*
+    Let (x, Value (5),
+     IfThenElse (Call (None, op_Equality, [x, Value (6)]),
+                 IfThenElse (Call (None, op_Equality, [x, Value (5)]), Value (1),
+                             IfThenElse (Call (None, op_Equality, [x, Value (5)]),
+                                         Value (2), Value (0))),
+                 IfThenElse (Call (None, op_Equality, [x, Value (5)]), Value (2),
+                             Value (0))))
+    *)   
+    [<TestMethod>]
+    member this.``Evaluate and pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = 5
+            match x with
+            | 6 & 5 -> 1
+            | 5 -> 2
+            | _ -> 0
+            @> 2
+            
+    (*
+    Let (x,
+     NewUnionCase (Cons, Value (1),
+                   NewUnionCase (Cons, Value (2),
+                                 NewUnionCase (Cons, Value (3),
+                                               NewUnionCase (Empty)))),
+     IfThenElse (UnionCaseTest (x, Cons),
+                 Let (tail, PropertyGet (Some (x), Tail, []),
+                      Let (head, PropertyGet (Some (x), Head, []), head)),
+                 Value (0)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate cons pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = [1 ; 2 ; 3]
+            match x with
+            | head :: _ -> head
+            | _ -> 0
+            @> 1
+
+    
+    (*
+    Let (x,
+     NewUnionCase (Cons, Value (1),
+                   NewUnionCase (Cons, Value (2),
+                                 NewUnionCase (Cons, Value (3),
+                                               NewUnionCase (Empty)))),
+     IfThenElse (UnionCaseTest (x, Cons),
+                 IfThenElse (UnionCaseTest (PropertyGet (Some (x), Tail, []),
+                                            Cons),
+                             IfThenElse (UnionCaseTest (PropertyGet (Some (PropertyGet (Some (x),
+                                                                                        Tail,
+                                                                                        [])),
+                                                                     Tail, []),
+                                                        Cons),
+                                         IfThenElse (UnionCaseTest (PropertyGet (Some (PropertyGet (Some (PropertyGet (Some (x),
+                                                                                                                       Tail,
+                                                                                                                       [])),
+                                                                                                    Tail,
+                                                                                                    [])),
+                                                                                 Tail,
+                                                                                 []),
+                                                                    Empty),
+                                                     Let (n,
+                                                          PropertyGet (Some (PropertyGet (Some (x),
+                                                                                          Tail,
+                                                                                          [])),
+                                                                       Head, []),
+                                                          n), Value (0)),
+                                         Value (0)), Value (0)), Value (0)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate list pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = [1 ; 2 ; 3]
+            match x with
+            | [ _ ; n ; _ ] -> n
+            | _ -> 0
+            @> 2
+    
+    (*
+    Let (x, NewTuple (Value (7), Value (8)),
+     IfThenElse (Call (None, op_Equality, [TupleGet (x, 0), Value (7)]),
+                 Let (n, TupleGet (x, 1), n), Value (0)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate tuple pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = (7, 8)
+            match x with
+            | (7, n) -> n
+            | _ -> 0
+            @> 8
+
+    
+    (*
+    Let (x, NewRecord (Person, Value ("First"), Value ("Last")),
+     IfThenElse (Call (None, op_Equality,
+                       [PropertyGet (Some (x), FirstName, []), Value ("First")]),
+                 Let (name, PropertyGet (Some (x), LastName, []), name),
+                 Value ("Empty")))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate record pattern matching``() = 
+        assertEval 
+            <@ 
+            let x = { FirstName = "First" ; LastName = "Last" }
+            match x with
+            | {FirstName = "First" ; LastName = name } -> name
+            | _ -> "Empty"
+            @> "Last"
+
+    (*
+    Let (x, Coerce (Value (6), Object),
+     IfThenElse (TypeTest (Int32, x), Value (true), Value (false)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate type test pattern matching``() = 
+        assertEval 
+            <@ 
+            let x : obj = 6 :> obj
+            match x with
+            | :? int -> true
+            | _ -> false
+            @> true
+
+    (*
+    Let (x, NewTuple (Value (10), Value (8)),
+     IfThenElse (Let (b, TupleGet (x, 1),
+                      Let (a, TupleGet (x, 0),
+                           Call (None, op_Equality, [b, Value (8)]))),
+                 Let (b, TupleGet (x, 1), Let (a, TupleGet (x, 0), Value (true))),
+                 Value (false)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate pattern matching with condition``() = 
+        assertEval 
+            <@ 
+            let x = (10, 8)
+            match x with
+            | (a, b) when b = 8 -> true
+            | _ -> false
+            @> true
+

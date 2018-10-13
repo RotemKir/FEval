@@ -57,3 +57,9 @@ module Reflection =
 
     let getTupleField index tuple =
         FSharpValue.GetTupleField (tuple, index)
+
+    let getUnionCaseInfo union =
+        FSharpValue.GetUnionFields (union, union.GetType()) |> fst
+
+    let getType obj =
+        obj.GetType()

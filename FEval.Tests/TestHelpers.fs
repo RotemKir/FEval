@@ -45,3 +45,5 @@ module TestHelpers =
         static member val IsDisposed = false
         interface IDisposable with
             member this.Dispose() = ignore()
+
+    type Union = UnionA | UnionB | UnionC

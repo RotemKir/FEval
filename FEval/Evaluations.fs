@@ -169,6 +169,16 @@ module Evaluations =
         |> getTupleField index
         |> Evaluator.setLastValue state
 
+    let private evalUnionCaseTest state (unionExpr, unionCaseInfo) =
+        Evaluator.evalExprAndGetLastValue unionExpr state
+        |> getUnionCaseInfo = unionCaseInfo
+        |> Evaluator.setLastValue state
+
+    let private evalTypeTest state (expr, expectedType) =
+        Evaluator.evalExprAndGetLastValue expr state
+        |> getType = expectedType
+        |> Evaluator.setLastValue state
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _)               -> evalValue state value
@@ -194,6 +204,8 @@ module Evaluations =
         | ForIntegerRangeLoop forState   -> evalFor state forState
         | WhileLoop whileState           -> evalWhile state whileState
         | IfThenElse ifState             -> evalIf state ifState
+        | UnionCaseTest unionCaseState   -> evalUnionCaseTest state unionCaseState
+        | TypeTest typeTestState         -> evalTypeTest state typeTestState
         | _                              -> failwithf "Expression %O is not supported" expr
         
     // Public functions
