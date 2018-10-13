@@ -573,6 +573,20 @@ type EvaluationsTest() =
             if x = 6 then 1 elif x = 4 then 9 else 12 
             @> 9
 
+    (*
+    Let (x, Value (0),
+     Sequential (WhileLoop (Call (None, op_LessThan, [x, Value (10)]),
+                            VarSet (x, Call (None, op_Addition, [x, Value (1)]))),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate while loop``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            while x < 10 do
+                x <- x + 1
 
-
-
+            x
+            @> 10

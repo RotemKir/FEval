@@ -152,6 +152,11 @@ module Evaluations =
         <| createForLoopConfiguration loopVar startIndex endIndex bodyExpr
         <| Evaluator.setVar loopVar startIndex state
 
+    let private evalWhile state (conditionExpr, bodyExpr) =
+        runLoop 
+        <| createWhileLoopConfiguration conditionExpr bodyExpr
+        <| state
+
     let private evalIf state (conditionExpr, thenExpr, elseExpr) =
         let condition = Evaluator.evalExprAndGetLastValue conditionExpr state :?> bool
 
@@ -181,6 +186,7 @@ module Evaluations =
         | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
         | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
         | ForIntegerRangeLoop forState   -> evalFor state forState
+        | WhileLoop whileState           -> evalWhile state whileState
         | IfThenElse ifState             -> evalIf state ifState
         | _                              -> failwithf "Expression %O is not supported" expr
         

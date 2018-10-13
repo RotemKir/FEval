@@ -18,6 +18,9 @@ module Loops =
     let private createForLoopTermination loopVar increment endIndex state =
         Evaluator.getVar loopVar state :?> int = endIndex + increment
 
+    let private createWhileLoopTermination conditionExpr state = 
+        Evaluator.evalExprAndGetLastValue conditionExpr state :?> bool = false
+
     // Public functions
 
     let rec runLoop loopConfiguration state =
@@ -36,4 +39,11 @@ module Loops =
             BodyExpr = bodyExpr
             LoopAction = createForLoopAction loopVar increment
             IsTerminated = createForLoopTermination loopVar increment endIndex
+        }
+
+    let createWhileLoopConfiguration conditionExpr bodyExpr =
+        {
+            BodyExpr = bodyExpr
+            LoopAction = id
+            IsTerminated = createWhileLoopTermination conditionExpr
         }
