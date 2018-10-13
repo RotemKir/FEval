@@ -1,6 +1,7 @@
 ﻿namespace FEval.Tests
 
 module TestHelpers =
+    open System
 
     type Person =
         {
@@ -39,3 +40,8 @@ module TestHelpers =
     type FieldClass =
         val mutable number : int
         new (num) = {number = num}
+
+    type DisposableClass() =
+        static member val IsDisposed = false
+        interface IDisposable with
+            member this.Dispose() = ignore()

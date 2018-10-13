@@ -54,3 +54,6 @@ module Reflection =
 
     let (|MethodFullName|_|) (methodInfo : MethodInfo) =
         Some <| sprintf "%s.%s" methodInfo.DeclaringType.FullName methodInfo.Name
+
+    let getTupleField index tuple =
+        FSharpValue.GetTupleField (tuple, index)

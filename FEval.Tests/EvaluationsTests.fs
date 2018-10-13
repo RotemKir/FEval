@@ -574,19 +574,9 @@ type EvaluationsTest() =
             @> 9
 
     (*
-    Let (x, Value (0),
-     Sequential (WhileLoop (Call (None, op_LessThan, [x, Value (10)]),
-                            VarSet (x, Call (None, op_Addition, [x, Value (1)]))),
-                 x))
+    Let (patternInput, NewTuple (Value (1), Value (2)),
+     Let (b, TupleGet (patternInput, 1), Let (a, TupleGet (patternInput, 0), a)))
     *)
     [<TestMethod>]
-    member this.``Evaluate while loop``() = 
-        assertEval 
-            <@ 
-            let mutable x = 0
-            
-            while x < 10 do
-                x <- x + 1
-
-            x
-            @> 10
+    member this.``Evaluate tuple get``() = 
+        assertEval <@ let (a, b) = (1, 2) in a @> 1

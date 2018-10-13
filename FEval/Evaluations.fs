@@ -164,6 +164,11 @@ module Evaluations =
         | true -> Evaluator.evalExpr thenExpr state
         | false -> Evaluator.evalExpr elseExpr state
 
+    let private evalTupleGet state (tupleExpr, index) =
+        Evaluator.evalExprAndGetLastValue tupleExpr state
+        |> getTupleField index
+        |> Evaluator.setLastValue state
+
     let rec private evalRec expr state =
         match expr with
         | Value (value, _)               -> evalValue state value
@@ -185,6 +190,7 @@ module Evaluations =
         | PropertySet propertySetState   -> evalPropertySet state propertySetState
         | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
         | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
+        | TupleGet tupleGetState         -> evalTupleGet state tupleGetState
         | ForIntegerRangeLoop forState   -> evalFor state forState
         | WhileLoop whileState           -> evalWhile state whileState
         | IfThenElse ifState             -> evalIf state ifState
