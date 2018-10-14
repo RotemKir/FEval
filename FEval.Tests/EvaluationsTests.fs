@@ -786,3 +786,19 @@ type EvaluationsTest() =
             | _ -> false
             @> true
 
+    (*
+    Let (x, NewRecord (Person, Value ("First"), Value ("Last")),
+     Let (LastName, Value ("New Last"),
+          NewRecord (Person, PropertyGet (Some (x), FirstName, []), LastName)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate update record``() = 
+        assertEval 
+            <@ 
+            let x = { FirstName = "First" ; LastName = "Last" }
+            {
+                x with LastName = "New Last"
+            }
+            @> { FirstName = "First" ; LastName = "New Last" }
+
+
