@@ -801,4 +801,282 @@ type EvaluationsTest() =
             }
             @> { FirstName = "First" ; LastName = "New Last" }
 
+    (*
+    Let (tried, Value (false),
+     Let (finalized, Value (false),
+          Sequential (TryFinally (VarSet (tried, Value (true)),
+                                  VarSet (finalized, Value (true))),
+                      IfThenElse (tried, finalized, Value (false)))))
+    *)    
+    [<TestMethod>]
+    member this.``Evaluate try finally``() = 
+        assertEval 
+            <@
+            let mutable tried = false
+            let mutable finalized = false
 
+            try
+                tried <- true
+            finally
+                finalized <- true
+                
+            (tried , finalized)
+            @> (true, true)
+
+    (*
+    Let (tried, Value (false),
+     Let (caught, Value (false),
+          Sequential (TryWith (Sequential (VarSet (tried, Value (true)),
+                                           Call (None, Raise,
+                                                 [Coerce (NewObject (InvalidOperationException,
+                                                                     Value ("Error")),
+                                                          Exception)])),
+                               matchValue,
+                               IfThenElse (TypeTest (InvalidOperationException,
+                                                     matchValue), Value (1),
+                                           Value (0)), matchValue,
+                               IfThenElse (TypeTest (InvalidOperationException,
+                                                     matchValue),
+                                           VarSet (caught, Value (true)),
+                                           Call (None, Reraise, []))),
+                      NewTuple (tried, caught))))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with catch by type``() = 
+        assertEval 
+            <@
+            let mutable tried = false
+            let mutable caught = false
+
+            try
+                tried <- true
+                raise (InvalidOperationException("Error"))
+            with
+            | :? InvalidOperationException -> caught <- true
+                
+            (tried , caught)
+            @> (true, true)
+
+    (*
+    Let (message, Value (""),
+     Sequential (TryWith (Sequential (VarSet (message,
+                                              Call (None, op_Addition,
+                                                    [message, Value ("Tried,")])),
+                                      Call (None, Raise,
+                                            [Coerce (NewObject (InvalidOperationException,
+                                                                Value ("Error")),
+                                                     Exception)])), matchValue,
+                          IfThenElse (TypeTest (InvalidOperationException,
+                                                matchValue),
+                                      Let (ex,
+                                           Call (None, UnboxGeneric,
+                                                 [matchValue]), Value (1)),
+                                      Value (0)), matchValue,
+                          IfThenElse (TypeTest (InvalidOperationException,
+                                                matchValue),
+                                      Let (ex,
+                                           Call (None, UnboxGeneric,
+                                                 [matchValue]),
+                                           VarSet (message,
+                                                   Call (None, op_Addition,
+                                                         [message,
+                                                          PropertyGet (Some (ex),
+                                                                       Message,
+                                                                       [])]))),
+                                      Call (None, Reraise, []))), message))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with catch by type and identifier``() = 
+        assertEval 
+            <@
+            let mutable message = ""
+
+            try
+                message <- message + "Tried,"
+                raise (InvalidOperationException("Error"))
+            with
+            | :? InvalidOperationException as ex -> message <- message + ex.Message
+                
+            message
+            @> "Tried,Error"
+            
+    (*
+    Let (message, Value (""),
+     Sequential (TryWith (Sequential (VarSet (message,
+                                              Call (None, op_Addition,
+                                                    [message, Value ("Tried,")])),
+                                      Call (None, Raise,
+                                            [Coerce (NewObject (TestException,
+                                                                Value ("Error")),
+                                                     Exception)])), matchValue,
+                          IfThenElse (TypeTest (TestException, matchValue),
+                                      Let (errorMessage,
+                                           PropertyGet (Some (Coerce (matchValue,
+                                                                      TestException)),
+                                                        Data0, []), Value (1)),
+                                      Value (0)), matchValue,
+                          IfThenElse (TypeTest (TestException, matchValue),
+                                      Let (errorMessage,
+                                           PropertyGet (Some (Coerce (matchValue,
+                                                                      TestException)),
+                                                        Data0, []),
+                                           VarSet (message,
+                                                   Call (None, op_Addition,
+                                                         [message, errorMessage]))),
+                                      Call (None, Reraise, []))), message))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with catch by name``() = 
+        assertEval 
+            <@
+            let mutable message = ""
+
+            try
+                message <- message + "Tried,"
+                raise (TestException("Error"))
+            with
+            | TestException (errorMessage) -> message <- message + errorMessage
+                
+            message
+            @> "Tried,Error"
+    
+    (*
+    Let (message, Value (""),
+     Sequential (TryWith (Sequential (VarSet (message,
+                                              Call (None, op_Addition,
+                                                    [message, Value ("Tried,")])),
+                                      Call (None, Raise,
+                                            [Coerce (NewObject (TestException,
+                                                                Value ("Error")),
+                                                     Exception)])), ex,
+                          Value (1), ex,
+                          VarSet (message,
+                                  Call (None, op_Addition,
+                                        [message,
+                                         PropertyGet (Some (ex), Message, [])]))),
+                 message))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with catch by identifier``() = 
+        assertEval 
+            <@
+            let mutable message = ""
+
+            try
+                message <- message + "Tried,"
+                raise (TestException("Error"))
+            with
+            | ex -> message <- message + ex.Message
+                
+            message
+            @> "Tried,Exception of type 'FEval.Tests.TestHelpers+TestException' was thrown."
+    
+    (*
+    Let (message, Value (""),
+     Let (b, Value (true),
+          Sequential (TryWith (Sequential (VarSet (message,
+                                                   Call (None, op_Addition,
+                                                         [message,
+                                                          Value ("Tried,")])),
+                                           Call (None, Raise,
+                                                 [Coerce (NewObject (TestException,
+                                                                     Value ("Error")),
+                                                          Exception)])),
+                               matchValue,
+                               IfThenElse (Let (ex, matchValue,
+                                                Call (None, op_Equality,
+                                                      [b, Value (false)])),
+                                           Let (ex, matchValue, Value (1)),
+                                           IfThenElse (Let (ex, matchValue,
+                                                            Call (None,
+                                                                  op_Equality,
+                                                                  [b,
+                                                                   Value (true)])),
+                                                       Let (ex, matchValue,
+                                                            Value (1)),
+                                                       Value (0))), matchValue,
+                               IfThenElse (Let (ex, matchValue,
+                                                Call (None, op_Equality,
+                                                      [b, Value (false)])),
+                                           Let (ex, matchValue,
+                                                VarSet (message,
+                                                        Call (None, op_Addition,
+                                                              [message,
+                                                               Value ("False")]))),
+                                           IfThenElse (Let (ex, matchValue,
+                                                            Call (None,
+                                                                  op_Equality,
+                                                                  [b,
+                                                                   Value (true)])),
+                                                       Let (ex, matchValue,
+                                                            VarSet (message,
+                                                                    Call (None,
+                                                                          op_Addition,
+                                                                          [message,
+                                                                           Value ("True")]))),
+                                                       Call (None, Reraise, [])))),
+                      message)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with catch by identifier and condition``() = 
+        assertEval 
+            <@
+            let mutable message = ""
+            let b = true
+
+            try
+                message <- message + "Tried,"
+                raise (TestException("Error"))
+            with
+            | ex when b = false -> message <- message + "False"
+            | ex when b = true -> message <- message + "True"
+                            
+            message
+            @> "Tried,True"
+        
+    (*
+    Let (message, Value (""),
+     Sequential (TryWith (TryFinally (Sequential (VarSet (message,
+                                                          Call (None,
+                                                                op_Addition,
+                                                                [message,
+                                                                 Value ("Tried,")])),
+                                                  Sequential (Call (None, Raise,
+                                                                    [Coerce (NewObject (TestException,
+                                                                                        Value ("Error")),
+                                                                             Exception)]),
+                                                              VarSet (message,
+                                                                      Call (None,
+                                                                            op_Addition,
+                                                                            [message,
+                                                                             Value ("Shouldnt be here,")])))),
+                                      VarSet (message,
+                                              Call (None, op_Addition,
+                                                    [message, Value ("Finally,")]))),
+                          matchValue,
+                          IfThenElse (TypeTest (TestException, matchValue),
+                                      Value (1), Value (0)), matchValue,
+                          IfThenElse (TypeTest (TestException, matchValue),
+                                      VarSet (message,
+                                              Call (None, op_Addition,
+                                                    [message, Value ("Caught,")])),
+                                      Call (None, Reraise, []))), message))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate try with finally``() = 
+        assertEval 
+            <@
+            let mutable message = ""
+
+            try
+                try
+                    message <- message + "Tried,"
+                    raise (TestException("Error"))
+                    message <- message + "Shouldnt be here,"
+                finally
+                    message <- message + "Finally,"
+            with
+            | :? TestException -> message <- message + "Caught"
+                            
+            message
+            @> "Tried,Finally,Caught"

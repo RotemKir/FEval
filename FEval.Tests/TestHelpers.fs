@@ -47,3 +47,5 @@ module TestHelpers =
             member this.Dispose() = ignore()
 
     type Union = UnionA | UnionB | UnionC
+
+    exception TestException of string

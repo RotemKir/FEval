@@ -1,6 +1,7 @@
 ﻿namespace FEval
 
 open Microsoft.FSharp.Quotations
+open System
 
 type EvaluationState =
     {
@@ -8,6 +9,8 @@ type EvaluationState =
         Variables : Map<string, obj>
         EvalFunc :  Expr -> EvaluationState -> EvaluationState
     }
+
+exception EvaluationException of Exception * EvaluationState
 
 [<RequireQualifiedAccess>]
 module Evaluator =
