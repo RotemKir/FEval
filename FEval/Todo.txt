@@ -1,0 +1,5 @@
+﻿NewDelegate
+LetRecursive
+Quote
+AddressOf ? 
+AddressSet ? 
