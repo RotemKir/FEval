@@ -1080,3 +1080,97 @@ type EvaluationsTest() =
                             
             message
             @> "Tried,Finally,Caught"
+
+    (*
+    Let (x, Value (0),
+     Sequential (Let (inputSequence,
+                      Call (None, op_RangeStep,
+                            [Value (1), Value (2), Value (6)]),
+                      Let (enumerator,
+                           Call (Some (inputSequence), GetEnumerator, []),
+                           TryFinally (WhileLoop (Call (Some (enumerator),
+                                                        MoveNext, []),
+                                                  Let (i,
+                                                       PropertyGet (Some (enumerator),
+                                                                    Current, []),
+                                                       VarSet (x,
+                                                               Call (None,
+                                                                     op_Addition,
+                                                                     [x, i])))),
+                                       IfThenElse (TypeTest (IDisposable,
+                                                             Coerce (enumerator,
+                                                                     Object)),
+                                                   Call (Some (Call (None,
+                                                                     UnboxGeneric,
+                                                                     [Coerce (enumerator,
+                                                                              Object)])),
+                                                         Dispose, []),
+                                                   Value (<null>))))), x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate for in loop with 2 skip``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            for i in 1 .. 2 .. 6 do
+                x <- x + i
+
+            x
+            @> 9
+    
+    (*
+    Let (x, Value (0),
+     Sequential (Let (inputSequence,
+                      Call (None, op_RangeStep,
+                            [Value (20), Value (-3), Value (0)]),
+                      Let (enumerator,
+                           Call (Some (inputSequence), GetEnumerator, []),
+                           TryFinally (WhileLoop (Call (Some (enumerator),
+                                                        MoveNext, []),
+                                                  Let (i,
+                                                       PropertyGet (Some (enumerator),
+                                                                    Current, []),
+                                                       VarSet (x,
+                                                               Call (None,
+                                                                     op_Addition,
+                                                                     [x, i])))),
+                                       IfThenElse (TypeTest (IDisposable,
+                                                             Coerce (enumerator,
+                                                                     Object)),
+                                                   Call (Some (Call (None,
+                                                                     UnboxGeneric,
+                                                                     [Coerce (enumerator,
+                                                                              Object)])),
+                                                         Dispose, []),
+                                                   Value (<null>))))), x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate for in loop with -3 skip``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            for i in 20 .. -3 .. 0 do
+                x <- x + i
+
+            x
+            @> 77
+    
+    (*
+    Let (x, Value (0),
+     Sequential (WhileLoop (Call (None, op_LessThan, [x, Value (10)]),
+                            VarSet (x, Call (None, op_Addition, [x, Value (1)]))),
+                 x))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate while loop``() = 
+        assertEval 
+            <@ 
+            let mutable x = 0
+            
+            while x < 10 do
+                x <- x + 1
+
+            x
+            @> 10
