@@ -1,4 +1,8 @@
-﻿NewDelegate
+﻿raise
+failWith
+invalidArg
+use
+NewDelegate
 LetRecursive
 Quote
 AddressOf ? 
