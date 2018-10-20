@@ -1,6 +1,4 @@
-﻿use
-NewDelegate
-LetRecursive
+﻿LetRecursive
 Quote
 AddressOf ? 
 AddressSet ? 
