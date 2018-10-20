@@ -41,10 +41,11 @@ module TestHelpers =
         val mutable number : int
         new (num) = {number = num}
 
-    type DisposableClass() =
-        static member val IsDisposed = false
+    type DisposableClass(name : string) =
+        member this.name = name
+        static member val IsDisposed = false with get, set
         interface IDisposable with
-            member this.Dispose() = ignore()
+            member this.Dispose() = DisposableClass.IsDisposed <- true
 
     type Union = UnionA | UnionB | UnionC
 

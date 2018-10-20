@@ -15,6 +15,19 @@ exception EvaluationException of Exception * EvaluationState
 [<RequireQualifiedAccess>]
 module Evaluator =
     
+    // Private Functions
+
+    let private mergeVariables oldVariables newVariables =
+        Map.map 
+            (fun name value -> 
+                match Map.tryFind name newVariables with
+                | Some newValue -> newValue
+                | None          -> value
+            ) 
+            oldVariables
+
+    // Public Functions
+
     let getLastValue state =
         state.LastValue
         
@@ -40,6 +53,11 @@ module Evaluator =
     let updateVar (variable : Var) newValueFunc state =
         let newValue = getVar variable state |> newValueFunc
         setVar variable newValue state
+
+    let updateVariables state newState =
+        {
+            state with Variables = mergeVariables state.Variables newState.Variables
+        }
 
     let evalExpr expr state =
         state.EvalFunc expr state

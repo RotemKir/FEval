@@ -1248,3 +1248,21 @@ type EvaluationsTest() =
                        | :? InvalidOperationException as ex 
                            when ex.Message = "Error" -> raise ex
                        | _ -> ignore())
+
+    (*
+    Let (s,
+     Let (x, NewObject (DisposableClass, Value ("Hello")),
+          TryFinally (PropertyGet (Some (x), name, []),
+                      IfThenElse (TypeTest (IDisposable, Coerce (x, Object)),
+                                  Call (Some (Call (None, UnboxGeneric,
+                                                    [Coerce (x, Object)])),
+                                        Dispose, []), Value (<null>)))),
+     PropertyGet (None, IsDisposed, []))
+     *)
+    [<TestMethod>]
+    member this.``Evaluate use statement``() = 
+        assertEval 
+            <@ 
+            let s = use x = new DisposableClass("Hello") in x.name
+            DisposableClass.IsDisposed
+            @> true

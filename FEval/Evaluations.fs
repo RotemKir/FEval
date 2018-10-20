@@ -174,14 +174,13 @@ module Evaluations =
         |> getUnionCaseInfo = unionCaseInfo
         |> Evaluator.setLastValue state
 
-    let private evalTypeTest state (expr, expectedType) =
-        Evaluator.evalExprAndGetLastValue expr state
-        |> getType = expectedType
+    let private evalTypeTest state (expr, expectedType : Type) =
+        Evaluator.evalExprAndGetLastValue expr state |> getType 
+        |> expectedType.IsAssignableFrom    
         |> Evaluator.setLastValue state
 
     let private evalTryFinally state (tryExpr, finallyExpr) =
         let mutable tempState = state
-        let mutable evalFinally = false
 
         try
             tempState <- Evaluator.evalExpr tryExpr tempState 
@@ -190,6 +189,7 @@ module Evaluations =
                 raise (EvaluationException (ex, Evaluator.evalExpr finallyExpr exState))
             
         Evaluator.evalExpr finallyExpr tempState
+        |> Evaluator.updateVariables tempState
 
     let private evalTryWith state (tryExpr, _, _, catchVar, catchExpr) =
         let mutable tempState = state
