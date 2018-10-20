@@ -4,6 +4,7 @@ open System
 open FEval.Evaluations
 open FEval.Tests.TestHelpers
 open Microsoft.VisualStudio.TestTools.UnitTesting
+open FEval
 
 [<TestClass>]
 type EvaluationsTest() =
@@ -15,6 +16,12 @@ type EvaluationsTest() =
 
     let listAssertEval expr expectedResult =
         CollectionAssert.AreEqual(expectedResult |> List.toArray, eval expr |> List.toArray)
+            
+    let evalWithTry expr exceptionHandler =
+        try 
+            eval expr |> ignore
+        with
+        | EvaluationException(ex, _) -> exceptionHandler ex
 
     (*
     Value (4)
@@ -1174,3 +1181,70 @@ type EvaluationsTest() =
 
             x
             @> 10
+    
+    (*
+    Call (None, Raise,
+      [Coerce (NewObject (TestException, Value ("Error")), Exception)])
+    *)
+    [<TestMethod>]
+    [<ExpectedException(typeof<TestException>)>]
+    member this.``Evaluate raise exception``() = 
+        evalWithTry 
+            <@ raise (TestException("Error")) @>
+            (fun ex -> match ex with
+                       | TestException("Error") -> raise ex
+                       | _ -> ignore())
+                        
+    (*
+    Call (None, FailWith, [Value ("Error")])
+    *)
+    [<TestMethod>]
+    [<ExpectedException(typeof<Exception>)>]
+    member this.``Evaluate failwith exception``() = 
+        evalWithTry 
+            <@ failwith "Error" @>
+            (fun ex -> match ex with
+                       | ex when ex.Message = "Error" -> raise ex
+                       | _ -> ignore())
+    
+    (*
+    Application (Let (clo1,
+                  Call (None, PrintFormatToStringThenFail,
+                        [Coerce (NewObject (PrintfFormat`5, Value ("Error %i")),
+                                 PrintfFormat`4)]),
+                  Lambda (arg10, Application (clo1, arg10))), Value (1))
+    *)
+    [<TestMethod>]
+    [<ExpectedException(typeof<Exception>)>]
+    member this.``Evaluate failwithf exception``() = 
+        evalWithTry 
+            <@ failwithf "Error %i" 1 @>
+            (fun ex -> match ex with
+                       | ex when ex.Message = "Error 1" -> raise ex
+                       | _ -> ignore())
+
+    (*
+    Call (None, InvalidArg, [Value ("Arg"), Value ("Error")])
+    *)   
+    [<TestMethod>]
+    [<ExpectedException(typeof<ArgumentException>)>]
+    member this.``Evaluate invalidArg exception``() = 
+        evalWithTry 
+            <@ invalidArg "Arg" "Error" @>
+            (fun ex -> match ex with
+                       | :? ArgumentException as ex 
+                           when ex.ParamName = "Arg" && ex.Message = "Error\r\nParameter name: Arg" -> raise ex
+                       | _ -> ignore())
+
+    (*
+    Call (None, InvalidOp, [Value ("Error")])
+    *)
+    [<TestMethod>]
+    [<ExpectedException(typeof<InvalidOperationException>)>]
+    member this.``Evaluate invalidOp exception``() = 
+        evalWithTry 
+            <@ invalidOp "Error" @>
+            (fun ex -> match ex with
+                       | :? InvalidOperationException as ex 
+                           when ex.Message = "Error" -> raise ex
+                       | _ -> ignore())

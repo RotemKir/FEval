@@ -1,7 +1,4 @@
-﻿raise
-failWith
-invalidArg
-use
+﻿use
 NewDelegate
 LetRecursive
 Quote

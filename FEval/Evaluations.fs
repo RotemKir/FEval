@@ -204,6 +204,14 @@ module Evaluations =
             
         tempState
 
+    let private handleTargetInvocationException (ex : TargetInvocationException) state =
+        let innerException = ex.InnerException
+        // If the inner exception is EvaluationException then we bubble the exception.
+        // Otherwise we raise a new evaluation exception for the current state.
+        match innerException with
+        | :? EvaluationException -> raise innerException 
+        | _                      -> raise (EvaluationException (innerException, state))
+
     let rec private evalRec expr state =
         try match expr with
             | Application applicationState   -> evalApplication state applicationState
@@ -235,7 +243,7 @@ module Evaluations =
             | WhileLoop whileState           -> evalWhile state whileState
             | _                              -> failwithf "Expression %O is not supported" expr
         with
-        | :? TargetInvocationException as ex -> raise (EvaluationException (ex.InnerException, state))
+        | :? TargetInvocationException as ex -> handleTargetInvocationException ex state
 
     // Public functions
 
