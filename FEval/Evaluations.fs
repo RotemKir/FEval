@@ -10,6 +10,29 @@ module Evaluations =
     
     // Private functions
 
+    let private objType = typeof<obj>
+    let private convertType = typeof<Convert>
+    let private operatorsType = typeof<Operators>
+
+    let private methodOverrides = 
+        new Map<string, MethodInfo>
+            [|
+                (Methods.Byte,        convertType.GetMethod("ToByte", [|objType|]))
+                (Methods.Char,        convertType.GetMethod("ToChar", [|objType|]))
+                (Methods.Decimal,     convertType.GetMethod("ToDecimal", [|objType|]))
+                (Methods.Float,       convertType.GetMethod("ToDouble", [|objType|]))
+                (Methods.Float32,     convertType.GetMethod("ToSingle", [|objType|]))
+                (Methods.Int,         convertType.GetMethod("ToInt32", [|objType|]))
+                (Methods.Int16,       convertType.GetMethod("ToInt16", [|objType|]))
+                (Methods.Int32,       convertType.GetMethod("ToInt32", [|objType|]))
+                (Methods.Int64,       convertType.GetMethod("ToInt64", [|objType|]))
+                (Methods.SByte,       convertType.GetMethod("ToSByte", [|objType|]))
+                (Methods.UInt16,      convertType.GetMethod("ToUInt16", [|objType|]))
+                (Methods.UInt32,      convertType.GetMethod("ToUInt32", [|objType|]))
+                (Methods.UInt64,      convertType.GetMethod("ToUInt64", [|objType|]))
+                (Methods.Subtraction, operatorsType.GetMethod("subtract", [|objType ; objType|]) )
+            |]
+
     let private evalValue =
         Evaluator.setLastValue
 
@@ -27,27 +50,16 @@ module Evaluations =
         |> invokeMethod instance methodInfo
         |> Evaluator.setLastValue newState
 
-    let private evalSingleExprMethod state exprs method =
-        Evaluator.evalSingleExpr exprs state
-        |> method
-        |> Evaluator.setLastValue state
+    let private getMethodOverride methodInfo =
+        match getMethodFullName methodInfo |> Map.tryFind <| methodOverrides with
+        | Some methodOverride -> methodOverride
+        | _                   -> methodInfo
 
     let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
-        match methodInfo with
-        | MethodFullName Methods.Byte    -> evalSingleExprMethod state parameterExprs Convert.ToByte
-        | MethodFullName Methods.Char    -> evalSingleExprMethod state parameterExprs Convert.ToChar
-        | MethodFullName Methods.Decimal -> evalSingleExprMethod state parameterExprs Convert.ToDecimal
-        | MethodFullName Methods.Float   -> evalSingleExprMethod state parameterExprs Convert.ToDouble
-        | MethodFullName Methods.Float32 -> evalSingleExprMethod state parameterExprs Convert.ToSingle
-        | MethodFullName Methods.Int     -> evalSingleExprMethod state parameterExprs Convert.ToInt32
-        | MethodFullName Methods.Int16   -> evalSingleExprMethod state parameterExprs Convert.ToInt16
-        | MethodFullName Methods.Int32   -> evalSingleExprMethod state parameterExprs Convert.ToInt32
-        | MethodFullName Methods.Int64   -> evalSingleExprMethod state parameterExprs Convert.ToInt64
-        | MethodFullName Methods.SByte   -> evalSingleExprMethod state parameterExprs Convert.ToSByte
-        | MethodFullName Methods.UInt16  -> evalSingleExprMethod state parameterExprs Convert.ToUInt16
-        | MethodFullName Methods.UInt32  -> evalSingleExprMethod state parameterExprs Convert.ToUInt32
-        | MethodFullName Methods.UInt64  -> evalSingleExprMethod state parameterExprs Convert.ToUInt64
-        | _ -> evalRegularMethodCall state instanceExpr methodInfo parameterExprs
+        let (instance, newState) = evalInstanceExpr state instanceExpr
+        Evaluator.evalExprs parameterExprs newState
+        |> invokeMethod instance (getMethodOverride methodInfo)
+        |> Evaluator.setLastValue newState
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 
@@ -211,6 +223,21 @@ module Evaluations =
         | :? EvaluationException -> raise innerException 
         | _                      -> raise (EvaluationException (innerException, state))
 
+    let private evalLetRecursive state (variables, bodyExpr) =
+        try
+            List.fold 
+                (fun s (variable, varExpr) -> 
+                    Evaluator.declareRecVariable variable s
+                    |> Evaluator.evalExpr varExpr
+                    |> Evaluator.setLastValueAsVar variable) 
+                state 
+                variables
+            |> Evaluator.evalExpr bodyExpr
+        finally
+            List.iter 
+                (fun (variable, _) -> Evaluator.clearRecVariable variable state) 
+                variables
+
     let rec private evalRec expr state =
         try match expr with
             | Application applicationState   -> evalApplication state applicationState
@@ -223,6 +250,7 @@ module Evaluations =
             | IfThenElse ifState             -> evalIf state ifState
             | Lambda lambdaState             -> evalLambda state lambdaState
             | Let letState                   -> evalLet state letState
+            | LetRecursive letRecursiveState -> evalLetRecursive state letRecursiveState
             | NewArray newArrayState         -> evalNewArray state newArrayState 
             | NewObject newObjectState       -> evalNewObject state newObjectState
             | NewRecord newRecordState       -> evalNewRecord state newRecordState

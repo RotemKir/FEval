@@ -2,11 +2,13 @@
 
 open Microsoft.FSharp.Quotations
 open System
+open System.Collections.Generic
 
 type EvaluationState =
     {
         LastValue : obj
         Variables : Map<string, obj>
+        RecVariables : Dictionary<string, obj>
         EvalFunc :  Expr -> EvaluationState -> EvaluationState
     }
 
@@ -25,7 +27,18 @@ module Evaluator =
                 | None          -> value
             ) 
             oldVariables
+            
+    let private setRecVariable (variable : Var) value state =
+        state.RecVariables.[variable.Name] <- value
+        state
 
+    let private actOnVariable (variable : Var) recVarAction varAction state =
+        if state.RecVariables.ContainsKey(variable.Name)
+        then
+            recVarAction variable
+        else
+            varAction variable
+        
     // Public Functions
 
     let getLastValue state =
@@ -35,17 +48,19 @@ module Evaluator =
         (getLastValue state, state)
 
     let setLastValue state value =
-        {
-            state with LastValue = value
-        }
+        { state with LastValue = value }
 
     let setVar (variable : Var) value state =
-        {
-            state with Variables = Map.add variable.Name value state.Variables
-        }
+        actOnVariable variable
+            (fun v -> setRecVariable v value state)
+            (fun v -> { state with Variables = Map.add variable.Name value state.Variables })
+            state
 
     let getVar (variable : Var) state =
-        state.Variables.Item variable.Name
+        actOnVariable variable
+            (fun v -> state.RecVariables.Item v.Name)
+            (fun v -> state.Variables.Item v.Name)
+            state
 
     let setLastValueAsVar (variable : Var) state =
         setVar variable state.LastValue state
@@ -58,6 +73,12 @@ module Evaluator =
         {
             state with Variables = mergeVariables state.Variables newState.Variables
         }
+
+    let declareRecVariable (variable : Var) =
+        setRecVariable variable <| new obj() 
+
+    let clearRecVariable (variable : Var) state =
+        state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
         state.EvalFunc expr state
@@ -78,6 +99,7 @@ module Evaluator =
         {
             LastValue = ()
             Variables = Map.empty<string, obj>
+            RecVariables = new Dictionary<string, obj>()
             EvalFunc = evalFunc
         }
 

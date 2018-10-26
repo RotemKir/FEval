@@ -1266,3 +1266,55 @@ type EvaluationsTest() =
             let s = use x = new DisposableClass("Hello") in x.name
             DisposableClass.IsDisposed
             @> true
+
+    (*
+    LetRecursive ([(f,Lambda (n,
+                          IfThenElse (Call (None, op_Equality, [n, Value (1)]),
+                                      Value (1),
+                                      Let (x, n,
+                                           Call (None, op_Addition,
+                                                 [x,
+                                                  Application (f,
+                                                               Call (None,
+                                                                     op_Subtraction,
+                                                                     [x,
+                                                                      Value (1)]))])))))],
+              Application (f, Value (6)))
+    *)            
+    [<TestMethod>]
+    member this.``Evaluate let recursive function with 1 parameter``() = 
+        assertEval 
+            <@ 
+            let rec f n =
+                match n with
+                | 1 -> 1
+                | x -> x + f (x - 1)
+            f 6
+            @> 21
+
+    (*
+    LetRecursive ([(f,Lambda (n,
+                          Lambda (m,
+                                  IfThenElse (Call (None, op_Equality,
+                                                    [n, Value (1)]), m,
+                                              Let (x, n,
+                                                   Call (None, op_Addition,
+                                                         [m,
+                                                          Application (Application (f,
+                                                                                    Call (None,
+                                                                                          op_Subtraction,
+                                                                                          [x,
+                                                                                           Value (1)])),
+                                                                       m)]))))))],
+              Application (Application (f, Value (6)), Value (3)))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate let recursive function with 2 parameters``() = 
+        assertEval 
+            <@ 
+            let rec f n m =
+                match n with
+                | 1 -> m
+                | x -> m + f (x - 1) m
+            f 6 3
+            @> 18
