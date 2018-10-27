@@ -30,3 +30,11 @@ module Methods =
     let UInt64 = "Microsoft.FSharp.Core.Operators.ToUInt64"
     
     let Subtraction = "Microsoft.FSharp.Core.Operators.op_Subtraction"
+
+    let UnaryNegate = "Microsoft.FSharp.Core.Operators.op_UnaryNegation"
+
+    let UnaryPlus = "Microsoft.FSharp.Core.Operators.op_UnaryPlus"
+
+    let Division = "Microsoft.FSharp.Core.Operators.op_Division"
+
+    let Modulus = "Microsoft.FSharp.Core.Operators.op_Modulus"

@@ -8,11 +8,11 @@ module Evaluations =
     open System
     open System.Reflection
     
-    // Private functions
-
     let private objType = typeof<obj>
     let private convertType = typeof<Convert>
     let private operatorsType = typeof<Operators>
+
+    // Private functions
 
     let private methodOverrides = 
         new Map<string, MethodInfo>
@@ -30,7 +30,11 @@ module Evaluations =
                 (Methods.UInt16,      convertType.GetMethod("ToUInt16", [|objType|]))
                 (Methods.UInt32,      convertType.GetMethod("ToUInt32", [|objType|]))
                 (Methods.UInt64,      convertType.GetMethod("ToUInt64", [|objType|]))
-                (Methods.Subtraction, operatorsType.GetMethod("subtract", [|objType ; objType|]) )
+                (Methods.Subtraction, operatorsType.GetMethod("subtract"))
+                (Methods.UnaryNegate, operatorsType.GetMethod("unaryNegate"))
+                (Methods.UnaryPlus,   operatorsType.GetMethod("unaryPlus"))
+                (Methods.Division,    operatorsType.GetMethod("division"))
+                (Methods.Modulus,     operatorsType.GetMethod("modulus"))
             |]
 
     let private evalValue =

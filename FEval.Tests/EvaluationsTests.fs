@@ -1318,3 +1318,45 @@ type EvaluationsTest() =
                 | x -> m + f (x - 1) m
             f 6 3
             @> 18
+
+    (*
+    Call (None, op_Subtraction, [Value (15), Value (7)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate subtraction``() = 
+        assertEval <@ 15 - 7 @> 8
+    
+    (*
+    Let (x, Value (7), Call (None, op_UnaryNegation, [x]))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate negation``() = 
+        assertEval <@ let x = 7 in -x @> -7
+    
+    (*
+    Let (x, Value (-9), Call (None, op_UnaryPlus, [x]))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate plus``() = 
+        assertEval <@ let x = -9 in +x @> -9
+    
+    (*
+    Call (None, op_Multiply, [Value (6), Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate multiply``() = 
+        assertEval <@ 6 * 3 @> 18
+
+    (*
+    Call (None, op_Division, [Value (6), Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate division``() = 
+        assertEval <@ 6 / 3 @> 2
+    
+    (*
+    Call (None, op_Modulus, [Value (7), Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate modulus``() = 
+        assertEval <@ 7 % 3 @> 1
