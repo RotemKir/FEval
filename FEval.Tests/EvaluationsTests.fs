@@ -10,7 +10,7 @@ open FEval
 type EvaluationsTest() =
     let assertEval expr expectedResult =
         Assert.AreEqual(expectedResult, eval expr)
-
+        
     let collectionAssertEval expr expectedResult =
         CollectionAssert.AreEqual(expectedResult, eval expr)
 
@@ -1360,3 +1360,74 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate modulus``() = 
         assertEval <@ 7 % 3 @> 1
+
+    (*
+    IfThenElse (Value (true), Value (true), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean and (true & true)``() = 
+        assertEval <@ true && true @> true
+
+    (*
+    IfThenElse (Value (true), Value (false), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean and (true & false)``() = 
+        assertEval <@ true && false @> false
+
+    (*
+    IfThenElse (Value (false), Value (true), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean and (false & true)``() = 
+        assertEval <@ false && true @> false
+        
+    (*
+    IfThenElse (Value (false), Value (false), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean and (false & false)``() = 
+        assertEval <@ false && false @> false
+
+    (*
+    IfThenElse (Value (true), Value (true), Value (true))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean or (true | true)``() = 
+        assertEval <@ true || true @> true
+
+    (*
+    IfThenElse (Value (true), Value (true), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean or (true | false)``() = 
+        assertEval <@ true || false @> true
+        
+    (*
+    IfThenElse (Value (false), Value (true), Value (true))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean or (false | true)``() = 
+        assertEval <@ false || true @> true
+
+    (*
+    IfThenElse (Value (false), Value (true), Value (false))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean or (false | false)``() = 
+        assertEval <@ false || false @> false
+
+    (*
+    Call (None, Not, [Value (true)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean not true``() = 
+        assertEval <@ not true @> false
+
+    (*
+    Call (None, Not, [Value (false)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate boolean not false``() = 
+        assertEval <@ not false @> true
+
