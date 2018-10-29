@@ -17,24 +17,30 @@ module Evaluations =
     let private methodOverrides = 
         new Map<string, MethodInfo>
             [|
-                (Methods.Byte,        convertType.GetMethod("ToByte", [|objType|]))
-                (Methods.Char,        convertType.GetMethod("ToChar", [|objType|]))
-                (Methods.Decimal,     convertType.GetMethod("ToDecimal", [|objType|]))
-                (Methods.Float,       convertType.GetMethod("ToDouble", [|objType|]))
-                (Methods.Float32,     convertType.GetMethod("ToSingle", [|objType|]))
-                (Methods.Int,         convertType.GetMethod("ToInt32", [|objType|]))
-                (Methods.Int16,       convertType.GetMethod("ToInt16", [|objType|]))
-                (Methods.Int32,       convertType.GetMethod("ToInt32", [|objType|]))
-                (Methods.Int64,       convertType.GetMethod("ToInt64", [|objType|]))
-                (Methods.SByte,       convertType.GetMethod("ToSByte", [|objType|]))
-                (Methods.UInt16,      convertType.GetMethod("ToUInt16", [|objType|]))
-                (Methods.UInt32,      convertType.GetMethod("ToUInt32", [|objType|]))
-                (Methods.UInt64,      convertType.GetMethod("ToUInt64", [|objType|]))
-                (Methods.Subtraction, operatorsType.GetMethod("subtract"))
-                (Methods.UnaryNegate, operatorsType.GetMethod("unaryNegate"))
-                (Methods.UnaryPlus,   operatorsType.GetMethod("unaryPlus"))
-                (Methods.Division,    operatorsType.GetMethod("division"))
-                (Methods.Modulus,     operatorsType.GetMethod("modulus"))
+                (Methods.byte,        convertType.GetMethod("ToByte",    [|objType|]))
+                (Methods.char,        convertType.GetMethod("ToChar",    [|objType|]))
+                (Methods.decimal,     convertType.GetMethod("ToDecimal", [|objType|]))
+                (Methods.float,       convertType.GetMethod("ToDouble",  [|objType|]))
+                (Methods.float32,     convertType.GetMethod("ToSingle",  [|objType|]))
+                (Methods.int,         convertType.GetMethod("ToInt32",   [|objType|]))
+                (Methods.int16,       convertType.GetMethod("ToInt16",   [|objType|]))
+                (Methods.int32,       convertType.GetMethod("ToInt32",   [|objType|]))
+                (Methods.int64,       convertType.GetMethod("ToInt64",   [|objType|]))
+                (Methods.sByte,       convertType.GetMethod("ToSByte",   [|objType|]))
+                (Methods.uInt16,      convertType.GetMethod("ToUInt16",  [|objType|]))
+                (Methods.uInt32,      convertType.GetMethod("ToUInt32",  [|objType|]))
+                (Methods.uInt64,      convertType.GetMethod("ToUInt64",  [|objType|]))
+                (Methods.subtraction, operatorsType.GetMethod("subtract"))
+                (Methods.unaryNegate, operatorsType.GetMethod("unaryNegate"))
+                (Methods.unaryPlus,   operatorsType.GetMethod("unaryPlus"))
+                (Methods.division,    operatorsType.GetMethod("division"))
+                (Methods.modulus,     operatorsType.GetMethod("modulus"))
+                (Methods.bitwiseAnd,  operatorsType.GetMethod("bitwiseAnd"))
+                (Methods.bitwiseOr,   operatorsType.GetMethod("bitwiseOr"))
+                (Methods.exclusiveOr, operatorsType.GetMethod("exclusiveOr"))
+                (Methods.logicalNot,  operatorsType.GetMethod("logicalNot"))
+                (Methods.leftShift,   operatorsType.GetMethod("leftShift"))
+                (Methods.rightShift,  operatorsType.GetMethod("rightShift"))
             |]
 
     let private evalValue =
@@ -47,12 +53,6 @@ module Evaluations =
         | Some expr -> 
             Evaluator.evalExpr expr state 
             |> Evaluator.getLastValueAndState
-
-    let private evalRegularMethodCall state instanceExpr methodInfo parameterExprs =
-        let (instance, newState) = evalInstanceExpr state instanceExpr
-        Evaluator.evalExprs parameterExprs newState
-        |> invokeMethod instance methodInfo
-        |> Evaluator.setLastValue newState
 
     let private getMethodOverride methodInfo =
         match getMethodFullName methodInfo |> Map.tryFind <| methodOverrides with

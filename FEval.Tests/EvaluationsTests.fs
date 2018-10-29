@@ -1431,3 +1431,107 @@ type EvaluationsTest() =
     member this.``Evaluate boolean not false``() = 
         assertEval <@ not false @> true
 
+    (*
+    Call (None, op_BitwiseAnd, [Value (1), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise and (1 & 1)``() = 
+        assertEval <@ 1 &&& 1 @> 1
+        
+    (*
+    Call (None, op_BitwiseAnd, [Value (1), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise and (1 & 0)``() = 
+        assertEval <@ 1 &&& 0 @> 0
+        
+    (*
+    Call (None, op_BitwiseAnd, [Value (0), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise and (0 & 1)``() = 
+        assertEval <@ 0 &&& 1 @> 0
+
+    (*
+    Call (None, op_BitwiseAnd, [Value (0), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise and (0 & 0)``() = 
+        assertEval <@ 0 &&& 0 @> 0
+        
+    (*
+    Call (None, op_BitwiseOr, [Value (1), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise or (1 | 1)``() = 
+        assertEval <@ 1 ||| 1 @> 1
+        
+    (*
+    Call (None, op_BitwiseOr, [Value (1), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise or (1 | 0)``() = 
+        assertEval <@ 1 ||| 0 @> 1
+        
+    (*
+    Call (None, op_BitwiseOr, [Value (0), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise or (0 | 1)``() = 
+        assertEval <@ 0 ||| 1 @> 1
+
+    (*
+    Call (None, op_BitwiseOr, [Value (0), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise or (0 | 0)``() = 
+        assertEval <@ 0 ||| 0 @> 0
+        
+    (*
+    Call (None, op_ExclusiveOr, [Value (1), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise xor (1 ^ 1)``() = 
+        assertEval <@ 1 ^^^ 1 @> 0
+        
+    (*
+    Call (None, op_ExclusiveOr, [Value (1), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise xor (1 ^ 0)``() = 
+        assertEval <@ 1 ^^^ 0 @> 1
+        
+    (*
+    Call (None, op_ExclusiveOr, [Value (0), Value (1)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise xor (0 ^ 1)``() = 
+        assertEval <@ 0 ^^^ 1 @> 1
+
+    (*
+    Call (None, op_ExclusiveOr, [Value (0), Value (0)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise xor (0 ^ 0)``() = 
+        assertEval <@ 0 ^^^ 0 @> 0
+        
+    (*
+    Call (None, op_LogicalNot, [Value (111uy)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise negation``() = 
+        assertEval <@ ~~~111uy @> 144uy
+
+    (*
+    Call (None, op_LeftShift, [Value (1), Value (3)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise left shift``() = 
+        assertEval <@ 1 <<< 3 @> 8
+
+    (*
+    Call (None, op_RightShift, [Value (64), Value (2)])
+    *)
+    [<TestMethod>]
+    member this.``Evaluate bitwise right shift``() = 
+        assertEval <@ 64 >>> 2 @> 16

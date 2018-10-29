@@ -3,38 +3,51 @@
 [<RequireQualifiedAccess>]
 module Methods =
 
-    let Byte = "Microsoft.FSharp.Core.Operators.ToByte"
+    let byte = "Microsoft.FSharp.Core.Operators.ToByte"
 
-    let Char = "Microsoft.FSharp.Core.Operators.ToChar"
+    let char = "Microsoft.FSharp.Core.Operators.ToChar"
 
-    let Decimal = "Microsoft.FSharp.Core.Operators.ToDecimal"
+    let decimal = "Microsoft.FSharp.Core.Operators.ToDecimal"
     
-    let Float = "Microsoft.FSharp.Core.Operators.ToDouble"
+    let float = "Microsoft.FSharp.Core.Operators.ToDouble"
     
-    let Float32 = "Microsoft.FSharp.Core.Operators.ToSingle"
+    let float32 = "Microsoft.FSharp.Core.Operators.ToSingle"
     
-    let Int = "Microsoft.FSharp.Core.Operators.ToInt"
+    let int = "Microsoft.FSharp.Core.Operators.ToInt"
     
-    let Int16 = "Microsoft.FSharp.Core.Operators.ToInt16"
+    let int16 = "Microsoft.FSharp.Core.Operators.ToInt16"
 
-    let Int32 = "Microsoft.FSharp.Core.Operators.ToInt32"
+    let int32 = "Microsoft.FSharp.Core.Operators.ToInt32"
     
-    let Int64 = "Microsoft.FSharp.Core.Operators.ToInt64"
+    let int64 = "Microsoft.FSharp.Core.Operators.ToInt64"
     
-    let SByte = "Microsoft.FSharp.Core.Operators.ToSByte"
+    let sByte = "Microsoft.FSharp.Core.Operators.ToSByte"
 
-    let UInt16 = "Microsoft.FSharp.Core.Operators.ToUInt16"
+    let uInt16 = "Microsoft.FSharp.Core.Operators.ToUInt16"
 
-    let UInt32 = "Microsoft.FSharp.Core.Operators.ToUInt32"
+    let uInt32 = "Microsoft.FSharp.Core.Operators.ToUInt32"
     
-    let UInt64 = "Microsoft.FSharp.Core.Operators.ToUInt64"
+    let uInt64 = "Microsoft.FSharp.Core.Operators.ToUInt64"
     
-    let Subtraction = "Microsoft.FSharp.Core.Operators.op_Subtraction"
+    let subtraction = "Microsoft.FSharp.Core.Operators.op_Subtraction"
 
-    let UnaryNegate = "Microsoft.FSharp.Core.Operators.op_UnaryNegation"
+    let unaryNegate = "Microsoft.FSharp.Core.Operators.op_UnaryNegation"
 
-    let UnaryPlus = "Microsoft.FSharp.Core.Operators.op_UnaryPlus"
+    let unaryPlus = "Microsoft.FSharp.Core.Operators.op_UnaryPlus"
 
-    let Division = "Microsoft.FSharp.Core.Operators.op_Division"
+    let division = "Microsoft.FSharp.Core.Operators.op_Division"
 
-    let Modulus = "Microsoft.FSharp.Core.Operators.op_Modulus"
+    let modulus = "Microsoft.FSharp.Core.Operators.op_Modulus"
+    
+    let bitwiseAnd = "Microsoft.FSharp.Core.Operators.op_BitwiseAnd"
+
+    let bitwiseOr = "Microsoft.FSharp.Core.Operators.op_BitwiseOr"
+
+    let exclusiveOr = "Microsoft.FSharp.Core.Operators.op_ExclusiveOr"
+
+    let logicalNot = "Microsoft.FSharp.Core.Operators.op_LogicalNot"
+
+    let leftShift = "Microsoft.FSharp.Core.Operators.op_LeftShift"
+
+    let rightShift = "Microsoft.FSharp.Core.Operators.op_RightShift"
+    
