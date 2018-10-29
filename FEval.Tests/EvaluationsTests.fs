@@ -1535,3 +1535,15 @@ type EvaluationsTest() =
     [<TestMethod>]
     member this.``Evaluate bitwise right shift``() = 
         assertEval <@ 64 >>> 2 @> 16
+
+    (*
+    Let (x, Quote (Value (4)), Call (Some (x), ToString, []))
+    *)
+    [<TestMethod>]
+    member this.``Evaluate typed code quotation``() = 
+        assertEval <@ let x = <@ 4 @> in x.ToString() @> "Value (4)"
+
+        
+    [<TestMethod>]
+    member this.``Evaluate raw code quotation``() = 
+        assertEval <@ let x = <@@ 7 @@> in x.ToString() @> "Value (7)"

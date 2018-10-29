@@ -43,8 +43,8 @@ module Evaluations =
                 (Methods.rightShift,  operatorsType.GetMethod("rightShift"))
             |]
 
-    let private evalValue =
-        Evaluator.setLastValue
+    let private evalValue state (value, _) =
+        Evaluator.setLastValue state value
 
     let private evalInstanceExpr state instanceExpr =
         match instanceExpr with
@@ -242,6 +242,9 @@ module Evaluations =
                 (fun (variable, _) -> Evaluator.clearRecVariable variable state) 
                 variables
 
+    let private evalQuote state quoteExpr =
+        Evaluator.setLastValue state quoteExpr
+
     let rec private evalRec expr state =
         try match expr with
             | Application applicationState   -> evalApplication state applicationState
@@ -262,13 +265,15 @@ module Evaluations =
             | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
             | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
             | PropertySet propertySetState   -> evalPropertySet state propertySetState
+            | QuoteRaw quoteExpr             -> evalQuote state quoteExpr
+            | QuoteTyped quoteExpr           -> evalQuote state quoteExpr
             | Sequential sequentialState     -> evalSequential state sequentialState
             | TryFinally tryFinallyState     -> evalTryFinally state tryFinallyState
             | TryWith tryWithState           -> evalTryWith state tryWithState
             | TupleGet tupleGetState         -> evalTupleGet state tupleGetState
             | TypeTest typeTestState         -> evalTypeTest state typeTestState
             | UnionCaseTest unionCaseState   -> evalUnionCaseTest state unionCaseState
-            | Value (value, _)               -> evalValue state value
+            | Value valueState               -> evalValue state valueState
             | VarSet varSetState             -> evalVarSet state varSetState
             | Var variable                   -> evalVarGet state variable
             | WhileLoop whileState           -> evalWhile state whileState
