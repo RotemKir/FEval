@@ -1543,7 +1543,9 @@ type EvaluationsTest() =
     member this.``Evaluate typed code quotation``() = 
         assertEval <@ let x = <@ 4 @> in x.ToString() @> "Value (4)"
 
-        
+    (*
+    Let (x, Quote (Value (7)), Call (Some (x), ToString, []))
+    *)
     [<TestMethod>]
     member this.``Evaluate raw code quotation``() = 
         assertEval <@ let x = <@@ 7 @@> in x.ToString() @> "Value (7)"
