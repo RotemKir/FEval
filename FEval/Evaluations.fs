@@ -246,7 +246,7 @@ module Evaluations =
     let private evalQuote  =
         Evaluator.setLastValue
 
-    let rec private evalRec = 
+    let private evalExpr = 
         withExceptionHandling 
             (fun expr state -> 
             match expr with
@@ -286,6 +286,6 @@ module Evaluations =
     // Public functions
 
     let eval<'a> (expr : Expr<'a>) : 'a =
-        Evaluator.eval evalRec expr 
+        Evaluator.eval evalExpr expr 
         |> Evaluator.getLastValue 
         :?> 'a
