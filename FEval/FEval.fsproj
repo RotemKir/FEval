@@ -45,6 +45,7 @@
     <Compile Include="Methods.fs" />
     <Compile Include="Reflection.fs" />
     <Compile Include="Evaluator.fs" />
+    <Compile Include="ExceptionHandling.fs" />
     <Compile Include="Loops.fs" />
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />

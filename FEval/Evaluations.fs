@@ -3,6 +3,7 @@
 module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
+    open FEval.ExceptionHandling
     open FEval.Loops
     open FEval.Reflection
     open System
@@ -245,41 +246,42 @@ module Evaluations =
     let private evalQuote  =
         Evaluator.setLastValue
 
-    let rec private evalRec expr state =
-        try match expr with
-            | Application applicationState   -> evalApplication state applicationState
-            | Call callState                 -> evalMethodCall state callState
-            | Coerce coerceState             -> evalCoerce state coerceState
-            | DefaultValue defaultType       -> evalDefaultValue state defaultType
-            | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
-            | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
-            | ForIntegerRangeLoop forState   -> evalFor state forState
-            | IfThenElse ifState             -> evalIf state ifState
-            | Lambda lambdaState             -> evalLambda state lambdaState
-            | Let letState                   -> evalLet state letState
-            | LetRecursive letRecursiveState -> evalLetRecursive state letRecursiveState
-            | NewArray newArrayState         -> evalNewArray state newArrayState 
-            | NewObject newObjectState       -> evalNewObject state newObjectState
-            | NewRecord newRecordState       -> evalNewRecord state newRecordState
-            | NewTuple exprs                 -> evalNewTuple state exprs expr.Type
-            | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
-            | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
-            | PropertySet propertySetState   -> evalPropertySet state propertySetState
-            | QuoteRaw quoteExpr             -> evalQuote state quoteExpr
-            | QuoteTyped quoteExpr           -> evalQuote state quoteExpr
-            | Sequential sequentialState     -> evalSequential state sequentialState
-            | TryFinally tryFinallyState     -> evalTryFinally state tryFinallyState
-            | TryWith tryWithState           -> evalTryWith state tryWithState
-            | TupleGet tupleGetState         -> evalTupleGet state tupleGetState
-            | TypeTest typeTestState         -> evalTypeTest state typeTestState
-            | UnionCaseTest unionCaseState   -> evalUnionCaseTest state unionCaseState
-            | Value valueState               -> evalValue state valueState
-            | VarSet varSetState             -> evalVarSet state varSetState
-            | Var variable                   -> evalVarGet state variable
-            | WhileLoop whileState           -> evalWhile state whileState
-            | _                              -> failwithf "Expression %O is not supported" expr
-        with
-        | :? TargetInvocationException as ex -> handleTargetInvocationException ex state
+    let rec private evalRec = 
+        withExceptionHandling 
+            (fun expr state -> 
+            match expr with
+                | Application applicationState   -> evalApplication state applicationState
+                | Call callState                 -> evalMethodCall state callState
+                | Coerce coerceState             -> evalCoerce state coerceState
+                | DefaultValue defaultType       -> evalDefaultValue state defaultType
+                | FieldGet fieldGetState         -> evalFieldGet state fieldGetState
+                | FieldSet fieldSetState         -> evalFieldSet state fieldSetState
+                | ForIntegerRangeLoop forState   -> evalFor state forState
+                | IfThenElse ifState             -> evalIf state ifState
+                | Lambda lambdaState             -> evalLambda state lambdaState
+                | Let letState                   -> evalLet state letState
+                | LetRecursive letRecursiveState -> evalLetRecursive state letRecursiveState
+                | NewArray newArrayState         -> evalNewArray state newArrayState 
+                | NewObject newObjectState       -> evalNewObject state newObjectState
+                | NewRecord newRecordState       -> evalNewRecord state newRecordState
+                | NewTuple exprs                 -> evalNewTuple state exprs expr.Type
+                | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
+                | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
+                | PropertySet propertySetState   -> evalPropertySet state propertySetState
+                | QuoteRaw quoteExpr             -> evalQuote state quoteExpr
+                | QuoteTyped quoteExpr           -> evalQuote state quoteExpr
+                | Sequential sequentialState     -> evalSequential state sequentialState
+                | TryFinally tryFinallyState     -> evalTryFinally state tryFinallyState
+                | TryWith tryWithState           -> evalTryWith state tryWithState
+                | TupleGet tupleGetState         -> evalTupleGet state tupleGetState
+                | TypeTest typeTestState         -> evalTypeTest state typeTestState
+                | UnionCaseTest unionCaseState   -> evalUnionCaseTest state unionCaseState
+                | Value valueState               -> evalValue state valueState
+                | VarSet varSetState             -> evalVarSet state varSetState
+                | Var variable                   -> evalVarGet state variable
+                | WhileLoop whileState           -> evalWhile state whileState
+                | _                              -> failwithf "Expression %O is not supported" expr
+            )
 
     // Public functions
 

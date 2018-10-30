@@ -2,9 +2,9 @@
 
 open System
 open FEval.Evaluations
+open FEval.ExceptionHandling
 open FEval.Tests.TestHelpers
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval
 
 [<TestClass>]
 type EvaluationsTest() =

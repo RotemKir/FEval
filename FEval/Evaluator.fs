@@ -1,7 +1,6 @@
 ﻿namespace FEval
 
 open Microsoft.FSharp.Quotations
-open System
 open System.Collections.Generic
 
 type EvaluationState =
@@ -11,8 +10,6 @@ type EvaluationState =
         RecVariables : Dictionary<string, obj>
         EvalFunc :  Expr -> EvaluationState -> EvaluationState
     }
-
-exception EvaluationException of Exception * EvaluationState
 
 [<RequireQualifiedAccess>]
 module Evaluator =
@@ -95,7 +92,7 @@ module Evaluator =
     let evalSingleExpr exprs state =
         evalExprAndGetLastValue <| Seq.head exprs <| state 
 
-    let createNew evalFunc =
+    let createNewState evalFunc =
         {
             LastValue = ()
             Variables = Map.empty<string, obj>
@@ -104,4 +101,4 @@ module Evaluator =
         }
 
     let eval evalFunc expr =
-        evalExpr expr <| createNew evalFunc
+        evalExpr expr <| createNewState evalFunc
