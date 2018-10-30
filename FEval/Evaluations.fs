@@ -242,8 +242,8 @@ module Evaluations =
                 (fun (variable, _) -> Evaluator.clearRecVariable variable state) 
                 variables
 
-    let private evalQuote state quoteExpr =
-        Evaluator.setLastValue state quoteExpr
+    let private evalQuote  =
+        Evaluator.setLastValue
 
     let rec private evalRec expr state =
         try match expr with
