@@ -286,6 +286,7 @@ module Evaluations =
     // Public functions
 
     let eval<'a> (expr : Expr<'a>) : 'a =
-        Evaluator.eval evalExpr expr 
+        Evaluator.createNewState evalExpr
+        |> Evaluator.evalExpr expr 
         |> Evaluator.getLastValue 
         :?> 'a

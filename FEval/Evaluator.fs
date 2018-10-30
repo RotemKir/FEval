@@ -99,6 +99,3 @@ module Evaluator =
             RecVariables = new Dictionary<string, obj>()
             EvalFunc = evalFunc
         }
-
-    let eval evalFunc expr =
-        evalExpr expr <| createNewState evalFunc
