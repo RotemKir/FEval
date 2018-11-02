@@ -28,7 +28,7 @@ type InspectorsTest() =
         assertMessages expectedMessages messageList
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - Value``() = 
+    member this.``Evaluate performance inspector - value``() = 
         assertInspectors
             <@ 4 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
@@ -38,7 +38,7 @@ type InspectorsTest() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - Call static method``() = 
+    member this.``Evaluate performance inspector - call static method``() = 
         assertInspectors
             <@ abs -3 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
@@ -50,7 +50,7 @@ type InspectorsTest() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - None union case``() = 
+    member this.``Evaluate performance inspector - none union case``() = 
         assertInspectors
             <@ None @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
@@ -60,7 +60,7 @@ type InspectorsTest() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - Some union case``() = 
+    member this.``Evaluate performance inspector - some union case``() = 
         assertInspectors
             <@ Some 16 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
@@ -83,4 +83,21 @@ type InspectorsTest() =
                 "Start - Get value: Last (String)" 
                 "End - Get value: Last (String)" 
                 "End - Created {FirstName = \"First\";\n LastName = \"Last\";} (Person)"
+            |]
+
+    
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - new tuple``() = 
+        assertInspectors
+            <@ (16, "Text", true) @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Creating new Tuple (Int32, String, Boolean)"
+                "Start - Get value: 16 (Int32)" 
+                "End - Get value: 16 (Int32)" 
+                "Start - Get value: Text (String)" 
+                "End - Get value: Text (String)" 
+                "Start - Get value: True (Boolean)" 
+                "End - Get value: True (Boolean)" 
+                "End - Created Tuple (16, Text, True) (Int32, String, Boolean)"
             |]

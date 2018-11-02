@@ -66,11 +66,22 @@ module Inspectors =
         then Some value
         else None
 
-    let private formatStateLastValue state (typeIfNull : Type) =
+    let private (|IsTuple|_|) (valueType : Type) value =
+        if FSharpType.IsTuple valueType
+        then Some value
+        else None
+
+    let private getTupleTypeDisplayValue (tupleType : Type) =
+        sprintf "(%s)"
+            (Array.map (fun (t : Type) -> t.Name) tupleType.GenericTypeArguments
+            |> String.concat ", ")
+
+    let private formatStateLastValue state (valueType : Type) =
         match Evaluator.getLastValue state with
-        | IsNoneOption typeIfNull _ -> sprintf "None (%s)" typeIfNull.Name
-        | null                      -> sprintf "null (%s)" typeIfNull.Name
-        | v                         -> sprintf "%O (%s)" v <| v.GetType().Name
+        | IsNoneOption valueType _ -> sprintf "None (%s)" valueType.Name
+        | IsTuple valueType      v -> sprintf "%O %s" v <| getTupleTypeDisplayValue valueType
+        | null                     -> sprintf "null (%s)" valueType.Name
+        | v                        -> sprintf "%O (%s)" v <| valueType.Name
 
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
@@ -95,6 +106,13 @@ module Inspectors =
             sprintf "Creating new %s" recordType.Name
         | Post -> 
             sprintf "Created %s" <| formatStateLastValue state recordType
+                
+    let private getNewTupleDisplayValue stage (tupleType : Type) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating new Tuple %s" <| getTupleTypeDisplayValue tupleType 
+        | Post -> 
+            sprintf "Created Tuple %s" <| formatStateLastValue state tupleType
 
     let private getExprDispalyValue stage expr state =
         match expr with
@@ -112,7 +130,7 @@ module Inspectors =
         //| NewArray            _ -> "NewArray"
         //| NewObject           _ -> "NewObject"
         | NewRecord  newRecordState -> getNewRecordDisplayValue stage newRecordState state
-        //| NewTuple            _ -> "NewTuple"
+        | NewTuple  _ -> getNewTupleDisplayValue stage expr.Type state
         | NewUnionCase newUnionCaseState -> getNewUnionDisplayValue stage newUnionCaseState state
         //| PropertyGet         _ -> "PropertyGet"
         //| PropertySet         _ -> "PropertySet"
