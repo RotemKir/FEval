@@ -5,12 +5,13 @@ open System.Collections.Generic
 
 type EvaluationState =
     {
-        LastValue : obj
-        Variables : Map<string, obj>
-        RecVariables : Dictionary<string, obj>
-        EvalFunc :  Expr -> EvaluationState -> EvaluationState
+        LastValue      : obj
+        Variables      : Map<string, obj>
+        RecVariables   : Dictionary<string, obj>
+        EvalFunc       : Expr -> EvaluationState -> EvaluationState
+        Inspectors     : (Expr -> EvaluationState -> (Expr -> EvaluationState -> unit) option) seq
     }
-
+        
 [<RequireQualifiedAccess>]
 module Evaluator =
     
@@ -35,7 +36,16 @@ module Evaluator =
             recVarAction variable
         else
             varAction variable
+    
+    let private runPreInspectors expr state =
+        Seq.map (fun i -> i expr state) state.Inspectors
+        |> Seq.filter Option.isSome
+        |> Seq.map Option.get
+        |> Seq.toArray
         
+    let private runPostInspectors inspectors expr state =
+        Seq.iter (fun i -> i expr state) inspectors
+
     // Public Functions
 
     let getLastValue state =
@@ -67,9 +77,7 @@ module Evaluator =
         setVar variable newValue state
 
     let updateVariables state newState =
-        {
-            state with Variables = mergeVariables state.Variables newState.Variables
-        }
+        { state with Variables = mergeVariables state.Variables newState.Variables }
 
     let declareRecVariable (variable : Var) =
         setRecVariable variable <| new obj() 
@@ -78,7 +86,10 @@ module Evaluator =
         state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
-        state.EvalFunc expr state
+        let postInspectors = runPreInspectors expr state
+        let newState = state.EvalFunc expr state
+        runPostInspectors postInspectors expr newState
+        newState
 
     let evalExprAndGetLastValue expr state =
         evalExpr expr state
@@ -92,10 +103,11 @@ module Evaluator =
     let evalSingleExpr exprs state =
         evalExprAndGetLastValue <| Seq.head exprs <| state 
 
-    let createNewState evalFunc =
+    let createNewState evalFunc inspectors =
         {
             LastValue = ()
             Variables = Map.empty<string, obj>
             RecVariables = new Dictionary<string, obj>()
             EvalFunc = evalFunc
+            Inspectors = inspectors
         }

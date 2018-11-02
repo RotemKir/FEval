@@ -248,7 +248,7 @@ module Evaluations =
 
     let private evalExpr = 
         withExceptionHandling 
-            (fun expr state -> 
+            (fun expr state ->
             match expr with
                 | Application applicationState   -> evalApplication state applicationState
                 | Call callState                 -> evalMethodCall state callState
@@ -285,8 +285,11 @@ module Evaluations =
 
     // Public functions
 
-    let eval<'a> (expr : Expr<'a>) : 'a =
-        Evaluator.createNewState evalExpr
+    let evalWith<'a> (expr : Expr<'a>) inspectors : 'a =
+        Evaluator.createNewState evalExpr inspectors
         |> Evaluator.evalExpr expr 
         |> Evaluator.getLastValue 
         :?> 'a
+
+    let eval<'a> (expr : Expr<'a>) : 'a = 
+        evalWith expr Seq.empty

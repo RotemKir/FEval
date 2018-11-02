@@ -1,0 +1,143 @@
+﻿namespace FEval
+
+module Inspectors =
+    open Microsoft.FSharp.Quotations
+    open Microsoft.FSharp.Quotations.Patterns
+    open System
+    open System.IO
+    open System.Reflection
+
+    type InpectionStage = Pre | Post
+
+    type PerformanceInspectorConfig =
+        {
+            HandleMessage : string -> unit
+            PreMessageFormatter : DateTime -> Expr -> EvaluationState -> string
+            PostMessageFormatter : DateTime -> Expr -> EvaluationState -> TimeSpan -> string
+        }
+
+    // Private functions
+
+    let private getExprName expr =
+        match expr with
+        | Application         _ -> "Application"
+        | Call                _ -> "Call"
+        | Coerce              _ -> "Coerce"
+        | DefaultValue        _ -> "DefaultValue"
+        | FieldGet            _ -> "FieldGet"
+        | FieldSet            _ -> "FieldSet"
+        | ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
+        | IfThenElse          _ -> "IfThenElse"
+        | Lambda              _ -> "Lambda"
+        | Let                 _ -> "Let"
+        | LetRecursive        _ -> "LetRecursive"
+        | NewArray            _ -> "NewArray"
+        | NewObject           _ -> "NewObject"
+        | NewRecord           _ -> "NewRecord"
+        | NewTuple            _ -> "NewTuple"
+        | NewUnionCase        _ -> "NewUnionCase"
+        | PropertyGet         _ -> "PropertyGet"
+        | PropertySet         _ -> "PropertySet"
+        | QuoteRaw            _ -> "QuoteRaw"
+        | QuoteTyped          _ -> "QuoteTyped"
+        | Sequential          _ -> "Sequential"
+        | TryFinally          _ -> "TryFinally"
+        | TryWith             _ -> "TryWith"
+        | TupleGet            _ -> "TupleGet"
+        | TypeTest            _ -> "TypeTest"
+        | UnionCaseTest       _ -> "UnionCaseTest"
+        | Value               _ -> "Value"
+        | VarSet              _ -> "VarSet"
+        | Var                 _ -> "Var"
+        | WhileLoop           _ -> "WhileLoop"
+        |                     _ -> failwithf "Expression %O is not supported" expr
+    
+    let private getValueDispalyValue (value, valueType : Type) =
+        sprintf "Get value: %O (%s)" value valueType.Name
+
+    let private getMethodDisplayName instanceExpr (methodInfo : MethodInfo) =
+        match instanceExpr with
+        | Some instance -> ""
+        | None          -> methodInfo.Name
+
+    let private formatStateLastValue state =
+        let lastValue = Evaluator.getLastValue state
+        sprintf "%O (%s)" lastValue <| lastValue.GetType().Name
+
+    let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Call %s" 
+            <| getMethodDisplayName instanceExpr methodInfo
+        | Post -> 
+            sprintf "Called %s, Returned: %s" 
+            <| getMethodDisplayName instanceExpr methodInfo
+            <| formatStateLastValue state
+
+    let private getExprDispalyValue stage expr state =
+        match expr with
+        //| Application         _ -> "Application"
+        | Call          callState -> getCallDispalyValue stage callState state
+        //| Coerce              _ -> "Coerce"
+        //| DefaultValue        _ -> "DefaultValue"
+        //| FieldGet            _ -> "FieldGet"
+        //| FieldSet            _ -> "FieldSet"
+        //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
+        //| IfThenElse          _ -> "IfThenElse"
+        //| Lambda              _ -> "Lambda"
+        //| Let                 _ -> "Let"
+        //| LetRecursive        _ -> "LetRecursive"
+        //| NewArray            _ -> "NewArray"
+        //| NewObject           _ -> "NewObject"
+        //| NewRecord           _ -> "NewRecord"
+        //| NewTuple            _ -> "NewTuple"
+        //| NewUnionCase        _ -> "NewUnionCase"
+        //| PropertyGet         _ -> "PropertyGet"
+        //| PropertySet         _ -> "PropertySet"
+        //| QuoteRaw            _ -> "QuoteRaw"
+        //| QuoteTyped          _ -> "QuoteTyped"
+        //| Sequential          _ -> "Sequential"
+        //| TryFinally          _ -> "TryFinally"
+        //| TryWith             _ -> "TryWith"
+        //| TupleGet            _ -> "TupleGet"
+        //| TypeTest            _ -> "TypeTest"
+        //| UnionCaseTest       _ -> "UnionCaseTest"
+        | Value         valueState -> getValueDispalyValue valueState
+        //| VarSet              _ -> "VarSet"
+        //| Var                 _ -> "Var"
+        //| WhileLoop           _ -> "WhileLoop"
+        |                     _ -> failwithf "Expression %O is not supported" expr
+
+    let private postPerformanceInspector config (startTime : DateTime) expr state =
+        let endTime = DateTime.Now
+        let elapsedTime = endTime.Subtract(startTime)
+        config.HandleMessage <| config.PostMessageFormatter endTime expr state elapsedTime
+    
+    // Public functions
+
+    let defaultPerformancePreMessageFormatter time expr state =
+        sprintf "%O - Start - %s" 
+            time
+            <| getExprDispalyValue Pre expr state
+        
+    let defaultPostformancePreMessageFormatter time expr state (elapsed : TimeSpan) =
+        sprintf "%O - End - %s, Elapsed - %.3f ms" 
+            time 
+            <| getExprDispalyValue Post expr state
+            <| elapsed.TotalMilliseconds
+
+    let saveToFile fileName message =
+        File.AppendAllText (fileName, message)
+
+    let performanceInspector config expr state =
+        let startTime = DateTime.Now
+        config.HandleMessage <| config.PreMessageFormatter startTime expr state
+        Some <| postPerformanceInspector config startTime
+
+    let filePerformanceInspector fileName =
+        performanceInspector 
+            {
+                HandleMessage = saveToFile fileName
+                PreMessageFormatter = defaultPerformancePreMessageFormatter
+                PostMessageFormatter = defaultPostformancePreMessageFormatter
+            }
