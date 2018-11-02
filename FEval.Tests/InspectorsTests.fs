@@ -3,6 +3,7 @@
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Evaluations
 open FEval.Inspectors
+open FEval.Tests.TestHelpers
 open System.Collections.Generic
 
 [<TestClass>]
@@ -42,7 +43,7 @@ type InspectorsTest() =
             <@ abs -3 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Call Abs"
+                "Start - Calling Abs"
                 "Start - Get value: -3 (Int32)"
                 "End - Get value: -3 (Int32)"
                 "End - Called Abs, Returned: 3 (Int32)" 
@@ -54,7 +55,7 @@ type InspectorsTest() =
             <@ None @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Create None (FSharpOption`1)"
+                "Start - Creating None (FSharpOption`1)"
                 "End - Created None (FSharpOption`1)" 
             |]
             
@@ -64,8 +65,22 @@ type InspectorsTest() =
             <@ Some 16 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Create Some (FSharpOption`1)"
+                "Start - Creating Some (FSharpOption`1)"
                 "Start - Get value: 16 (Int32)" 
                 "End - Get value: 16 (Int32)" 
                 "End - Created Some(16) (FSharpOption`1)" 
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - new record``() = 
+        assertInspectors
+            <@ { FirstName = "First" ; LastName = "Last" } @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Creating new Person"
+                "Start - Get value: First (String)" 
+                "End - Get value: First (String)" 
+                "Start - Get value: Last (String)" 
+                "End - Get value: Last (String)" 
+                "End - Created {FirstName = \"First\";\n LastName = \"Last\";} (Person)"
             |]

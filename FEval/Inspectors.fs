@@ -75,7 +75,7 @@ module Inspectors =
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Call %s" 
+            sprintf "Calling %s" 
             <| getMethodDisplayName instanceExpr methodInfo
         | Post -> 
             sprintf "Called %s, Returned: %s" 
@@ -85,9 +85,16 @@ module Inspectors =
     let private getNewUnionDisplayValue stage (unionCaseInfo : UnionCaseInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Create %s (%s)" unionCaseInfo.Name unionCaseInfo.DeclaringType.Name
+            sprintf "Creating %s (%s)" unionCaseInfo.Name unionCaseInfo.DeclaringType.Name
         | Post -> 
             sprintf "Created %s" <| formatStateLastValue state unionCaseInfo.DeclaringType
+
+    let private getNewRecordDisplayValue stage (recordType : Type, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating new %s" recordType.Name
+        | Post -> 
+            sprintf "Created %s" <| formatStateLastValue state recordType
 
     let private getExprDispalyValue stage expr state =
         match expr with
@@ -104,7 +111,7 @@ module Inspectors =
         //| LetRecursive        _ -> "LetRecursive"
         //| NewArray            _ -> "NewArray"
         //| NewObject           _ -> "NewObject"
-        //| NewRecord           _ -> "NewRecord"
+        | NewRecord  newRecordState -> getNewRecordDisplayValue stage newRecordState state
         //| NewTuple            _ -> "NewTuple"
         | NewUnionCase newUnionCaseState -> getNewUnionDisplayValue stage newUnionCaseState state
         //| PropertyGet         _ -> "PropertyGet"
