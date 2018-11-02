@@ -3,6 +3,7 @@
 module Inspectors =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
+    open Microsoft.FSharp.Reflection
     open System
     open System.IO
     open System.Reflection
@@ -59,10 +60,17 @@ module Inspectors =
         match instanceExpr with
         | Some instance -> ""
         | None          -> methodInfo.Name
+    
+    let private (|IsNoneOption|_|) (valueType : Type) value =
+        if value = null && valueType.Name = "FSharpOption`1"
+        then Some value
+        else None
 
-    let private formatStateLastValue state =
-        let lastValue = Evaluator.getLastValue state
-        sprintf "%O (%s)" lastValue <| lastValue.GetType().Name
+    let private formatStateLastValue state (typeIfNull : Type) =
+        match Evaluator.getLastValue state with
+        | IsNoneOption typeIfNull _ -> sprintf "None (%s)" typeIfNull.Name
+        | null                      -> sprintf "null (%s)" typeIfNull.Name
+        | v                         -> sprintf "%O (%s)" v <| v.GetType().Name
 
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
@@ -72,7 +80,14 @@ module Inspectors =
         | Post -> 
             sprintf "Called %s, Returned: %s" 
             <| getMethodDisplayName instanceExpr methodInfo
-            <| formatStateLastValue state
+            <| formatStateLastValue state methodInfo.ReturnType
+
+    let private getNewUnionDisplayValue stage (unionCaseInfo : UnionCaseInfo, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Create %s (%s)" unionCaseInfo.Name unionCaseInfo.DeclaringType.Name
+        | Post -> 
+            sprintf "Created %s" <| formatStateLastValue state unionCaseInfo.DeclaringType
 
     let private getExprDispalyValue stage expr state =
         match expr with
@@ -91,7 +106,7 @@ module Inspectors =
         //| NewObject           _ -> "NewObject"
         //| NewRecord           _ -> "NewRecord"
         //| NewTuple            _ -> "NewTuple"
-        //| NewUnionCase        _ -> "NewUnionCase"
+        | NewUnionCase newUnionCaseState -> getNewUnionDisplayValue stage newUnionCaseState state
         //| PropertyGet         _ -> "PropertyGet"
         //| PropertySet         _ -> "PropertySet"
         //| QuoteRaw            _ -> "QuoteRaw"
