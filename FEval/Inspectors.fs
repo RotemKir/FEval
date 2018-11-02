@@ -53,38 +53,56 @@ module Inspectors =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
-    let private getValueDispalyValue (value, valueType : Type) =
-        sprintf "Get value: %O (%s)" value valueType.Name
-
     let private getMethodDisplayName instanceExpr (methodInfo : MethodInfo) =
         match instanceExpr with
         | Some instance -> ""
         | None          -> methodInfo.Name
     
-    let private (|IsNoneOption|_|) (valueType : Type) value =
-        if value = null && valueType.Name = "FSharpOption`1"
-        then Some value
+    let private (|IsOption|_|) (valueType : Type) =
+        if valueType.Name = "FSharpOption`1"
+        then Some valueType
         else None
 
-    let private (|IsTuple|_|) (valueType : Type) value =
+    let private (|IsTuple|_|) (valueType : Type) =
         if FSharpType.IsTuple valueType
-        then Some value
+        then Some valueType
+        else None
+        
+    let private (|IsFunction|_|) (valueType : Type) =
+        if FSharpType.IsFunction valueType
+        then Some valueType
         else None
 
-    let private getTupleTypeDisplayValue (tupleType : Type) =
-        sprintf "(%s)"
-            (Array.map (fun (t : Type) -> t.Name) tupleType.GenericTypeArguments
-            |> String.concat ", ")
+    let private formatGenericTypeArguments typeFormatter (declaringType : Type) separator =
+        Array.map typeFormatter declaringType.GenericTypeArguments
+        |> String.concat separator
 
-    let private formatStateLastValue state (valueType : Type) =
-        match Evaluator.getLastValue state with
-        | IsNoneOption valueType _ -> sprintf "None (%s)" valueType.Name
-        | IsTuple valueType      v -> sprintf "%O %s" v <| getTupleTypeDisplayValue valueType
-        | null                     -> sprintf "null (%s)" valueType.Name
-        | v                        -> sprintf "%O (%s)" v <| valueType.Name
+    let private getTupleTypeDisplayValue typeFormatter tupleType =
+        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter tupleType ", "
+
+    let private getFunctionDisplayValue typeFormatter functionType =
+        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter functionType " -> "
+
+    let rec private formatType (valueType : Type) =
+        match valueType with
+        | IsFunction t -> getFunctionDisplayValue formatType t
+        | IsTuple t    -> getTupleTypeDisplayValue formatType t
+        | IsOption _   -> "Option"
+        | t            -> t.Name
+
+    let private formatStateLastValue state valueType =
+        let value = Evaluator.getLastValue state
+
+        match valueType with
+        | IsFunction t                 -> formatType t
+        | IsOption t when value = null -> sprintf "None : %s" <| formatType t
+        | t                            -> sprintf "%O : %s" value <| formatType t
 
     let private formatVariable (variable : Var) =
-        sprintf "%s (%s)" variable.Name variable.Type.Name
+        sprintf "%s : %s" variable.Name <| formatType variable.Type
+        
+    let private getValueDispalyValue (value, valueType : Type) =
+        sprintf "Get value %O : %s" value <| formatType valueType
 
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
@@ -99,7 +117,7 @@ module Inspectors =
     let private getNewUnionDisplayValue stage (unionCaseInfo : UnionCaseInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating %s (%s)" unionCaseInfo.Name unionCaseInfo.DeclaringType.Name
+            sprintf "Creating %s : %s" unionCaseInfo.Name <| formatType unionCaseInfo.DeclaringType
         | Post -> 
             sprintf "Created %s" <| formatStateLastValue state unionCaseInfo.DeclaringType
 
@@ -113,7 +131,7 @@ module Inspectors =
     let private getNewTupleDisplayValue stage (tupleType : Type) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating new Tuple %s" <| getTupleTypeDisplayValue tupleType 
+            sprintf "Creating new Tuple %s" <| formatType tupleType 
         | Post -> 
             sprintf "Created Tuple %s" <| formatStateLastValue state tupleType
 
@@ -133,10 +151,25 @@ module Inspectors =
             <| variable.Name
             <| formatStateLastValue state variable.Type
     
+    let private getLambdaDisplayValue stage functionType =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating lambda %s" <| formatType functionType
+        | Post -> 
+            sprintf "Created lambda %s" <| formatType functionType
 
+    let private getApplicationDisplayValue stage (funcExpr : Expr, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Applying function %s" <| formatType funcExpr.Type
+        | Post -> 
+            sprintf "Applyied function %s, Returned %s" 
+            <| formatType funcExpr.Type
+            <| (formatStateLastValue state <| state.LastValue.GetType())
+            
     let private getExprDispalyValue stage expr state =
         match expr with
-        //| Application         _ -> "Application"
+        | Application applicationState -> getApplicationDisplayValue stage applicationState state
         | Call          callState -> getCallDispalyValue stage callState state
         //| Coerce              _ -> "Coerce"
         //| DefaultValue        _ -> "DefaultValue"
@@ -144,7 +177,7 @@ module Inspectors =
         //| FieldSet            _ -> "FieldSet"
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
         //| IfThenElse          _ -> "IfThenElse"
-        //| Lambda              _ -> "Lambda"
+        | Lambda _ -> getLambdaDisplayValue stage expr.Type
         | Let letState -> getLetDisplayValue stage letState state
         //| LetRecursive        _ -> "LetRecursive"
         //| NewArray            _ -> "NewArray"
@@ -162,11 +195,11 @@ module Inspectors =
         //| TupleGet            _ -> "TupleGet"
         //| TypeTest            _ -> "TypeTest"
         //| UnionCaseTest       _ -> "UnionCaseTest"
-        | Value         valueState -> getValueDispalyValue valueState
+        | Value valueState -> getValueDispalyValue valueState
         //| VarSet              _ -> "VarSet"
-        | Var           variable -> getVarDisplayValue stage variable state
+        | Var variable -> getVarDisplayValue stage variable state
         //| WhileLoop           _ -> "WhileLoop"
-        |                     _ -> failwithf "Expression %O is not supported" expr
+        | _ -> failwithf "Expression %O is not supported" expr
 
     let private postPerformanceInspector config (startTime : DateTime) expr state =
         let endTime = DateTime.Now

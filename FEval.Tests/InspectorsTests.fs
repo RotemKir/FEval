@@ -33,8 +33,8 @@ type InspectorsTest() =
             <@ 4 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Get value: 4 (Int32)" 
-                "End - Get value: 4 (Int32)" 
+                "Start - Get value 4 : Int32" 
+                "End - Get value 4 : Int32" 
             |]
 
     [<TestMethod>]
@@ -44,9 +44,9 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Calling Abs"
-                "Start - Get value: -3 (Int32)"
-                "End - Get value: -3 (Int32)"
-                "End - Called Abs, Returned: 3 (Int32)" 
+                "Start - Get value -3 : Int32"
+                "End - Get value -3 : Int32"
+                "End - Called Abs, Returned: 3 : Int32" 
             |]
 
     [<TestMethod>]
@@ -55,8 +55,8 @@ type InspectorsTest() =
             <@ None @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating None (FSharpOption`1)"
-                "End - Created None (FSharpOption`1)" 
+                "Start - Creating None : Option"
+                "End - Created None : Option" 
             |]
             
     [<TestMethod>]
@@ -65,10 +65,10 @@ type InspectorsTest() =
             <@ Some 16 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating Some (FSharpOption`1)"
-                "Start - Get value: 16 (Int32)" 
-                "End - Get value: 16 (Int32)" 
-                "End - Created Some(16) (FSharpOption`1)" 
+                "Start - Creating Some : Option"
+                "Start - Get value 16 : Int32" 
+                "End - Get value 16 : Int32" 
+                "End - Created Some(16) : Option" 
             |]
             
     [<TestMethod>]
@@ -78,11 +78,11 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Creating new Person"
-                "Start - Get value: First (String)" 
-                "End - Get value: First (String)" 
-                "Start - Get value: Last (String)" 
-                "End - Get value: Last (String)" 
-                "End - Created {FirstName = \"First\";\n LastName = \"Last\";} (Person)"
+                "Start - Get value First : String" 
+                "End - Get value First : String" 
+                "Start - Get value Last : String" 
+                "End - Get value Last : String" 
+                "End - Created {FirstName = \"First\";\n LastName = \"Last\";} : Person"
             |]
     
     [<TestMethod>]
@@ -92,13 +92,13 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Creating new Tuple (Int32, String, Boolean)"
-                "Start - Get value: 16 (Int32)" 
-                "End - Get value: 16 (Int32)" 
-                "Start - Get value: Text (String)" 
-                "End - Get value: Text (String)" 
-                "Start - Get value: True (Boolean)" 
-                "End - Get value: True (Boolean)" 
-                "End - Created Tuple (16, Text, True) (Int32, String, Boolean)"
+                "Start - Get value 16 : Int32" 
+                "End - Get value 16 : Int32" 
+                "Start - Get value Text : String" 
+                "End - Get value Text : String" 
+                "Start - Get value True : Boolean" 
+                "End - Get value True : Boolean" 
+                "End - Created Tuple (16, Text, True) : (Int32, String, Boolean)"
             |]
     
     [<TestMethod>]
@@ -107,10 +107,34 @@ type InspectorsTest() =
             <@ let x = 18 in x @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Let x (Int32)"
-                "Start - Get value: 18 (Int32)" 
-                "End - Get value: 18 (Int32)" 
-                "Start - Get variable x (Int32)" 
-                "End - Get variable x, Returned 18 (Int32)" 
+                "Start - Let x : Int32"
+                "Start - Get value 18 : Int32" 
+                "End - Get value 18 : Int32" 
+                "Start - Get variable x : Int32" 
+                "End - Get variable x, Returned 18 : Int32" 
                 "End - Let x returned 18"
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - function application``() = 
+        assertInspectors
+            <@ let f x = x + 1 in f 3 @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let f : (Int32 -> Int32)"
+                "Start - Creating lambda (Int32 -> Int32)"
+                "End - Created lambda (Int32 -> Int32)"
+                "Start - Applying function (Int32 -> Int32)"
+                "Start - Get variable f : (Int32 -> Int32)"
+                "End - Get variable f, Returned (Int32 -> Int32)"
+                "Start - Get value 3 : Int32"
+                "End - Get value 3 : Int32"
+                "Start - Calling op_Addition"
+                "Start - Get variable x : Int32"
+                "End - Get variable x, Returned 3 : Int32"
+                "Start - Get value 1 : Int32"
+                "End - Get value 1 : Int32"
+                "End - Called op_Addition, Returned: 4 : Int32"
+                "End - Applyied function (Int32 -> Int32), Returned 4 : Int32"
+                "End - Let f returned 4 : Int32"
             |]
