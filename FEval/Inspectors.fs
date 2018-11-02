@@ -83,6 +83,9 @@ module Inspectors =
         | null                     -> sprintf "null (%s)" valueType.Name
         | v                        -> sprintf "%O (%s)" v <| valueType.Name
 
+    let private formatVariable (variable : Var) =
+        sprintf "%s (%s)" variable.Name variable.Type.Name
+
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
         | Pre  -> 
@@ -114,6 +117,23 @@ module Inspectors =
         | Post -> 
             sprintf "Created Tuple %s" <| formatStateLastValue state tupleType
 
+    let private getLetDisplayValue stage (variable : Var, _, body : Expr) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Let %s" <| formatVariable variable
+        | Post -> 
+            sprintf "Let %s returned %s" variable.Name <| formatStateLastValue state body.Type
+    
+    let private getVarDisplayValue stage variable state =
+        match stage with
+        | Pre  -> 
+            sprintf "Get variable %s" <| formatVariable variable
+        | Post -> 
+            sprintf "Get variable %s, Returned %s" 
+            <| variable.Name
+            <| formatStateLastValue state variable.Type
+    
+
     let private getExprDispalyValue stage expr state =
         match expr with
         //| Application         _ -> "Application"
@@ -125,7 +145,7 @@ module Inspectors =
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
         //| IfThenElse          _ -> "IfThenElse"
         //| Lambda              _ -> "Lambda"
-        //| Let                 _ -> "Let"
+        | Let letState -> getLetDisplayValue stage letState state
         //| LetRecursive        _ -> "LetRecursive"
         //| NewArray            _ -> "NewArray"
         //| NewObject           _ -> "NewObject"
@@ -144,7 +164,7 @@ module Inspectors =
         //| UnionCaseTest       _ -> "UnionCaseTest"
         | Value         valueState -> getValueDispalyValue valueState
         //| VarSet              _ -> "VarSet"
-        //| Var                 _ -> "Var"
+        | Var           variable -> getVarDisplayValue stage variable state
         //| WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
 

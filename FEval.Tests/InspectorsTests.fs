@@ -84,7 +84,6 @@ type InspectorsTest() =
                 "End - Get value: Last (String)" 
                 "End - Created {FirstName = \"First\";\n LastName = \"Last\";} (Person)"
             |]
-
     
     [<TestMethod>]
     member this.``Evaluate performance inspector - new tuple``() = 
@@ -100,4 +99,18 @@ type InspectorsTest() =
                 "Start - Get value: True (Boolean)" 
                 "End - Get value: True (Boolean)" 
                 "End - Created Tuple (16, Text, True) (Int32, String, Boolean)"
+            |]
+    
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - let statement``() = 
+        assertInspectors
+            <@ let x = 18 in x @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x (Int32)"
+                "Start - Get value: 18 (Int32)" 
+                "End - Get value: 18 (Int32)" 
+                "Start - Get variable x (Int32)" 
+                "End - Get variable x, Returned 18 (Int32)" 
+                "End - Let x returned 18"
             |]
