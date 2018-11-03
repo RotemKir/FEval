@@ -68,7 +68,7 @@ type InspectorsTest() =
                 "Start - Creating Some : Option"
                 "Start - Get value 16 : Int32" 
                 "End - Get value 16 : Int32" 
-                "End - Created Some(16) : Option" 
+                "End - Created Some 16 : Option" 
             |]
             
     [<TestMethod>]
@@ -78,10 +78,10 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Creating new Person"
-                "Start - Get value First : String" 
-                "End - Get value First : String" 
-                "Start - Get value Last : String" 
-                "End - Get value Last : String" 
+                "Start - Get value \"First\" : String" 
+                "End - Get value \"First\" : String" 
+                "Start - Get value \"Last\" : String" 
+                "End - Get value \"Last\" : String" 
                 "End - Created {FirstName = \"First\";\n LastName = \"Last\";} : Person"
             |]
     
@@ -94,11 +94,11 @@ type InspectorsTest() =
                 "Start - Creating new Tuple (Int32, String, Boolean)"
                 "Start - Get value 16 : Int32" 
                 "End - Get value 16 : Int32" 
-                "Start - Get value Text : String" 
-                "End - Get value Text : String" 
-                "Start - Get value True : Boolean" 
-                "End - Get value True : Boolean" 
-                "End - Created Tuple (16, Text, True) : (Int32, String, Boolean)"
+                "Start - Get value \"Text\" : String" 
+                "End - Get value \"Text\" : String" 
+                "Start - Get value true : Boolean" 
+                "End - Get value true : Boolean" 
+                "End - Created Tuple (16, \"Text\", true) : (Int32, String, Boolean)"
             |]
     
     [<TestMethod>]
@@ -151,8 +151,8 @@ type InspectorsTest() =
                 "Start - Calling Int32.ToString"
                 "Start - Get variable x : Int32"
                 "End - Get variable x, Returned 3 : Int32"                
-                "End - Called Int32.ToString, Returned 3 : String" 
-                "End - Let x returned 3 : String"
+                "End - Called Int32.ToString, Returned \"3\" : String" 
+                "End - Let x returned \"3\" : String"
             |]
 
     [<TestMethod>]
@@ -162,13 +162,13 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Let x : String"
-                "Start - Get value Hello : String"
-                "End - Get value Hello : String"
+                "Start - Get value \"Hello\" : String"
+                "End - Get value \"Hello\" : String"
                 "Start - Coercing String to Object"
                 "Start - Get variable x : String"
-                "End - Get variable x, Returned Hello : String"                
+                "End - Get variable x, Returned \"Hello\" : String"                
                 "End - Coerced String to Object"
-                "End - Let x returned Hello : Object"
+                "End - Let x returned \"Hello\" : Object"
             |]
         
     [<TestMethod>]
@@ -178,7 +178,7 @@ type InspectorsTest() =
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Creating new object ChildClass (String)"
-                "Start - Get value Hello : String"
-                "End - Get value Hello : String"
+                "Start - Get value \"Hello\" : String"
+                "End - Get value \"Hello\" : String"
                 "End - Created new object ChildClass"
             |]

@@ -55,7 +55,7 @@ module Inspectors =
         |                     _ -> failwithf "Expression %O is not supported" expr
     
     let private formatValueExpr (value, valueType : Type) =
-        sprintf "Get value %O : %s" value <| formatType valueType
+        sprintf "Get value %s" <| formatValue value valueType 
             
     let private formatCallExpr stage (instanceExpr, methodInfo, _) state =
         match stage with

@@ -18,12 +18,12 @@ module TypeFormatters =
         then Some valueType
         else None
 
-    let (|IsTuple|_|) (valueType : Type) =
+    let (|IsTuple|_|) valueType =
         if FSharpType.IsTuple valueType
         then Some valueType
         else None
         
-    let (|IsFunction|_|) (valueType : Type) =
+    let (|IsFunction|_|) valueType =
         if FSharpType.IsFunction valueType
         then Some valueType
         else None
@@ -48,13 +48,14 @@ module TypeFormatters =
         | IsOption _   -> "Option"
         | t            -> t.Name
         
-    let formatStateLastValue state valueType =
-        let value = Evaluator.getLastValue state
-
+    let formatValue value valueType =
         match valueType with
         | IsFunction t                 -> formatType t
         | IsOption t when value = null -> sprintf "None : %s" <| formatType t
-        | t                            -> sprintf "%O : %s" value <| formatType t
+        | t                            -> sprintf "%A : %s" value <| formatType t
+
+    let formatStateLastValue state =
+        formatValue <| Evaluator.getLastValue state
 
     let formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
