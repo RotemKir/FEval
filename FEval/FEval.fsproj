@@ -49,7 +49,8 @@
     <Compile Include="Loops.fs" />
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
-    <Compile Include="Inspectors.fs" />
+    <Compile Include="Inspections\TypeFormatters.fs" />
+    <Compile Include="Inspections\Inspectors.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>

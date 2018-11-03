@@ -1,6 +1,7 @@
 ﻿namespace FEval
 
 module Inspectors =
+    open FEval.TypeFormatters
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open Microsoft.FSharp.Reflection
@@ -53,57 +54,9 @@ module Inspectors =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
-    let private (|IsOption|_|) (valueType : Type) =
-        if valueType.Name = "FSharpOption`1"
-        then Some valueType
-        else None
-
-    let private (|IsTuple|_|) (valueType : Type) =
-        if FSharpType.IsTuple valueType
-        then Some valueType
-        else None
-        
-    let private (|IsFunction|_|) (valueType : Type) =
-        if FSharpType.IsFunction valueType
-        then Some valueType
-        else None
-
-    let private formatGenericTypeArguments typeFormatter (declaringType : Type) separator =
-        Array.map typeFormatter declaringType.GenericTypeArguments
-        |> String.concat separator
-
-    let private formatTupleType typeFormatter tupleType =
-        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter tupleType ", "
-
-    let private formatFunctionType typeFormatter functionType =
-        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter functionType " -> "
-
-    let rec private formatType (valueType : Type) =
-        match valueType with
-        | IsFunction t -> formatFunctionType formatType t
-        | IsTuple t    -> formatTupleType formatType t
-        | IsOption _   -> "Option"
-        | t            -> t.Name
-
-    let private formatStateLastValue state valueType =
-        let value = Evaluator.getLastValue state
-
-        match valueType with
-        | IsFunction t                 -> formatType t
-        | IsOption t when value = null -> sprintf "None : %s" <| formatType t
-        | t                            -> sprintf "%O : %s" value <| formatType t
-
-    let private formatVariable (variable : Var) =
-        sprintf "%s : %s" variable.Name <| formatType variable.Type
-        
     let private formatValueExpr (value, valueType : Type) =
         sprintf "Get value %O : %s" value <| formatType valueType
-        
-    let private formatMethodDisplayName (instanceExpr : Expr option) (methodInfo : MethodInfo) =
-        match instanceExpr with
-        | Some instance -> sprintf "%s.%s" (formatType instance.Type) methodInfo.Name
-        | None          -> methodInfo.Name
-
+            
     let private formatCallExpr stage (instanceExpr, methodInfo, _) state =
         match stage with
         | Pre  -> 
