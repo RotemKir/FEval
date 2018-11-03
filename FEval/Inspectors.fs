@@ -53,11 +53,6 @@ module Inspectors =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
-    let private getMethodDisplayName instanceExpr (methodInfo : MethodInfo) =
-        match instanceExpr with
-        | Some instance -> ""
-        | None          -> methodInfo.Name
-    
     let private (|IsOption|_|) (valueType : Type) =
         if valueType.Name = "FSharpOption`1"
         then Some valueType
@@ -103,6 +98,11 @@ module Inspectors =
         
     let private getValueDispalyValue (value, valueType : Type) =
         sprintf "Get value %O : %s" value <| formatType valueType
+        
+    let private getMethodDisplayName (instanceExpr : Expr option) (methodInfo : MethodInfo) =
+        match instanceExpr with
+        | Some instance -> sprintf "%s.%s" (formatType instance.Type) methodInfo.Name
+        | None          -> methodInfo.Name
 
     let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
         match stage with
@@ -110,7 +110,7 @@ module Inspectors =
             sprintf "Calling %s" 
             <| getMethodDisplayName instanceExpr methodInfo
         | Post -> 
-            sprintf "Called %s, Returned: %s" 
+            sprintf "Called %s, Returned %s" 
             <| getMethodDisplayName instanceExpr methodInfo
             <| formatStateLastValue state methodInfo.ReturnType
 

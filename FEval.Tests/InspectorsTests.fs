@@ -46,7 +46,7 @@ type InspectorsTest() =
                 "Start - Calling Abs"
                 "Start - Get value -3 : Int32"
                 "End - Get value -3 : Int32"
-                "End - Called Abs, Returned: 3 : Int32" 
+                "End - Called Abs, Returned 3 : Int32" 
             |]
 
     [<TestMethod>]
@@ -134,7 +134,23 @@ type InspectorsTest() =
                 "End - Get variable x, Returned 3 : Int32"
                 "Start - Get value 1 : Int32"
                 "End - Get value 1 : Int32"
-                "End - Called op_Addition, Returned: 4 : Int32"
+                "End - Called op_Addition, Returned 4 : Int32"
                 "End - Applyied function (Int32 -> Int32), Returned 4 : Int32"
                 "End - Let f returned 4 : Int32"
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - call instance method``() = 
+        assertInspectors
+            <@ let x = 3 in x.ToString() @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : Int32"
+                "Start - Get value 3 : Int32"
+                "End - Get value 3 : Int32"
+                "Start - Calling Int32.ToString"
+                "Start - Get variable x : Int32"
+                "End - Get variable x, Returned 3 : Int32"                
+                "End - Called Int32.ToString, Returned 3 : String" 
+                "End - Let x returned 3 : String"
             |]
