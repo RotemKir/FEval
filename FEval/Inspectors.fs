@@ -72,16 +72,16 @@ module Inspectors =
         Array.map typeFormatter declaringType.GenericTypeArguments
         |> String.concat separator
 
-    let private getTupleTypeDisplayValue typeFormatter tupleType =
+    let private formatTupleType typeFormatter tupleType =
         sprintf "(%s)" <| formatGenericTypeArguments typeFormatter tupleType ", "
 
-    let private getFunctionDisplayValue typeFormatter functionType =
+    let private formatFunctionType typeFormatter functionType =
         sprintf "(%s)" <| formatGenericTypeArguments typeFormatter functionType " -> "
 
     let rec private formatType (valueType : Type) =
         match valueType with
-        | IsFunction t -> getFunctionDisplayValue formatType t
-        | IsTuple t    -> getTupleTypeDisplayValue formatType t
+        | IsFunction t -> formatFunctionType formatType t
+        | IsTuple t    -> formatTupleType formatType t
         | IsOption _   -> "Option"
         | t            -> t.Name
 
@@ -96,53 +96,53 @@ module Inspectors =
     let private formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
         
-    let private getValueDispalyValue (value, valueType : Type) =
+    let private formatValueExpr (value, valueType : Type) =
         sprintf "Get value %O : %s" value <| formatType valueType
         
-    let private getMethodDisplayName (instanceExpr : Expr option) (methodInfo : MethodInfo) =
+    let private formatMethodDisplayName (instanceExpr : Expr option) (methodInfo : MethodInfo) =
         match instanceExpr with
         | Some instance -> sprintf "%s.%s" (formatType instance.Type) methodInfo.Name
         | None          -> methodInfo.Name
 
-    let private getCallDispalyValue stage (instanceExpr, methodInfo, _) state =
+    let private formatCallExpr stage (instanceExpr, methodInfo, _) state =
         match stage with
         | Pre  -> 
             sprintf "Calling %s" 
-            <| getMethodDisplayName instanceExpr methodInfo
+            <| formatMethodDisplayName instanceExpr methodInfo
         | Post -> 
             sprintf "Called %s, Returned %s" 
-            <| getMethodDisplayName instanceExpr methodInfo
+            <| formatMethodDisplayName instanceExpr methodInfo
             <| formatStateLastValue state methodInfo.ReturnType
 
-    let private getNewUnionDisplayValue stage (unionCaseInfo : UnionCaseInfo, _) state =
+    let private formatNewUnionCaseExpr stage (unionCaseInfo : UnionCaseInfo, _) state =
         match stage with
         | Pre  -> 
             sprintf "Creating %s : %s" unionCaseInfo.Name <| formatType unionCaseInfo.DeclaringType
         | Post -> 
             sprintf "Created %s" <| formatStateLastValue state unionCaseInfo.DeclaringType
 
-    let private getNewRecordDisplayValue stage (recordType : Type, _) state =
+    let private formatNewRecordExpr stage (recordType : Type, _) state =
         match stage with
         | Pre  -> 
             sprintf "Creating new %s" recordType.Name
         | Post -> 
             sprintf "Created %s" <| formatStateLastValue state recordType
                 
-    let private getNewTupleDisplayValue stage (tupleType : Type) state =
+    let private formatNewTupleExpr stage (tupleType : Type) state =
         match stage with
         | Pre  -> 
             sprintf "Creating new Tuple %s" <| formatType tupleType 
         | Post -> 
             sprintf "Created Tuple %s" <| formatStateLastValue state tupleType
 
-    let private getLetDisplayValue stage (variable : Var, _, body : Expr) state =
+    let private formatLetExpr stage (variable : Var, _, body : Expr) state =
         match stage with
         | Pre  -> 
             sprintf "Let %s" <| formatVariable variable
         | Post -> 
             sprintf "Let %s returned %s" variable.Name <| formatStateLastValue state body.Type
     
-    let private getVarDisplayValue stage variable state =
+    let private formatVariableExpr stage variable state =
         match stage with
         | Pre  -> 
             sprintf "Get variable %s" <| formatVariable variable
@@ -151,14 +151,14 @@ module Inspectors =
             <| variable.Name
             <| formatStateLastValue state variable.Type
     
-    let private getLambdaDisplayValue stage functionType =
+    let private formatlambdaExpr stage functionType =
         match stage with
         | Pre  -> 
             sprintf "Creating lambda %s" <| formatType functionType
         | Post -> 
             sprintf "Created lambda %s" <| formatType functionType
 
-    let private getApplicationDisplayValue stage (funcExpr : Expr, _) state =
+    let private formatApplicationExpr stage (funcExpr : Expr, _) state =
         match stage with
         | Pre  -> 
             sprintf "Applying function %s" <| formatType funcExpr.Type
@@ -166,25 +166,32 @@ module Inspectors =
             sprintf "Applyied function %s, Returned %s" 
             <| formatType funcExpr.Type
             <| (formatStateLastValue state <| state.LastValue.GetType())
-            
+    
+    let private formatCoerceExpr stage (expr : Expr, coerceType) =
+        match stage with
+        | Pre  -> 
+            sprintf "Coercing %s to %s" <| formatType expr.Type <| formatType coerceType
+        | Post -> 
+            sprintf "Coerced %s to %s" <| formatType expr.Type <| formatType coerceType
+    
     let private getExprDispalyValue stage expr state =
         match expr with
-        | Application applicationState -> getApplicationDisplayValue stage applicationState state
-        | Call          callState -> getCallDispalyValue stage callState state
-        //| Coerce              _ -> "Coerce"
+        | Application applicationState -> formatApplicationExpr stage applicationState state
+        | Call          callState -> formatCallExpr stage callState state
+        | Coerce            coerceState -> formatCoerceExpr stage coerceState
         //| DefaultValue        _ -> "DefaultValue"
         //| FieldGet            _ -> "FieldGet"
         //| FieldSet            _ -> "FieldSet"
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
         //| IfThenElse          _ -> "IfThenElse"
-        | Lambda _ -> getLambdaDisplayValue stage expr.Type
-        | Let letState -> getLetDisplayValue stage letState state
+        | Lambda _ -> formatlambdaExpr stage expr.Type
+        | Let letState -> formatLetExpr stage letState state
         //| LetRecursive        _ -> "LetRecursive"
         //| NewArray            _ -> "NewArray"
         //| NewObject           _ -> "NewObject"
-        | NewRecord  newRecordState -> getNewRecordDisplayValue stage newRecordState state
-        | NewTuple  _ -> getNewTupleDisplayValue stage expr.Type state
-        | NewUnionCase newUnionCaseState -> getNewUnionDisplayValue stage newUnionCaseState state
+        | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
+        | NewTuple  _ -> formatNewTupleExpr stage expr.Type state
+        | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state
         //| PropertyGet         _ -> "PropertyGet"
         //| PropertySet         _ -> "PropertySet"
         //| QuoteRaw            _ -> "QuoteRaw"
@@ -195,9 +202,9 @@ module Inspectors =
         //| TupleGet            _ -> "TupleGet"
         //| TypeTest            _ -> "TypeTest"
         //| UnionCaseTest       _ -> "UnionCaseTest"
-        | Value valueState -> getValueDispalyValue valueState
+        | Value valueState -> formatValueExpr valueState
         //| VarSet              _ -> "VarSet"
-        | Var variable -> getVarDisplayValue stage variable state
+        | Var variable -> formatVariableExpr stage variable state
         //| WhileLoop           _ -> "WhileLoop"
         | _ -> failwithf "Expression %O is not supported" expr
 

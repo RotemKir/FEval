@@ -154,3 +154,20 @@ type InspectorsTest() =
                 "End - Called Int32.ToString, Returned 3 : String" 
                 "End - Let x returned 3 : String"
             |]
+
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - coerce to object``() = 
+        assertInspectors
+            <@ let x = "Hello" in x :> obj @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : String"
+                "Start - Get value Hello : String"
+                "End - Get value Hello : String"
+                "Start - Coercing String to Object"
+                "Start - Get variable x : String"
+                "End - Get variable x, Returned Hello : String"                
+                "End - Coerced String to Object"
+                "End - Let x returned Hello : Object"
+            |]
