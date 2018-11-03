@@ -155,7 +155,6 @@ type InspectorsTest() =
                 "End - Let x returned 3 : String"
             |]
 
-            
     [<TestMethod>]
     member this.``Evaluate performance inspector - coerce to object``() = 
         assertInspectors
@@ -170,4 +169,16 @@ type InspectorsTest() =
                 "End - Get variable x, Returned Hello : String"                
                 "End - Coerced String to Object"
                 "End - Let x returned Hello : Object"
+            |]
+        
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - create new object``() = 
+        assertInspectors
+            <@ new ChildClass("Hello") @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Creating new object ChildClass (String)"
+                "Start - Get value Hello : String"
+                "End - Get value Hello : String"
+                "End - Created new object ChildClass"
             |]

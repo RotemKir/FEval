@@ -127,6 +127,14 @@ module Inspectors =
         | Post -> 
             sprintf "Coerced %s to %s" <| formatType expr.Type <| formatType coerceType
     
+    let private formatNewObject stage (constructorInfo, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating new object %s" <| formatCtor constructorInfo
+        | Post -> 
+            sprintf "Created new object %s" 
+            <| formatType constructorInfo.DeclaringType
+
     let private getExprDispalyValue stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -141,7 +149,7 @@ module Inspectors =
         | Let letState -> formatLetExpr stage letState state
         //| LetRecursive        _ -> "LetRecursive"
         //| NewArray            _ -> "NewArray"
-        //| NewObject           _ -> "NewObject"
+        | NewObject  newObjectState -> formatNewObject stage newObjectState state
         | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
         | NewTuple  _ -> formatNewTupleExpr stage expr.Type state
         | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state

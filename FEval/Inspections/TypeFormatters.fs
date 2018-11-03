@@ -6,6 +6,13 @@ module TypeFormatters =
     open System
     open System.Reflection
 
+    // Private functions
+
+    let private getParameterTypes =
+        Array.map (fun (p : ParameterInfo) -> p.ParameterType)
+
+    // Public functions
+    
     let (|IsOption|_|) (valueType : Type) =
         if valueType.Name = "FSharpOption`1"
         then Some valueType
@@ -21,20 +28,23 @@ module TypeFormatters =
         then Some valueType
         else None
 
-    let formatGenericTypeArguments typeFormatter (declaringType : Type) separator =
-        Array.map typeFormatter declaringType.GenericTypeArguments
+    let formatTypes types separator typeFormatter =
+        Array.map typeFormatter types
         |> String.concat separator
 
-    let formatTupleType typeFormatter tupleType =
-        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter tupleType ", "
+    let formatGenericTypeArguments (declaringType : Type) =
+        formatTypes declaringType.GenericTypeArguments
 
-    let formatFunctionType typeFormatter functionType =
-        sprintf "(%s)" <| formatGenericTypeArguments typeFormatter functionType " -> "
+    let formatTupleType tupleType typeFormatter =
+        sprintf "(%s)" <| formatGenericTypeArguments tupleType ", " typeFormatter
+
+    let formatFunctionType functionType typeFormatter  =
+        sprintf "(%s)" <| formatGenericTypeArguments functionType " -> " typeFormatter
 
     let rec formatType (valueType : Type) =
         match valueType with
-        | IsFunction t -> formatFunctionType formatType t
-        | IsTuple t    -> formatTupleType formatType t
+        | IsFunction t -> formatFunctionType t formatType 
+        | IsTuple t    -> formatTupleType t formatType 
         | IsOption _   -> "Option"
         | t            -> t.Name
         
@@ -53,3 +63,11 @@ module TypeFormatters =
         match instanceExpr with
         | Some instance -> sprintf "%s.%s" (formatType instance.Type) methodInfo.Name
         | None          -> methodInfo.Name
+
+    let formatParameters parameters =
+        formatTypes <| getParameterTypes parameters <| ", " <| formatType
+
+    let formatCtor (constructorInfo : ConstructorInfo) =
+        sprintf "%s (%s)" 
+        <| formatType constructorInfo.DeclaringType 
+        <| formatParameters (constructorInfo.GetParameters())
