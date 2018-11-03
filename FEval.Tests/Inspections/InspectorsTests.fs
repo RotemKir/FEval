@@ -20,7 +20,7 @@ type InspectorsTest() =
 
     let assertMessages (expected : string array) (actual : List<string>) =
         Assert.AreEqual(expected.Length, actual.Count)
-        Array.iteri (fun i s -> StringAssert.Contains(actual.[i], s)) expected
+        Array.iteri (fun i s -> StringAssert.Contains(actual.[i], s, sprintf "Item %i" i)) expected
 
     let assertInspectors expr createInspectors expectedMessages =
         let messageList = new List<string>()
@@ -150,7 +150,7 @@ type InspectorsTest() =
                 "End - Get value 3 : Int32"
                 "Start - Calling Int32.ToString"
                 "Start - Get variable x : Int32"
-                "End - Get variable x, Returned 3 : Int32"                
+                "End - Get variable x, Returned 3 : Int32"
                 "End - Called Int32.ToString, Returned \"3\" : String" 
                 "End - Let x returned \"3\" : String"
             |]
@@ -166,9 +166,9 @@ type InspectorsTest() =
                 "End - Get value \"Hello\" : String"
                 "Start - Coercing String to Object"
                 "Start - Get variable x : String"
-                "End - Get variable x, Returned \"Hello\" : String"                
+                "End - Get variable x, Returned \"Hello\" : String"
                 "End - Coerced String to Object"
-                "End - Let x returned \"Hello\" : Object"
+                "End - Let x returned \"Hello\" : String (Object)"
             |]
         
     [<TestMethod>]
@@ -181,4 +181,22 @@ type InspectorsTest() =
                 "Start - Get value \"Hello\" : String"
                 "End - Get value \"Hello\" : String"
                 "End - Created new object ChildClass"
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - get property``() = 
+        assertInspectors
+            <@ let x = new ChildClass("Hello") in x.NameProperty @>
+            (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : ChildClass"
+                "Start - Creating new object ChildClass (String)"
+                "Start - Get value \"Hello\" : String"
+                "End - Get value \"Hello\" : String"
+                "End - Created new object ChildClass"
+                "Start - Get property ChildClass.NameProperty"
+                "Start - Get variable x : ChildClass"
+                "End - Get variable x, Returned ChildClass"
+                "End - Get property ChildClass.NameProperty, Returned \"Hello\" : String"
+                "End - Let x returned \"Hello\" : String"
             |]

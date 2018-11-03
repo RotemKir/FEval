@@ -28,6 +28,18 @@ module TypeFormatters =
         then Some valueType
         else None
 
+    let (|IsObject|_|) valueType =
+        if valueType = typeof<obj>
+        then Some valueType
+        else None
+
+    let (|HasToString|_|) (valueType : Type) =
+        let toStringMethod = valueType.GetMethod("ToString", [||])
+        
+        if toStringMethod.DeclaringType = typeof<obj>
+        then None
+        else Some valueType
+
     let formatTypes types separator typeFormatter =
         Array.map typeFormatter types
         |> String.concat separator
@@ -43,27 +55,50 @@ module TypeFormatters =
 
     let rec formatType (valueType : Type) =
         match valueType with
+        // Format functions as arrow notation (a -> b -> c) where a,b,c are types
         | IsFunction t -> formatFunctionType t formatType 
+        // Format tuples as (a, b, c)  where a,b,c are types
         | IsTuple t    -> formatTupleType t formatType 
+        // Format Option specifically instead of the default which is FSharpOption`1
         | IsOption _   -> "Option"
+        // Return the type name since no special formatting exists
         | t            -> t.Name
         
-    let formatValue value valueType =
+    let rec formatValue value valueType =
         match valueType with
-        | IsFunction t                 -> formatType t
-        | IsOption t when value = null -> sprintf "None : %s" <| formatType t
-        | t                            -> sprintf "%A : %s" value <| formatType t
+        // If null object format as null since we can't unbox an actual value
+        | IsObject _ when value = null        -> "null : Object"
+        // If value is actually object, format as Object to prevent stack overflow
+        | IsObject t when value.GetType() = t -> "Object"
+        // If object, call this method again with the actual value type
+        | IsObject _                          -> sprintf "%s (Object)" <| (formatValue value <| value.GetType())
+        // Format functions as arrow notation (a -> b -> c)
+        | IsFunction t                        -> formatType t
+        // Format null option as None, otherwise we'll show null
+        | IsOption t when value = null        -> sprintf "None : %s" <| formatType t
+        // If the type overrides ToString use it to format the value
+        | HasToString _                       -> sprintf "%A : %s" value <| formatType valueType
+        // Format only the type since no special formatting exists
+        | t                                   -> formatType t
 
     let formatStateLastValue state =
         formatValue <| Evaluator.getLastValue state
 
     let formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
-        
-    let formatMethodDisplayName (instanceExpr : Expr option) (methodInfo : MethodInfo) =
+    
+    let formatInstancePrefix (instanceExpr : Expr option) =
         match instanceExpr with
-        | Some instance -> sprintf "%s.%s" (formatType instance.Type) methodInfo.Name
-        | None          -> methodInfo.Name
+        | Some instance -> sprintf "%s." <| formatType instance.Type
+        | None          -> String.Empty
+
+    let formatWithInstance formattedMember instanceExpr =
+        sprintf "%s%s" 
+        <| formatInstancePrefix instanceExpr
+        <| formattedMember
+
+    let formatMethodDisplayName (methodInfo : MethodInfo) =
+        formatWithInstance methodInfo.Name
 
     let formatParameters parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
@@ -72,3 +107,7 @@ module TypeFormatters =
         sprintf "%s (%s)" 
         <| formatType constructorInfo.DeclaringType 
         <| formatParameters (constructorInfo.GetParameters())
+
+    let formatProperty (propertyInfo : PropertyInfo) =
+        formatWithInstance propertyInfo.Name
+ 

@@ -61,10 +61,10 @@ module Inspectors =
         match stage with
         | Pre  -> 
             sprintf "Calling %s" 
-            <| formatMethodDisplayName instanceExpr methodInfo
+            <| formatMethodDisplayName methodInfo instanceExpr
         | Post -> 
             sprintf "Called %s, Returned %s" 
-            <| formatMethodDisplayName instanceExpr methodInfo
+            <| formatMethodDisplayName methodInfo instanceExpr
             <| formatStateLastValue state methodInfo.ReturnType
 
     let private formatNewUnionCaseExpr stage (unionCaseInfo : UnionCaseInfo, _) state =
@@ -98,7 +98,8 @@ module Inspectors =
     let private formatVariableExpr stage variable state =
         match stage with
         | Pre  -> 
-            sprintf "Get variable %s" <| formatVariable variable
+            sprintf "Get variable %s" 
+            <| formatVariable variable
         | Post -> 
             sprintf "Get variable %s, Returned %s" 
             <| variable.Name
@@ -135,6 +136,16 @@ module Inspectors =
             sprintf "Created new object %s" 
             <| formatType constructorInfo.DeclaringType
 
+    let private formatPropertyGet stage (instanceExpr, propertyInfo, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Get property %s" 
+            <| formatProperty propertyInfo instanceExpr
+        | Post -> 
+            sprintf "Get property %s, Returned %s"
+            <| formatProperty propertyInfo instanceExpr
+            <| formatStateLastValue state propertyInfo.PropertyType
+            
     let private getExprDispalyValue stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -153,7 +164,7 @@ module Inspectors =
         | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
         | NewTuple  _ -> formatNewTupleExpr stage expr.Type state
         | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state
-        //| PropertyGet         _ -> "PropertyGet"
+        | PropertyGet propertyGetState -> formatPropertyGet stage propertyGetState state
         //| PropertySet         _ -> "PropertySet"
         //| QuoteRaw            _ -> "QuoteRaw"
         //| QuoteTyped          _ -> "QuoteTyped"
