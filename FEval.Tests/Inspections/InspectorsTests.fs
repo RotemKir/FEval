@@ -55,8 +55,8 @@ type InspectorsTest() =
             <@ None @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating None : Option"
-                "End - Created None : Option" 
+                "Start - Creating None : Option<Object>"
+                "End - Created None : Option<Object>" 
             |]
             
     [<TestMethod>]
@@ -65,10 +65,10 @@ type InspectorsTest() =
             <@ Some 16 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating Some : Option"
+                "Start - Creating Some : Option<Int32>"
                 "Start - Get value 16 : Int32" 
                 "End - Get value 16 : Int32" 
-                "End - Created Some 16 : Option" 
+                "End - Created Some 16 : Option<Int32>" 
             |]
             
     [<TestMethod>]

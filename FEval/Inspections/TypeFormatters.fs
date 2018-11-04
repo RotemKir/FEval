@@ -11,6 +11,19 @@ module TypeFormatters =
     let private getParameterTypes =
         Array.map (fun (p : ParameterInfo) -> p.ParameterType)
 
+    let private typeNameOverrides = 
+        new Map<string, string>
+            [|
+                ("FSharpOption`1", "Option")
+                ("FSharpList`1"  , "List")
+                ("FSharpMap`2"   , "Map")
+            |]      
+
+    let private getTypeNameOverride typeName =
+        match Map.tryFind typeName typeNameOverrides with
+        | Some s -> s
+        | None   -> typeName
+
     // Public functions
     
     let (|IsOption|_|) (valueType : Type) =
@@ -32,6 +45,11 @@ module TypeFormatters =
         if valueType = typeof<obj>
         then Some valueType
         else None
+        
+    let (|IsGenericType|_|) (valueType : Type) =
+        if valueType.IsGenericType
+        then Some valueType
+        else None
 
     let (|HasToString|_|) (valueType : Type) =
         let toStringMethod = valueType.GetMethod("ToString", [||])
@@ -40,7 +58,7 @@ module TypeFormatters =
         then None
         else Some valueType
 
-    let formatTypes types separator typeFormatter =
+    let formatTypes (types : Type array) separator typeFormatter =
         Array.map typeFormatter types
         |> String.concat separator
 
@@ -53,16 +71,21 @@ module TypeFormatters =
     let formatFunctionType functionType typeFormatter  =
         sprintf "(%s)" <| formatGenericTypeArguments functionType " -> " typeFormatter
 
+    let formatGenericType (genericType : Type) typeFormatter =
+        sprintf "%s<%s>" 
+        <| getTypeNameOverride genericType.Name
+        <| formatGenericTypeArguments genericType ", " typeFormatter
+
     let rec formatType (valueType : Type) =
         match valueType with
         // Format functions as arrow notation (a -> b -> c) where a,b,c are types
-        | IsFunction t -> formatFunctionType t formatType 
+        | IsFunction t    -> formatFunctionType t formatType 
         // Format tuples as (a, b, c)  where a,b,c are types
-        | IsTuple t    -> formatTupleType t formatType 
-        // Format Option specifically instead of the default which is FSharpOption`1
-        | IsOption _   -> "Option"
+        | IsTuple t       -> formatTupleType t formatType 
+        // Format generic types as a<b,c> where a is the type name and b,c are the type arguments
+        | IsGenericType t -> formatGenericType t formatType
         // Return the type name since no special formatting exists
-        | t            -> t.Name
+        | t               -> t.Name
         
     let rec formatValue value valueType =
         match valueType with

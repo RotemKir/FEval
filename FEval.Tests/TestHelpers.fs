@@ -50,3 +50,10 @@ module TestHelpers =
     type Union = UnionA | UnionB | UnionC
 
     exception TestException of string
+    
+    type ClassWithTostring(name : string) =
+        member this.name = name
+        override this.ToString() = name
+
+    type InheritsClassWithTostring(name : string) =
+        inherit ClassWithTostring(name)

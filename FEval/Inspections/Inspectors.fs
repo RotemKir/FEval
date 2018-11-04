@@ -7,7 +7,6 @@ module Inspectors =
     open Microsoft.FSharp.Reflection
     open System
     open System.IO
-    open System.Reflection
 
     type InpectionStage = Pre | Post
 
