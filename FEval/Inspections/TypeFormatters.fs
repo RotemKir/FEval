@@ -19,10 +19,15 @@ module TypeFormatters =
                 ("FSharpMap`2"   , "Map")
             |]      
 
+    let private normalizeGenericTypeName (typeName :String) =
+        if typeName.IndexOf('`') > -1 
+        then typeName.Split('`').[0]
+        else typeName
+
     let private getTypeNameOverride typeName =
         match Map.tryFind typeName typeNameOverrides with
         | Some s -> s
-        | None   -> typeName
+        | None   -> normalizeGenericTypeName typeName
 
     // Public functions
     
