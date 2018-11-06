@@ -43,10 +43,10 @@ type InspectorsTest() =
             <@ abs -3 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Calling Operators.Abs"
+                "Start - Calling Operators.Abs(Int32)"
                 "Start - Get value -3 : Int32"
                 "End - Get value -3 : Int32"
-                "End - Called Operators.Abs, Returned 3 : Int32" 
+                "End - Called Operators.Abs(Int32), Returned 3 : Int32" 
             |]
 
     [<TestMethod>]
@@ -129,12 +129,12 @@ type InspectorsTest() =
                 "End - Get variable f, Returned (Int32 -> Int32)"
                 "Start - Get value 3 : Int32"
                 "End - Get value 3 : Int32"
-                "Start - Calling Operators.op_Addition"
+                "Start - Calling Operators.op_Addition(Int32, Int32)"
                 "Start - Get variable x : Int32"
                 "End - Get variable x, Returned 3 : Int32"
                 "Start - Get value 1 : Int32"
                 "End - Get value 1 : Int32"
-                "End - Called Operators.op_Addition, Returned 4 : Int32"
+                "End - Called Operators.op_Addition(Int32, Int32), Returned 4 : Int32"
                 "End - Applyied function (Int32 -> Int32), Returned 4 : Int32"
                 "End - Let f returned 4 : Int32"
             |]
@@ -148,10 +148,10 @@ type InspectorsTest() =
                 "Start - Let x : Int32"
                 "Start - Get value 3 : Int32"
                 "End - Get value 3 : Int32"
-                "Start - Calling Int32.ToString"
+                "Start - Calling Int32.ToString()"
                 "Start - Get variable x : Int32"
                 "End - Get variable x, Returned 3 : Int32"
-                "End - Called Int32.ToString, Returned \"3\" : String" 
+                "End - Called Int32.ToString(), Returned \"3\" : String" 
                 "End - Let x returned \"3\" : String"
             |]
 

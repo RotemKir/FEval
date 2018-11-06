@@ -63,10 +63,10 @@ module Inspectors =
         match stage with
         | Pre  -> 
             sprintf "Calling %s" 
-            <| formatMethodDisplayName methodInfo instanceExpr
+            <| formatMethod methodInfo instanceExpr
         | Post -> 
             sprintf "Called %s, Returned %s" 
-            <| formatMethodDisplayName methodInfo instanceExpr
+            <| formatMethod methodInfo instanceExpr
             <| formatStateLastValue state methodInfo.ReturnType
 
     let private formatNewUnionCaseExpr stage (unionCaseInfo : UnionCaseInfo, _) state =

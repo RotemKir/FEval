@@ -117,24 +117,19 @@ module TypeFormatters =
         | Some expr -> expr.Type
         | None      -> declaringType
 
-    let formatWithTypePrefix formattedMember declaringType =
-        sprintf "%s.%s" 
-        <| formatType declaringType
-        <| formattedMember
-
-    let formatMethodDisplayName (methodInfo : MethodInfo) instanceExpr =
-        getDeclaringType instanceExpr methodInfo.DeclaringType
-        |> formatWithTypePrefix methodInfo.Name
-
     let formatParameters parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
 
+    let formatMethod (methodInfo : MethodInfo) instanceExpr =
+        let typeName = formatType <| getDeclaringType instanceExpr methodInfo.DeclaringType
+        let parameters = formatParameters <| methodInfo.GetParameters()
+        sprintf "%s.%s(%s)" typeName methodInfo.Name parameters 
+        
     let formatCtor (constructorInfo : ConstructorInfo) =
         sprintf "%s (%s)" 
         <| formatType constructorInfo.DeclaringType 
         <| formatParameters (constructorInfo.GetParameters())
 
     let formatProperty (propertyInfo : PropertyInfo) instanceExpr =
-        getDeclaringType instanceExpr propertyInfo.DeclaringType
-        |> formatWithTypePrefix propertyInfo.Name
- 
+        let typeName = formatType <| getDeclaringType instanceExpr propertyInfo.DeclaringType
+        sprintf "%s.%s" typeName propertyInfo.Name 
