@@ -109,9 +109,6 @@ module TypeFormatters =
         // Format only the type since no special formatting exists
         | t                                   -> formatType t
 
-    let formatStateLastValue state =
-        formatValue <| Evaluator.getLastValue state
-
     let formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
     

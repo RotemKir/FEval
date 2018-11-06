@@ -53,6 +53,9 @@ module Inspectors =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
+    let private formatStateLastValue state =
+        formatValue <| Evaluator.getLastValue state
+
     let private formatValueExpr (value, valueType : Type) =
         sprintf "Get value %s" <| formatValue value valueType 
             
