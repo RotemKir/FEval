@@ -43,10 +43,10 @@ type InspectorsTest() =
             <@ abs -3 @>
             (fun list -> [| performanceInspector <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Calling Abs"
+                "Start - Calling Operators.Abs"
                 "Start - Get value -3 : Int32"
                 "End - Get value -3 : Int32"
-                "End - Called Abs, Returned 3 : Int32" 
+                "End - Called Operators.Abs, Returned 3 : Int32" 
             |]
 
     [<TestMethod>]
@@ -129,12 +129,12 @@ type InspectorsTest() =
                 "End - Get variable f, Returned (Int32 -> Int32)"
                 "Start - Get value 3 : Int32"
                 "End - Get value 3 : Int32"
-                "Start - Calling op_Addition"
+                "Start - Calling Operators.op_Addition"
                 "Start - Get variable x : Int32"
                 "End - Get variable x, Returned 3 : Int32"
                 "Start - Get value 1 : Int32"
                 "End - Get value 1 : Int32"
-                "End - Called op_Addition, Returned 4 : Int32"
+                "End - Called Operators.op_Addition, Returned 4 : Int32"
                 "End - Applyied function (Int32 -> Int32), Returned 4 : Int32"
                 "End - Let f returned 4 : Int32"
             |]

@@ -5,10 +5,14 @@ open FEval.TypeFormatters
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
 open Microsoft.FSharp.Reflection
+open Microsoft.FSharp.Quotations
 
 [<TestClass>]
 type TypeFormattersTests() =
     let mockTypeFormatter (t : Type) = t.Name
+
+    member this.createValueExpr<'a>() =
+        Some <| Expr.Value (null, typeof<'a>)
 
     [<TestMethod>]
     member this.``IsOption - type is not option - doesn't match``() = 
@@ -348,3 +352,38 @@ type TypeFormattersTests() =
     member this.``formatValue - value is class with ToString - returns ToString : class name``() = 
         let result = formatValue <| (new ClassWithTostring("Hello") :> obj )<| typeof<ClassWithTostring>
         Assert.AreEqual("Hello : ClassWithTostring", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is int - returns name : Int32``() = 
+        let result = formatVariable <| new Var("number", typeof<int>)
+        Assert.AreEqual("number : Int32", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is tuple - returns name : tuple type``() = 
+        let result = formatVariable <| new Var("tuple", typeof<int * string>)
+        Assert.AreEqual("tuple : (Int32, String)", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is function - returns name : function type``() = 
+        let result = formatVariable <| new Var("func", typeof<int -> string>)
+        Assert.AreEqual("func : (Int32 -> String)", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is list - returns name : list type``() = 
+        let result = formatVariable <| new Var("list", typeof<int list>)
+        Assert.AreEqual("list : List<Int32>", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is record - returns name : record type``() = 
+        let result = formatVariable <| new Var("person", typeof<Person>)
+        Assert.AreEqual("person : Person", result)
+        
+    [<TestMethod>]
+    member this.``formatVariable - variable type is union - returns name : union type``() = 
+        let result = formatVariable <| new Var("some union", typeof<Union>)
+        Assert.AreEqual("some union : Union", result)
+
+    [<TestMethod>]
+    member this.``formatVariable - variable type is class - returns name : class type``() = 
+        let result = formatVariable <| new Var("some class", typeof<ChildClass>)
+        Assert.AreEqual("some class : ChildClass", result)
