@@ -420,6 +420,17 @@ type TypeFormattersTests() =
         let result = formatMethod 
                         (typeof<string>.GetMethod("Insert"))
                         <| this.createValueExpr<int>()
-
         Assert.AreEqual("Int32.Insert(Int32, String)", result)
         
+    [<TestMethod>]
+    member this.``formatCtor - has no parameters - returns type name with ()``() = 
+        let result = formatCtor (typeof<Exception>.GetConstructor([||]))
+        Assert.AreEqual("Exception()", result)
+        
+    [<TestMethod>]
+    member this.``formatCtor - has parameters - returns type name with parameters ()``() = 
+        let result = 
+            formatCtor 
+                (typeof<Exception>.GetConstructor([|typeof<string> ; typeof<Exception> |]))
+        Assert.AreEqual("Exception(String, Exception)", result)
+    

@@ -126,7 +126,7 @@ module TypeFormatters =
         sprintf "%s.%s(%s)" typeName methodInfo.Name parameters 
         
     let formatCtor (constructorInfo : ConstructorInfo) =
-        sprintf "%s (%s)" 
+        sprintf "%s(%s)" 
         <| formatType constructorInfo.DeclaringType 
         <| formatParameters (constructorInfo.GetParameters())
 

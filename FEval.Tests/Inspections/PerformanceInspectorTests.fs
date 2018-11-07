@@ -177,7 +177,7 @@ type PerformanceInspectorTests() =
             <@ new ChildClass("Hello") @>
             (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating new object ChildClass (String)"
+                "Start - Creating new object ChildClass(String)"
                 "Start - Get value \"Hello\" : String"
                 "End - Get value \"Hello\" : String"
                 "End - Created new object ChildClass"
@@ -190,7 +190,7 @@ type PerformanceInspectorTests() =
             (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Let x : ChildClass"
-                "Start - Creating new object ChildClass (String)"
+                "Start - Creating new object ChildClass(String)"
                 "Start - Get value \"Hello\" : String"
                 "End - Get value \"Hello\" : String"
                 "End - Created new object ChildClass"
