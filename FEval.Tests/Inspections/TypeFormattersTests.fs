@@ -434,3 +434,14 @@ type TypeFormattersTests() =
                 (typeof<Exception>.GetConstructor([|typeof<string> ; typeof<Exception> |]))
         Assert.AreEqual("Exception(String, Exception)", result)
     
+    [<TestMethod>]
+    member this.``formatProperty - has instance - returns instance type name and property name()``() = 
+        let result = formatProperty 
+                        (typeof<Exception>.GetProperty("Message")) 
+                        <| this.createValueExpr<string>()
+        Assert.AreEqual("String.Message", result)
+    
+    [<TestMethod>]
+    member this.``formatProperty - has no instance - returns declaring type name and property name()``() = 
+        let result = formatProperty (typeof<Exception>.GetProperty("Message")) None
+        Assert.AreEqual("Exception.Message", result)
