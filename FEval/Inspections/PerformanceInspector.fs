@@ -1,6 +1,8 @@
 ﻿namespace FEval
 
-module Inspectors =
+[<RequireQualifiedAccess>]
+module PerformanceInspector =
+    open FEval.CommonInpections
     open FEval.TypeFormatters
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
@@ -8,9 +10,7 @@ module Inspectors =
     open System
     open System.IO
 
-    type InpectionStage = Pre | Post
-
-    type PerformanceInspectorConfig =
+    type Config =
         {
             HandleMessage : string -> unit
             PreMessageFormatter : DateTime -> Expr -> EvaluationState -> string
@@ -189,12 +189,12 @@ module Inspectors =
     
     // Public functions
 
-    let defaultPerformancePreMessageFormatter time expr state =
+    let defaultPreMessageFormatter time expr state =
         sprintf "%O - Start - %s" 
             time
             <| getExprDispalyValue Pre expr state
         
-    let defaultPostformancePreMessageFormatter time expr state (elapsed : TimeSpan) =
+    let defaultPostMessageFormatter time expr state (elapsed : TimeSpan) =
         sprintf "%O - End - %s, Elapsed - %.3f ms" 
             time 
             <| getExprDispalyValue Post expr state
@@ -203,15 +203,15 @@ module Inspectors =
     let saveToFile fileName message =
         File.AppendAllText (fileName, message)
 
-    let performanceInspector config expr state =
+    let createNew config expr state =
         let startTime = DateTime.Now
         config.HandleMessage <| config.PreMessageFormatter startTime expr state
         Some <| postPerformanceInspector config startTime
 
     let filePerformanceInspector fileName =
-        performanceInspector 
+        createNew 
             {
                 HandleMessage = saveToFile fileName
-                PreMessageFormatter = defaultPerformancePreMessageFormatter
-                PostMessageFormatter = defaultPostformancePreMessageFormatter
+                PreMessageFormatter = defaultPreMessageFormatter
+                PostMessageFormatter = defaultPostMessageFormatter
             }

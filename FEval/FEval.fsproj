@@ -50,7 +50,8 @@
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
     <Compile Include="Inspections\TypeFormatters.fs" />
-    <Compile Include="Inspections\Inspectors.fs" />
+    <Compile Include="Inspections\CommonInspections.fs" />
+    <Compile Include="Inspections\PerformanceInspector.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>
