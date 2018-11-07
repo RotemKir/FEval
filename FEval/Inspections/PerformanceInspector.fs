@@ -2,7 +2,7 @@
 
 [<RequireQualifiedAccess>]
 module PerformanceInspector =
-    open FEval.CommonInpections
+    open FEval.CommonInspections
     open FEval.TypeFormatters
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
