@@ -120,6 +120,11 @@ module TypeFormatters =
     let formatParameters parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
 
+    let formatIndexerParameters parameters =
+        match parameters with
+        | [||] -> String.Empty
+        | _    -> sprintf "[%s]" <| formatParameters parameters
+
     let formatMethod (methodInfo : MethodInfo) instanceExpr =
         let typeName = formatType <| getDeclaringType instanceExpr methodInfo.DeclaringType
         let parameters = formatParameters <| methodInfo.GetParameters()
@@ -132,4 +137,5 @@ module TypeFormatters =
 
     let formatProperty (propertyInfo : PropertyInfo) instanceExpr =
         let typeName = formatType <| getDeclaringType instanceExpr propertyInfo.DeclaringType
-        sprintf "%s.%s" typeName propertyInfo.Name 
+        let parameters = formatIndexerParameters <| propertyInfo.GetIndexParameters()
+        sprintf "%s.%s%s" typeName propertyInfo.Name parameters

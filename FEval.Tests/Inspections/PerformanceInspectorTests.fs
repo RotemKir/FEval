@@ -231,3 +231,24 @@ type PerformanceInspectorTests() =
                 "End   - Let child returned \"World\" : String"
             |]
             
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - get indexer property``() = 
+        assertInspectors
+            <@ 
+            let indexerClass = new IndexerClass()
+            indexerClass.[2]
+            @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let indexerClass : IndexerClass"
+                "Start - Creating new object IndexerClass()"
+                "End   - Created new object IndexerClass"
+                "Start - Get property IndexerClass.Item"
+                "Start - Get variable indexerClass : IndexerClass"
+                "End   - Get variable indexerClass, Returned IndexerClass"
+                "Start - Get value 2 : Int32"
+                "End   - Get value 2 : Int32"
+                "End   - Get property IndexerClass.Item[Int32]"
+                "End   - Let indexerClass returned \"three\" : String"
+            |]
+            

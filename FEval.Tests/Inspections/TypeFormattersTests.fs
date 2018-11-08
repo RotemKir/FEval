@@ -445,3 +445,24 @@ type TypeFormattersTests() =
     member this.``formatProperty - has no instance - returns declaring type name and property name()``() = 
         let result = formatProperty (typeof<Exception>.GetProperty("Message")) None
         Assert.AreEqual("Exception.Message", result)
+        
+    [<TestMethod>]
+    member this.``formatParameters - has no parameters - returns empty string``() = 
+        let result = formatParameters (typeof<int>.GetMethod("GetHashCode").GetParameters())
+        Assert.AreEqual(String.Empty, result)
+        
+    [<TestMethod>]
+    member this.``formatParameters - has parameters - returns types separated by ,``() = 
+        let result = formatParameters (typeof<string>.GetMethod("Insert").GetParameters())
+        Assert.AreEqual("Int32, String", result)
+        
+    [<TestMethod>]
+    member this.``formatIndexerParameters - has no parameters - returns empty string``() = 
+        let result = formatIndexerParameters (typeof<BaseClass>.GetProperty("NameProperty").GetIndexParameters())
+        Assert.AreEqual(String.Empty, result)
+        
+    [<TestMethod>]
+    member this.``formatIndexerParameters - has parameters - returns [types separated by ,]``() = 
+        let result = formatIndexerParameters (typeof<IndexerClass>.GetProperty("Item").GetIndexParameters())
+        Assert.AreEqual("[Int32]", result)
+        
