@@ -813,7 +813,7 @@ type EvaluationsTest() =
      Let (finalized, Value (false),
           Sequential (TryFinally (VarSet (tried, Value (true)),
                                   VarSet (finalized, Value (true))),
-                      IfThenElse (tried, finalized, Value (false)))))
+                      NewTuple (tried, finalized))))
     *)    
     [<TestMethod>]
     member this.``Evaluate try finally``() = 
