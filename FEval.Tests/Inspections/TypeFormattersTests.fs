@@ -78,7 +78,6 @@ type TypeFormattersTests() =
         | IsGenericType t -> Assert.AreEqual(typeof<int list>, t)
         | _               -> Assert.Fail("Shouldn't match this")
 
-
     [<TestMethod>]
     member this.``HasToString - type is object - doesn't match``() = 
         match typeof<obj> with
@@ -111,8 +110,8 @@ type TypeFormattersTests() =
           
     [<TestMethod>]
     member this.``HasToString - type is class with ToString - matches``() = 
-        match typeof<ClassWithTostring> with
-        | HasToString t -> Assert.AreEqual(typeof<ClassWithTostring>, t)
+        match typeof<ClassWithToString> with
+        | HasToString t -> Assert.AreEqual(typeof<ClassWithToString>, t)
         | _             -> Assert.Fail("Shouldn't match this")
         
     [<TestMethod>]
@@ -126,6 +125,18 @@ type TypeFormattersTests() =
         match typeof<BaseClass> with
         | HasToString t -> Assert.Fail("Shouldn't match this")
         | _             -> ignore()
+        
+    [<TestMethod>]
+    member this.``HasToString - type is struct - doesn't match``() = 
+        match typeof<Struct> with
+        | HasToString t -> Assert.Fail("Shouldn't match this")
+        | _             -> ignore()
+
+    [<TestMethod>]
+    member this.``HasToString - type is struct with ToString - matches``() = 
+        match typeof<StructWithToString> with
+        | HasToString t -> Assert.AreEqual(typeof<StructWithToString>, t)
+        | _             -> Assert.Fail("Shouldn't match this")
             
     [<TestMethod>]
     member this.``formatTypes - empty types array - returns empty string``() = 
@@ -350,9 +361,9 @@ type TypeFormattersTests() =
         
     [<TestMethod>]
     member this.``formatValue - value is class with ToString - returns ToString : class name``() = 
-        let result = formatValue <| (new ClassWithTostring("Hello") :> obj )<| typeof<ClassWithTostring>
-        Assert.AreEqual("Hello : ClassWithTostring", result)
-        
+        let result = formatValue <| (new ClassWithToString("Hello") :> obj )<| typeof<ClassWithToString>
+        Assert.AreEqual("Hello : ClassWithToString", result)
+ 
     [<TestMethod>]
     member this.``formatVariable - variable type is int - returns name : Int32``() = 
         let result = formatVariable <| new Var("number", typeof<int>)

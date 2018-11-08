@@ -22,8 +22,12 @@ module PerformanceInspector =
     let private formatStateLastValue state =
         formatValue <| Evaluator.getLastValue state
 
-    let private formatValueExpr (value, valueType : Type) =
-        sprintf "Get value %s" <| formatValue value valueType 
+    let private formatValueExpr stage (value, valueType : Type) =
+        match stage with
+        | Pre  -> 
+            sprintf "Getting value %s" <| formatValue value valueType 
+        | Post -> 
+            sprintf "Got value %s" <| formatValue value valueType 
             
     let private formatCallExpr stage (instanceExpr, methodInfo, _) state =
         match stage with
@@ -66,10 +70,10 @@ module PerformanceInspector =
     let private formatVariableExpr stage variable state =
         match stage with
         | Pre  -> 
-            sprintf "Get variable %s" 
+            sprintf "Getting variable %s" 
             <| formatVariable variable
         | Post -> 
-            sprintf "Get variable %s, Returned %s" 
+            sprintf "Got variable %s, Returned %s" 
             <| variable.Name
             <| formatStateLastValue state variable.Type
     
@@ -107,17 +111,17 @@ module PerformanceInspector =
     let private formatPropertyGet stage (instanceExpr, propertyInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Get property %s" 
+            sprintf "Getting property %s" 
             <| formatProperty propertyInfo instanceExpr
         | Post -> 
-            sprintf "Get property %s, Returned %s"
+            sprintf "Got property %s, Returned %s"
             <| formatProperty propertyInfo instanceExpr
             <| formatStateLastValue state propertyInfo.PropertyType
     
     let private formatPropertySet stage (instanceExpr, propertyInfo, _, _) =
         match stage with
         | Pre  -> 
-            sprintf "Set property %s" 
+            sprintf "Setting property %s" 
             <| formatProperty propertyInfo instanceExpr
         | Post -> 
             sprintf "Set property %s"
@@ -134,12 +138,21 @@ module PerformanceInspector =
             <| getExprName firstExpr
             <| getExprName secondExpr
 
+    let private formatDefaultValue stage defaultValueType =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating default value for %s" 
+            <| formatType defaultValueType
+        | Post -> 
+            sprintf "Created default value for %s" 
+            <| formatType defaultValueType
+        
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
         | Call          callState -> formatCallExpr stage callState state
         | Coerce            coerceState -> formatCoerceExpr stage coerceState
-        //| DefaultValue        _ -> "DefaultValue"
+        | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
         //| FieldGet            _ -> "FieldGet"
         //| FieldSet            _ -> "FieldSet"
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
@@ -162,7 +175,7 @@ module PerformanceInspector =
         //| TupleGet            _ -> "TupleGet"
         //| TypeTest            _ -> "TypeTest"
         //| UnionCaseTest       _ -> "UnionCaseTest"
-        | Value valueState -> formatValueExpr valueState
+        | Value valueState -> formatValueExpr stage valueState
         //| VarSet              _ -> "VarSet"
         | Var variable -> formatVariableExpr stage variable state
         //| WhileLoop           _ -> "WhileLoop"

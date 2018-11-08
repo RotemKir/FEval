@@ -34,7 +34,6 @@ module TestHelpers =
     type Struct =
         struct
             val StructName : string
-           // new (name : string) = { StructName = name }
         end
 
     type FieldClass =
@@ -51,9 +50,15 @@ module TestHelpers =
 
     exception TestException of string
     
-    type ClassWithTostring(name : string) =
+    type ClassWithToString(name : string) =
         member this.name = name
         override this.ToString() = name
 
     type InheritsClassWithTostring(name : string) =
-        inherit ClassWithTostring(name)
+        inherit ClassWithToString(name)
+        
+    type StructWithToString =
+        struct
+            val StructName : string
+            override this.ToString() = this.StructName
+        end

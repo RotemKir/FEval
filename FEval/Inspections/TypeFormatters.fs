@@ -59,7 +59,8 @@ module TypeFormatters =
     let (|HasToString|_|) (valueType : Type) =
         let toStringMethod = valueType.GetMethod("ToString", [||])
         
-        if toStringMethod.DeclaringType = typeof<obj>
+        if toStringMethod.DeclaringType = typeof<obj> || 
+           toStringMethod.DeclaringType = typeof<ValueType>
         then None
         else Some valueType
 
