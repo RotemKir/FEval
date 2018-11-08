@@ -19,40 +19,6 @@ module PerformanceInspector =
 
     // Private functions
 
-    let private getExprName expr =
-        match expr with
-        | Application         _ -> "Application"
-        | Call                _ -> "Call"
-        | Coerce              _ -> "Coerce"
-        | DefaultValue        _ -> "DefaultValue"
-        | FieldGet            _ -> "FieldGet"
-        | FieldSet            _ -> "FieldSet"
-        | ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
-        | IfThenElse          _ -> "IfThenElse"
-        | Lambda              _ -> "Lambda"
-        | Let                 _ -> "Let"
-        | LetRecursive        _ -> "LetRecursive"
-        | NewArray            _ -> "NewArray"
-        | NewObject           _ -> "NewObject"
-        | NewRecord           _ -> "NewRecord"
-        | NewTuple            _ -> "NewTuple"
-        | NewUnionCase        _ -> "NewUnionCase"
-        | PropertyGet         _ -> "PropertyGet"
-        | PropertySet         _ -> "PropertySet"
-        | QuoteRaw            _ -> "QuoteRaw"
-        | QuoteTyped          _ -> "QuoteTyped"
-        | Sequential          _ -> "Sequential"
-        | TryFinally          _ -> "TryFinally"
-        | TryWith             _ -> "TryWith"
-        | TupleGet            _ -> "TupleGet"
-        | TypeTest            _ -> "TypeTest"
-        | UnionCaseTest       _ -> "UnionCaseTest"
-        | Value               _ -> "Value"
-        | VarSet              _ -> "VarSet"
-        | Var                 _ -> "Var"
-        | WhileLoop           _ -> "WhileLoop"
-        |                     _ -> failwithf "Expression %O is not supported" expr
-    
     let private formatStateLastValue state =
         formatValue <| Evaluator.getLastValue state
 
@@ -147,8 +113,28 @@ module PerformanceInspector =
             sprintf "Get property %s, Returned %s"
             <| formatProperty propertyInfo instanceExpr
             <| formatStateLastValue state propertyInfo.PropertyType
-            
-    let private getExprDispalyValue stage expr state =
+    
+    let private formatPropertySet stage (instanceExpr, propertyInfo, _, _) =
+        match stage with
+        | Pre  -> 
+            sprintf "Set property %s" 
+            <| formatProperty propertyInfo instanceExpr
+        | Post -> 
+            sprintf "Set property %s"
+            <| formatProperty propertyInfo instanceExpr
+
+    let private formatSequential stage (firstExpr, secondExpr) =
+        match stage with
+        | Pre  -> 
+            sprintf "Performing %s and then %s" 
+            <| getExprName firstExpr
+            <| getExprName secondExpr
+        | Post -> 
+            sprintf "Performed %s and then %s" 
+            <| getExprName firstExpr
+            <| getExprName secondExpr
+
+    let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
         | Call          callState -> formatCallExpr stage callState state
@@ -167,10 +153,10 @@ module PerformanceInspector =
         | NewTuple  _ -> formatNewTupleExpr stage expr.Type state
         | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state
         | PropertyGet propertyGetState -> formatPropertyGet stage propertyGetState state
-        //| PropertySet         _ -> "PropertySet"
+        | PropertySet propertySetState -> formatPropertySet stage propertySetState
         //| QuoteRaw            _ -> "QuoteRaw"
         //| QuoteTyped          _ -> "QuoteTyped"
-        //| Sequential          _ -> "Sequential"
+        | Sequential sequentialState -> formatSequential stage sequentialState
         //| TryFinally          _ -> "TryFinally"
         //| TryWith             _ -> "TryWith"
         //| TupleGet            _ -> "TupleGet"
@@ -192,12 +178,12 @@ module PerformanceInspector =
     let defaultPreMessageFormatter time expr state =
         sprintf "%O - Start - %s" 
             time
-            <| getExprDispalyValue Pre expr state
+            <| formatExpr Pre expr state
         
     let defaultPostMessageFormatter time expr state (elapsed : TimeSpan) =
-        sprintf "%O - End - %s, Elapsed - %.3f ms" 
+        sprintf "%O - End   - %s, Elapsed - %.3f ms" 
             time 
-            <| getExprDispalyValue Post expr state
+            <| formatExpr Post expr state
             <| elapsed.TotalMilliseconds
 
     let saveToFile fileName message =
