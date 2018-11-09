@@ -72,6 +72,9 @@ module Evaluator =
     let setLastValueAsVar (variable : Var) state =
         setVar variable state.LastValue state
     
+    let setLastValueAsUnit state =
+        setLastValue state ()
+
     let updateVar (variable : Var) newValueFunc state =
         let newValue = getVar variable state |> newValueFunc
         setVar variable newValue state

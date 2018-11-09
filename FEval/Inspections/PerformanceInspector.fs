@@ -166,6 +166,15 @@ module PerformanceInspector =
             sprintf "Set field %s"
             <| formatField fieldInfo instanceExpr
     
+    let private formatVarSet stage (variable, _) =
+        match stage with
+        | Pre  -> 
+            sprintf "Setting variable %s" 
+            <| formatVariable variable
+        | Post -> 
+            sprintf "Set variable %s"
+            <| formatVariable variable
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -195,7 +204,7 @@ module PerformanceInspector =
         //| TypeTest            _ -> "TypeTest"
         //| UnionCaseTest       _ -> "UnionCaseTest"
         | Value valueState -> formatValueExpr stage valueState
-        //| VarSet              _ -> "VarSet"
+        | VarSet varSetState -> formatVarSet stage varSetState
         | Var variable -> formatVariableExpr stage variable state
         //| WhileLoop           _ -> "WhileLoop"
         | _ -> failwithf "Expression %O is not supported" expr

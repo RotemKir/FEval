@@ -326,3 +326,19 @@ type PerformanceInspectorTests() =
                 "End   - Set field FieldClass.number"
                 "End   - Let field returned Unit"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - var set``() = 
+        assertInspectors
+            <@  let mutable x = 3 in x <- 18 @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : Int32"
+                "Start - Getting value 3 : Int32"
+                "End   - Got value 3 : Int32"
+                "Start - Setting variable x : Int32"
+                "Start - Getting value 18 : Int32"
+                "End   - Got value 18 : Int32"
+                "End   - Set variable x : Int32"
+                "End   - Let x returned Unit"
+            |]

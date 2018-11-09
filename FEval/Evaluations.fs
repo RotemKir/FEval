@@ -98,6 +98,7 @@ module Evaluations =
     let private evalVarSet state (variable, valueExpr) = 
         Evaluator.evalExpr valueExpr state
         |> Evaluator.setLastValueAsVar variable
+        |> Evaluator.setLastValueAsUnit
 
     let private createLambdaBody state variable expr value =
         Evaluator.setLastValue state value
