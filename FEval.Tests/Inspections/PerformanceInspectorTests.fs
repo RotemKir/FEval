@@ -489,3 +489,30 @@ type PerformanceInspectorTests() =
                 "End   - Handled with try with, Returned 4 : Int32"
             |]
             
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - try finally``() = 
+        assertInspectors
+            <@ try 4 finally ignore() @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Handling with try finally"
+                "Start - Getting value 4 : Int32"
+                "End   - Got value 4 : Int32"
+                "Start - Calling Operators.Ignore(Unit)"
+                "Start - Getting value Unit"
+                "End   - Got value Unit"
+                "End   - Called Operators.Ignore(Unit), Returned Void"
+                "End   - Handled with try finally, Returned 4 : Int32"
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - while loop``() = 
+        assertInspectors
+            <@ while false do ignore() @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Running while loop"
+                "Start - Getting value false : Boolean"
+                "End   - Got value false : Boolean"
+                "End   - Ran while loop"
+            |]

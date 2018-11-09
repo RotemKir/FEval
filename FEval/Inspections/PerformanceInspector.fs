@@ -234,6 +234,19 @@ module PerformanceInspector =
             sprintf "Handled with try with, Returned %s"
             <| formatStateLastValue state bodyExpr.Type
 
+    let private formatTryFinally stage (bodyExpr : Expr, _) state =
+        match stage with
+        | Pre  -> 
+            "Handling with try finally"
+        | Post -> 
+            sprintf "Handled with try finally, Returned %s"
+            <| formatStateLastValue state bodyExpr.Type
+
+    let private formatWhileLoop stage =
+        match stage with
+        | Pre  -> "Running while loop"
+        | Post -> "Ran while loop"
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -257,7 +270,7 @@ module PerformanceInspector =
         //| QuoteRaw            _ -> "QuoteRaw"
         //| QuoteTyped          _ -> "QuoteTyped"
         | Sequential sequentialState -> formatSequential stage sequentialState
-        //| TryFinally          _ -> "TryFinally"
+        | TryFinally tryFinallyState -> formatTryFinally stage tryFinallyState state
         | TryWith tryWithState -> formatTryWith stage tryWithState state
         | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
         | TypeTest   typeTestState -> formatTypeTest stage typeTestState state
@@ -265,7 +278,7 @@ module PerformanceInspector =
         | Value valueState -> formatValueExpr stage valueState
         | VarSet varSetState -> formatVarSet stage varSetState
         | Var variable -> formatVariableExpr stage variable state
-        //| WhileLoop           _ -> "WhileLoop"
+        | WhileLoop _ -> formatWhileLoop stage
         | _ -> failwithf "Expression %O is not supported" expr
 
     let private postPerformanceInspector config (startTime : DateTime) expr state =

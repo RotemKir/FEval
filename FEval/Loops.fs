@@ -26,7 +26,7 @@ module Loops =
     let rec runLoop loopConfiguration state =
         match loopConfiguration.IsTerminated state with
         | true -> 
-            state
+            Evaluator.setLastValueAsUnit state
         | false -> 
             Evaluator.evalExpr loopConfiguration.BodyExpr state
             |> loopConfiguration.LoopAction
