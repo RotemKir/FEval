@@ -147,13 +147,23 @@ module PerformanceInspector =
             sprintf "Created default value for %s" 
             <| formatType defaultValueType
         
+    let private formatFieldGet stage (instanceExpr, fieldInfo) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Getting field %s" 
+            <| formatField fieldInfo instanceExpr
+        | Post -> 
+            sprintf "Got field %s, Returned %s"
+            <| formatField fieldInfo instanceExpr
+            <| formatStateLastValue state fieldInfo.FieldType
+    
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
         | Call          callState -> formatCallExpr stage callState state
         | Coerce            coerceState -> formatCoerceExpr stage coerceState
         | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
-        //| FieldGet            _ -> "FieldGet"
+        | FieldGet fieldGetState -> formatFieldGet stage fieldGetState state
         //| FieldSet            _ -> "FieldSet"
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
         //| IfThenElse          _ -> "IfThenElse"

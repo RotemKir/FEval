@@ -278,7 +278,7 @@ type PerformanceInspectorTests() =
     [<TestMethod>]
     member this.``Evaluate performance inspector - struct default value``() = 
         assertInspectors
-            <@  let struct1 = new Struct() in struct1             @>
+            <@  let struct1 = new Struct() in struct1 @>
             (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Let struct1 : Struct"
@@ -287,4 +287,22 @@ type PerformanceInspectorTests() =
                 "Start - Getting variable struct1 : Struct"
                 "End   - Got variable struct1, Returned Struct"
                 "End   - Let struct1 returned Struct"
-            |]            
+            |]       
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - get field``() = 
+        assertInspectors
+            <@  let field = new FieldClass(54) in field.number @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let field : FieldClass"
+                "Start - Creating new object FieldClass(Int32)"
+                "Start - Getting value 54 : Int32"
+                "End   - Got value 54 : Int32"
+                "End   - Created new object FieldClass"
+                "Start - Getting field FieldClass.number"
+                "Start - Getting variable field : FieldClass"
+                "End   - Got variable field, Returned FieldClass"
+                "End   - Got field FieldClass.number, Returned 54"
+                "End   - Let field returned 54 : Int32"
+            |]

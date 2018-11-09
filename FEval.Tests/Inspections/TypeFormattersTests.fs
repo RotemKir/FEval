@@ -477,3 +477,14 @@ type TypeFormattersTests() =
         let result = formatIndexerParameters (typeof<IndexerClass>.GetProperty("Item").GetIndexParameters())
         Assert.AreEqual("[Int32]", result)
         
+    [<TestMethod>]
+    member this.``formatField - has instance - returns instance type name and field name``() = 
+        let result = formatField
+                        (typeof<FieldClass>.GetField("number")) 
+                        <| this.createValueExpr<string>()
+        Assert.AreEqual("String.number", result)
+    
+    [<TestMethod>]
+    member this.``formatField - has no instance - returns declaring type name and field name``() = 
+        let result = formatField (typeof<FieldClass>.GetField("number")) None
+        Assert.AreEqual("FieldClass.number", result)
