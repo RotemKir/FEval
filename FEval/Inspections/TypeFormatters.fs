@@ -111,4 +111,4 @@ module TypeFormatters =
 
     let formatUnionCaseInfo (unionCaseInfo : UnionCaseInfo) =
         let typeName = formatType <| unionCaseInfo.DeclaringType
-        sprintf "%s.%s" typeName unionCaseInfo.Name
+        sprintf "%s : %s" unionCaseInfo.Name typeName 

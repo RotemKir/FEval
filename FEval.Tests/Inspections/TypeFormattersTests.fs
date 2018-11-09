@@ -353,6 +353,6 @@ type TypeFormattersTests() =
         Assert.AreEqual("FieldClass.number", result)
                 
     [<TestMethod>]
-    member this.``formatUnionCaseInfo - returns type name and union case name``() = 
+    member this.``formatUnionCaseInfo - returns union case name and type name``() = 
         let result = formatUnionCaseInfo <| (Array.item 0 <| FSharpType.GetUnionCases typeof<Union>)
-        Assert.AreEqual("Union.UnionA", result)
+        Assert.AreEqual("UnionA : Union", result)
