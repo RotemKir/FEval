@@ -49,3 +49,6 @@ module CommonInspections =
     let getTupleItemType tupleType index =
         FSharpType.GetTupleElements tupleType
         |> Array.item index
+
+    let getFunctionReturnType funcType =
+        snd <| FSharpType.GetFunctionElements funcType

@@ -91,7 +91,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Applied function %s, Returned %s" 
             <| formatType funcExpr.Type
-            <| (formatStateLastValue state <| state.LastValue.GetType())
+            <| (formatStateLastValue state <| getFunctionReturnType funcExpr.Type)
     
     let private formatCoerceExpr stage (expr : Expr, coerceType) =
         match stage with
