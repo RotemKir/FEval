@@ -186,7 +186,8 @@ module PerformanceInspector =
 
     let private formatIf stage (_, thenExpr : Expr, _) state =
         match stage with
-        | Pre  -> "Evaluating if"
+        | Pre  -> 
+            "Evaluating if"
         | Post -> 
             sprintf "Evaluated if, Returned %s" 
             <| formatStateLastValue state thenExpr.Type
@@ -202,6 +203,16 @@ module PerformanceInspector =
             <| formatType tupleExpr.Type
             <| index
             <| (formatStateLastValue state <| getTupleItemType tupleExpr.Type index)
+
+    let private formatUnionCaseTest stage (_, unionCaseInfo) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Checking if union matches %s"
+            <| formatUnionCaseInfo unionCaseInfo
+        | Post -> 
+            sprintf "Checked if union matches %s, Returned %s"
+            <| formatUnionCaseInfo unionCaseInfo
+            <| formatStateLastValue state typeof<bool>
 
     let private formatExpr stage expr state =
         match expr with
@@ -230,7 +241,7 @@ module PerformanceInspector =
         //| TryWith             _ -> "TryWith"
         | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
         //| TypeTest            _ -> "TypeTest"
-        //| UnionCaseTest       _ -> "UnionCaseTest"
+        | UnionCaseTest unionCaseState -> formatUnionCaseTest stage unionCaseState state
         | Value valueState -> formatValueExpr stage valueState
         | VarSet varSetState -> formatVarSet stage varSetState
         | Var variable -> formatVariableExpr stage variable state

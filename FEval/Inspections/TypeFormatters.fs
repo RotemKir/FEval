@@ -140,3 +140,7 @@ module TypeFormatters =
     let formatField (fieldInfo : FieldInfo) instanceExpr =
         let typeName = formatType <| getDeclaringType instanceExpr fieldInfo.DeclaringType
         sprintf "%s.%s" typeName fieldInfo.Name
+
+    let formatUnionCaseInfo (unionCaseInfo : UnionCaseInfo) =
+        let typeName = formatType <| unionCaseInfo.DeclaringType
+        sprintf "%s.%s" typeName unionCaseInfo.Name

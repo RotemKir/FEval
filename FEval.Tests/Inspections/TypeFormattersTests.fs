@@ -475,3 +475,8 @@ type TypeFormattersTests() =
     member this.``formatField - has no instance - returns declaring type name and field name``() = 
         let result = formatField (typeof<FieldClass>.GetField("number")) None
         Assert.AreEqual("FieldClass.number", result)
+                
+    [<TestMethod>]
+    member this.``formatUnionCaseInfo - returns type name and union case name``() = 
+        let result = formatUnionCaseInfo <| (Array.item 0 <| FSharpType.GetUnionCases typeof<Union>)
+        Assert.AreEqual("Union.UnionA", result)

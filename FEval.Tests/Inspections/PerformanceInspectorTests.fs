@@ -431,3 +431,23 @@ type PerformanceInspectorTests() =
                 "End   - Let b returned 1 : Int32"
                 "End   - Let patternInput returned 1 : Int32"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - union case test``() = 
+        assertInspectors
+            <@ match UnionB with | UnionA -> true | _ -> false @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let matchValue : Union"
+                "Start - Creating UnionB : Union"
+                "End   - Created UnionB : Union"
+                "Start - Evaluating if"
+                "Start - Checking if union matches Union.UnionA"
+                "Start - Getting variable matchValue : Union"
+                "End   - Got variable matchValue, Returned UnionB : Union"
+                "End   - Checked if union matches Union.UnionA, Returned false : Boolean"
+                "Start - Getting value false : Boolean"
+                "End   - Got value false : Boolean"
+                "End   - Evaluated if, Returned false : Boolean"
+                "End   - Let matchValue returned false : Boolean"
+            |]
