@@ -45,6 +45,7 @@
     <Compile Include="TestHelpers.fs" />
     <Compile Include="EvaluationsTests.fs" />
     <Compile Include="Inspections\CommonInspectionsTests.fs" />
+    <Compile Include="Inspections\TypeChecksTests.fs" />
     <Compile Include="Inspections\TypeFormattersTests.fs" />
     <Compile Include="Inspections\PerformanceInspectorTests.fs" />
     <Content Include="packages.config" />
