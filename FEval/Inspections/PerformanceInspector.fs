@@ -214,6 +214,18 @@ module PerformanceInspector =
             <| formatUnionCaseInfo unionCaseInfo
             <| formatStateLastValue state typeof<bool>
 
+    let private formatTypeTest stage (expr : Expr, expectedType) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Testing if %s is %s"
+            <| formatType expr.Type
+            <| formatType expectedType
+        | Post -> 
+            sprintf "Tested if %s is %s, Returned %s"
+            <| formatType expr.Type
+            <| formatType expectedType
+            <| formatStateLastValue state typeof<bool>
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -240,7 +252,7 @@ module PerformanceInspector =
         //| TryFinally          _ -> "TryFinally"
         //| TryWith             _ -> "TryWith"
         | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
-        //| TypeTest            _ -> "TypeTest"
+        | TypeTest   typeTestState -> formatTypeTest stage typeTestState state
         | UnionCaseTest unionCaseState -> formatUnionCaseTest stage unionCaseState state
         | Value valueState -> formatValueExpr stage valueState
         | VarSet varSetState -> formatVarSet stage varSetState

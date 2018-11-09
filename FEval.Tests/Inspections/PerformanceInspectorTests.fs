@@ -451,3 +451,28 @@ type PerformanceInspectorTests() =
                 "End   - Evaluated if, Returned false : Boolean"
                 "End   - Let matchValue returned false : Boolean"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - type test``() = 
+        assertInspectors
+            <@ 
+            let x : obj = 6 :> obj           
+            match x with | :? int -> true | _ -> false
+            @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : Object"
+                "Start - Coercing Int32 to Object"
+                "Start - Getting value 6 : Int32"
+                "End   - Got value 6 : Int32"
+                "End   - Coerced Int32 to Object"
+                "Start - Evaluating if"
+                "Start - Testing if Object is Int32"
+                "Start - Getting variable x : Object"
+                "End   - Got variable x, Returned 6 : Int32 (Object)"
+                "End   - Tested if Object is Int32, Returned true : Boolean"
+                "Start - Getting value true : Boolean"
+                "End   - Got value true : Boolean"
+                "End   - Evaluated if, Returned true : Boolean"
+                "End   - Let x returned true : Boolean"
+            |]
