@@ -184,6 +184,13 @@ module PerformanceInspector =
             sprintf "Ran for loop on %s" 
             <| formatVariable variable
 
+    let private formatIf stage (_, thenExpr : Expr, _) state =
+        match stage with
+        | Pre  -> "Evaluating if"
+        | Post -> 
+            sprintf "Evaluated if, Returned %s" 
+            <| formatStateLastValue state thenExpr.Type
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -193,7 +200,7 @@ module PerformanceInspector =
         | FieldGet fieldGetState -> formatFieldGet stage fieldGetState state
         | FieldSet fieldSetState -> formatFieldSet stage fieldSetState
         | ForIntegerRangeLoop forState -> formatFor stage forState
-        //| IfThenElse          _ -> "IfThenElse"
+        | IfThenElse ifState -> formatIf stage ifState state
         | Lambda _ -> formatlambdaExpr stage expr.Type
         | Let letState -> formatLetExpr stage letState state
         //| LetRecursive        _ -> "LetRecursive"

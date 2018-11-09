@@ -387,3 +387,17 @@ type PerformanceInspectorTests() =
                 "End   - Ran for loop on i : Int32"
                 "End   - Let x returned Unit"
             |]
+
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - if then else``() = 
+        assertInspectors
+            <@ if true then 4 else 5 @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Evaluating if"
+                "Start - Getting value true : Boolean"
+                "End   - Got value true : Boolean"
+                "Start - Getting value 4 : Int32"
+                "End   - Got value 4 : Int32"
+                "End   - Evaluated if, Returned 4 : Int32"
+            |]
