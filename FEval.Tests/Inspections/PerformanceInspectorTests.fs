@@ -476,3 +476,16 @@ type PerformanceInspectorTests() =
                 "End   - Evaluated if, Returned true : Boolean"
                 "End   - Let x returned true : Boolean"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - try with``() = 
+        assertInspectors
+            <@ try 4 with | _ -> 5 @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Handling with try with"
+                "Start - Getting value 4 : Int32"
+                "End   - Got value 4 : Int32"
+                "End   - Handled with try with, Returned 4 : Int32"
+            |]
+            

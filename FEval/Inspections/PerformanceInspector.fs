@@ -226,6 +226,14 @@ module PerformanceInspector =
             <| formatType expectedType
             <| formatStateLastValue state typeof<bool>
 
+    let private formatTryWith stage (bodyExpr : Expr, _, _, _, _) state =
+        match stage with
+        | Pre  -> 
+            "Handling with try with"
+        | Post -> 
+            sprintf "Handled with try with, Returned %s"
+            <| formatStateLastValue state bodyExpr.Type
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -250,7 +258,7 @@ module PerformanceInspector =
         //| QuoteTyped          _ -> "QuoteTyped"
         | Sequential sequentialState -> formatSequential stage sequentialState
         //| TryFinally          _ -> "TryFinally"
-        //| TryWith             _ -> "TryWith"
+        | TryWith tryWithState -> formatTryWith stage tryWithState state
         | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
         | TypeTest   typeTestState -> formatTypeTest stage typeTestState state
         | UnionCaseTest unionCaseState -> formatUnionCaseTest stage unionCaseState state
