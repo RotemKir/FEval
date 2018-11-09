@@ -135,7 +135,7 @@ type PerformanceInspectorTests() =
                 "Start - Getting value 1 : Int32"
                 "End   - Got value 1 : Int32"
                 "End   - Called Operators.op_Addition(Int32, Int32), Returned 4 : Int32"
-                "End   - Applyied function (Int32 -> Int32), Returned 4 : Int32"
+                "End   - Applied function (Int32 -> Int32), Returned 4 : Int32"
                 "End   - Let f returned 4 : Int32"
             |]
             
@@ -340,5 +340,50 @@ type PerformanceInspectorTests() =
                 "Start - Getting value 18 : Int32"
                 "End   - Got value 18 : Int32"
                 "End   - Set variable x : Int32"
+                "End   - Let x returned Unit"
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - for loop``() = 
+        assertInspectors
+            <@  let mutable x = 0 in for i = 1 to 3 do x <- x + i @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let x : Int32"
+                "Start - Getting value 0 : Int32"
+                "End   - Got value 0 : Int32"
+                "Start - Running for loop on i : Int32"
+                "Start - Getting value 1 : Int32"
+                "End   - Got value 1 : Int32"
+                "Start - Getting value 3 : Int32"
+                "End   - Got value 3 : Int32"
+                // Loop #1
+                "Start - Setting variable x : Int32"
+                "Start - Calling Operators.op_Addition(Int32, Int32)"
+                "Start - Getting variable x : Int32"
+                "End   - Got variable x, Returned 0 : Int32"
+                "Start - Getting variable i : Int32"
+                "End   - Got variable i, Returned 1 : Int32"
+                "End   - Called Operators.op_Addition(Int32, Int32), Returned 1 : Int32"
+                "End   - Set variable x : Int32"                
+                // Loop #2               
+                "Start - Setting variable x : Int32"
+                "Start - Calling Operators.op_Addition(Int32, Int32)"
+                "Start - Getting variable x : Int32"
+                "End   - Got variable x, Returned 1 : Int32"
+                "Start - Getting variable i : Int32"
+                "End   - Got variable i, Returned 2 : Int32"
+                "End   - Called Operators.op_Addition(Int32, Int32), Returned 3 : Int32"
+                "End   - Set variable x : Int32"
+                // Loop #3
+                "Start - Setting variable x : Int32"
+                "Start - Calling Operators.op_Addition(Int32, Int32)"
+                "Start - Getting variable x : Int32"
+                "End   - Got variable x, Returned 3 : Int32"
+                "Start - Getting variable i : Int32"
+                "End   - Got variable i, Returned 3 : Int32"
+                "End   - Called Operators.op_Addition(Int32, Int32), Returned 6 : Int32"
+                "End   - Set variable x : Int32"
+                "End   - Ran for loop on i : Int32"
                 "End   - Let x returned Unit"
             |]

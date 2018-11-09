@@ -89,7 +89,7 @@ module PerformanceInspector =
         | Pre  -> 
             sprintf "Applying function %s" <| formatType funcExpr.Type
         | Post -> 
-            sprintf "Applyied function %s, Returned %s" 
+            sprintf "Applied function %s, Returned %s" 
             <| formatType funcExpr.Type
             <| (formatStateLastValue state <| state.LastValue.GetType())
     
@@ -175,6 +175,15 @@ module PerformanceInspector =
             sprintf "Set variable %s"
             <| formatVariable variable
 
+    let private formatFor stage (variable, _, _, _) =
+        match stage with
+        | Pre  -> 
+            sprintf "Running for loop on %s" 
+            <| formatVariable variable
+        | Post -> 
+            sprintf "Ran for loop on %s" 
+            <| formatVariable variable
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -183,7 +192,7 @@ module PerformanceInspector =
         | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
         | FieldGet fieldGetState -> formatFieldGet stage fieldGetState state
         | FieldSet fieldSetState -> formatFieldSet stage fieldSetState
-        //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
+        | ForIntegerRangeLoop forState -> formatFor stage forState
         //| IfThenElse          _ -> "IfThenElse"
         | Lambda _ -> formatlambdaExpr stage expr.Type
         | Let letState -> formatLetExpr stage letState state
