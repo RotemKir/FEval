@@ -306,3 +306,23 @@ type PerformanceInspectorTests() =
                 "End   - Got field FieldClass.number, Returned 54"
                 "End   - Let field returned 54 : Int32"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - set field``() = 
+        assertInspectors
+            <@  let field = new FieldClass(54) in field.number <- 73 @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let field : FieldClass"
+                "Start - Creating new object FieldClass(Int32)"
+                "Start - Getting value 54 : Int32"
+                "End   - Got value 54 : Int32"
+                "End   - Created new object FieldClass"
+                "Start - Setting field FieldClass.number"
+                "Start - Getting variable field : FieldClass"
+                "End   - Got variable field, Returned FieldClass"
+                "Start - Getting value 73 : Int32"
+                "End   - Got value 73 : Int32"
+                "End   - Set field FieldClass.number"
+                "End   - Let field returned Unit"
+            |]

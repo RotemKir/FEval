@@ -157,6 +157,15 @@ module PerformanceInspector =
             <| formatField fieldInfo instanceExpr
             <| formatStateLastValue state fieldInfo.FieldType
     
+    let private formatFieldSet stage (instanceExpr, fieldInfo, _) =
+        match stage with
+        | Pre  -> 
+            sprintf "Setting field %s" 
+            <| formatField fieldInfo instanceExpr
+        | Post -> 
+            sprintf "Set field %s"
+            <| formatField fieldInfo instanceExpr
+    
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -164,7 +173,7 @@ module PerformanceInspector =
         | Coerce            coerceState -> formatCoerceExpr stage coerceState
         | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
         | FieldGet fieldGetState -> formatFieldGet stage fieldGetState state
-        //| FieldSet            _ -> "FieldSet"
+        | FieldSet fieldSetState -> formatFieldSet stage fieldSetState
         //| ForIntegerRangeLoop _ -> "ForIntegerRangeLoop"
         //| IfThenElse          _ -> "IfThenElse"
         | Lambda _ -> formatlambdaExpr stage expr.Type
