@@ -56,9 +56,16 @@ module PerformanceInspector =
     let private formatNewTupleExpr stage (tupleType : Type) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating new Tuple %s" <| formatType tupleType 
+            sprintf "Creating new tuple %s" <| formatType tupleType 
         | Post -> 
-            sprintf "Created Tuple %s" <| formatStateLastValue state tupleType
+            sprintf "Created tuple %s" <| formatStateLastValue state tupleType
+
+    let private formatNewArray stage (arrayType, _) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Creating new array %s" <| formatType arrayType 
+        | Post -> 
+            sprintf "Created array %s" <| formatStateLastValue state arrayType
 
     let private formatLetExpr stage (variable : Var, _, body : Expr) state =
         match stage with
@@ -260,7 +267,7 @@ module PerformanceInspector =
         | Lambda _ -> formatlambdaExpr stage expr.Type
         | Let letState -> formatLetExpr stage letState state
         //| LetRecursive        _ -> "LetRecursive"
-        //| NewArray            _ -> "NewArray"
+        | NewArray newArrayState -> formatNewArray stage newArrayState state
         | NewObject  newObjectState -> formatNewObject stage newObjectState state
         | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
         | NewTuple  _ -> formatNewTupleExpr stage expr.Type state

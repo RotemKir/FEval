@@ -91,16 +91,32 @@ type PerformanceInspectorTests() =
             <@ (16, "Text", true) @>
             (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
             [| 
-                "Start - Creating new Tuple (Int32, String, Boolean)"
+                "Start - Creating new tuple (Int32, String, Boolean)"
                 "Start - Getting value 16 : Int32" 
                 "End   - Got value 16 : Int32" 
                 "Start - Getting value \"Text\" : String" 
                 "End   - Got value \"Text\" : String" 
                 "Start - Getting value true : Boolean" 
                 "End   - Got value true : Boolean" 
-                "End   - Created Tuple (16, \"Text\", true) : (Int32, String, Boolean)"
+                "End   - Created tuple (16, \"Text\", true) : (Int32, String, Boolean)"
             |]
     
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - new array``() = 
+        assertInspectors
+            <@ [|1 ; 2 ; 3|] @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Creating new array Int32"
+                "Start - Getting value 1 : Int32" 
+                "End   - Got value 1 : Int32" 
+                "Start - Getting value 2 : Int32" 
+                "End   - Got value 2 : Int32" 
+                "Start - Getting value 3 : Int32" 
+                "End   - Got value 3 : Int32" 
+                "End   - Created array [|1; 2; 3|] : Int32"
+            |]
+
     [<TestMethod>]
     member this.``Evaluate performance inspector - let statement``() = 
         assertInspectors
@@ -409,12 +425,12 @@ type PerformanceInspectorTests() =
             (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
             [| 
                 "Start - Let patternInput : (Int32, Int32)"
-                "Start - Creating new Tuple (Int32, Int32)"
+                "Start - Creating new tuple (Int32, Int32)"
                 "Start - Getting value 1 : Int32"
                 "End   - Got value 1 : Int32"
                 "Start - Getting value 2 : Int32"
                 "End   - Got value 2 : Int32"
-                "End   - Created Tuple (1, 2) : (Int32, Int32)"
+                "End   - Created tuple (1, 2) : (Int32, Int32)"
                 "Start - Let b : Int32"
                 "Start - Getting value from tuple (Int32, Int32) at index 1"
                 "Start - Getting variable patternInput : (Int32, Int32)"
