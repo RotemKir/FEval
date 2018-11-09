@@ -11,9 +11,6 @@ open Microsoft.FSharp.Quotations
 type TypeFormattersTests() =
     let mockTypeFormatter (t : Type) = t.Name
 
-    member this.createValueExpr<'a>() =
-        Some <| Expr.Value (null, typeof<'a>)
-
     [<TestMethod>]
     member this.``IsOption - type is not option - doesn't match``() = 
         match typeof<int> with
@@ -398,17 +395,7 @@ type TypeFormattersTests() =
     member this.``formatVariable - variable type is class - returns name : class type``() = 
         let result = formatVariable <| new Var("some class", typeof<ChildClass>)
         Assert.AreEqual("some class : ChildClass", result)
-        
-    [<TestMethod>]
-    member this.``getDeclaringType - has no instance - returns declaring type``() = 
-        let result = getDeclaringType None typeof<int>
-        Assert.AreEqual(typeof<int>, result)
-        
-    [<TestMethod>]
-    member this.``getDeclaringType - has instance - returns instance type``() = 
-        let result = getDeclaringType <| this.createValueExpr<string>() <| typeof<int>
-        Assert.AreEqual(typeof<string>, result)
-
+            
     [<TestMethod>]
     member this.``formatMethod - has no instance - returns method declaring type and method name``() = 
         let result = formatMethod (typeof<int>.GetMethod("GetHashCode")) None
@@ -423,14 +410,14 @@ type TypeFormattersTests() =
     member this.``formatMethod - has instance - returns instance type and member name``() = 
         let result = formatMethod
                         (typeof<int>.GetMethod("GetHashCode")) 
-                        <| this.createValueExpr<string>()
+                        <| createValueExpr<string>()
         Assert.AreEqual("String.GetHashCode()", result)
         
     [<TestMethod>]
     member this.``formatMethod - has instance, method has parameters - returns instance type, method name and parameters``() = 
         let result = formatMethod 
                         (typeof<string>.GetMethod("Insert"))
-                        <| this.createValueExpr<int>()
+                        <| createValueExpr<int>()
         Assert.AreEqual("Int32.Insert(Int32, String)", result)
         
     [<TestMethod>]
@@ -449,7 +436,7 @@ type TypeFormattersTests() =
     member this.``formatProperty - has instance - returns instance type name and property name()``() = 
         let result = formatProperty 
                         (typeof<Exception>.GetProperty("Message")) 
-                        <| this.createValueExpr<string>()
+                        <| createValueExpr<string>()
         Assert.AreEqual("String.Message", result)
     
     [<TestMethod>]
@@ -481,7 +468,7 @@ type TypeFormattersTests() =
     member this.``formatField - has instance - returns instance type name and field name``() = 
         let result = formatField
                         (typeof<FieldClass>.GetField("number")) 
-                        <| this.createValueExpr<string>()
+                        <| createValueExpr<string>()
         Assert.AreEqual("String.number", result)
     
     [<TestMethod>]

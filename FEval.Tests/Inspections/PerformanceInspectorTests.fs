@@ -401,3 +401,33 @@ type PerformanceInspectorTests() =
                 "End   - Got value 4 : Int32"
                 "End   - Evaluated if, Returned 4 : Int32"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - tuple get``() = 
+        assertInspectors
+            <@ let (a, b) = (1, 2) in a @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Let patternInput : (Int32, Int32)"
+                "Start - Creating new Tuple (Int32, Int32)"
+                "Start - Getting value 1 : Int32"
+                "End   - Got value 1 : Int32"
+                "Start - Getting value 2 : Int32"
+                "End   - Got value 2 : Int32"
+                "End   - Created Tuple (1, 2) : (Int32, Int32)"
+                "Start - Let b : Int32"
+                "Start - Getting value from tuple (Int32, Int32) at index 1"
+                "Start - Getting variable patternInput : (Int32, Int32)"
+                "End   - Got variable patternInput, Returned (1, 2) : (Int32, Int32)"
+                "End   - Got value from tuple (Int32, Int32) at index 1, Retuned 2 : Int32"
+                "Start - Let a : Int32"
+                "Start - Getting value from tuple (Int32, Int32) at index 0"
+                "Start - Getting variable patternInput : (Int32, Int32)"
+                "End   - Got variable patternInput, Returned (1, 2) : (Int32, Int32)"
+                "End   - Got value from tuple (Int32, Int32) at index 0, Retuned 1 : Int32"
+                "Start - Getting variable a : Int32"
+                "End   - Got variable a, Returned 1"
+                "End   - Let a returned 1 : Int32"
+                "End   - Let b returned 1 : Int32"
+                "End   - Let patternInput returned 1 : Int32"
+            |]

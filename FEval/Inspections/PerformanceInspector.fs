@@ -191,6 +191,18 @@ module PerformanceInspector =
             sprintf "Evaluated if, Returned %s" 
             <| formatStateLastValue state thenExpr.Type
 
+    let private formatTupleGet stage (tupleExpr : Expr, index) state =
+        match stage with
+        | Pre  -> 
+            sprintf "Getting value from tuple %s at index %i"
+            <| formatType tupleExpr.Type
+            <| index
+        | Post -> 
+            sprintf "Got value from tuple %s at index %i, Retuned %s"
+            <| formatType tupleExpr.Type
+            <| index
+            <| (formatStateLastValue state <| getTupleItemType tupleExpr.Type index)
+
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -216,7 +228,7 @@ module PerformanceInspector =
         | Sequential sequentialState -> formatSequential stage sequentialState
         //| TryFinally          _ -> "TryFinally"
         //| TryWith             _ -> "TryWith"
-        //| TupleGet            _ -> "TupleGet"
+        | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
         //| TypeTest            _ -> "TypeTest"
         //| UnionCaseTest       _ -> "UnionCaseTest"
         | Value valueState -> formatValueExpr stage valueState

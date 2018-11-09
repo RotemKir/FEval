@@ -2,6 +2,10 @@
 
 module TestHelpers =
     open System
+    open Microsoft.FSharp.Quotations
+
+    let createValueExpr<'a>() =
+        Some <| Expr.Value (null, typeof<'a>)
 
     type Person =
         {

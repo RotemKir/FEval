@@ -5,6 +5,7 @@ module TypeFormatters =
     open Microsoft.FSharp.Reflection
     open System
     open System.Reflection
+    open FEval.CommonInspections
 
     // Private functions
 
@@ -113,11 +114,6 @@ module TypeFormatters =
     let formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
     
-    let getDeclaringType (instanceExpr : Expr option) declaringType =
-        match instanceExpr with
-        | Some expr -> expr.Type
-        | None      -> declaringType
-
     let formatParameters parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
 

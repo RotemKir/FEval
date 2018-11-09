@@ -2,6 +2,8 @@
 
 module CommonInspections =
     open Microsoft.FSharp.Quotations.Patterns
+    open Microsoft.FSharp.Quotations
+    open Microsoft.FSharp.Reflection
 
     type InpectionStage = Pre | Post
 
@@ -39,3 +41,11 @@ module CommonInspections =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
+    let getDeclaringType (instanceExpr : Expr option) declaringType =
+        match instanceExpr with
+        | Some expr -> expr.Type
+        | None      -> declaringType
+
+    let getTupleItemType tupleType index =
+        FSharpType.GetTupleElements tupleType
+        |> Array.item index
