@@ -236,8 +236,12 @@ module Evaluations =
                 (fun (variable, _) -> Evaluator.clearRecVariable variable state) 
                 variables
 
-    let private evalQuote  =
+    let private evalQuoteRaw =
         Evaluator.setLastValue
+
+    let private evalQuoteTyped state quoteExpr =
+        convertExprToTyped quoteExpr quoteExpr.Type
+        |> Evaluator.setLastValue state
 
     let private evalExpr = 
         withExceptionHandling 
@@ -261,8 +265,8 @@ module Evaluations =
                 | NewUnionCase newUnionCaseState -> evalNewUnionCase state newUnionCaseState
                 | PropertyGet propertyGetState   -> evalPropertyGet state propertyGetState
                 | PropertySet propertySetState   -> evalPropertySet state propertySetState
-                | QuoteRaw quoteExpr             -> evalQuote state quoteExpr
-                | QuoteTyped quoteExpr           -> evalQuote state quoteExpr
+                | QuoteRaw quoteExpr             -> evalQuoteRaw state quoteExpr
+                | QuoteTyped quoteExpr           -> evalQuoteTyped state quoteExpr
                 | Sequential sequentialState     -> evalSequential state sequentialState
                 | TryFinally tryFinallyState     -> evalTryFinally state tryFinallyState
                 | TryWith tryWithState           -> evalTryWith state tryWithState

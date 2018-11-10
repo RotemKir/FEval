@@ -283,39 +283,50 @@ module PerformanceInspector =
             <| formatVariables variables 
             <| formatStateLastValue state expr.Type
     
+    let private formatQuote stage (quoteExpr : Expr) =
+        match stage with
+        | Pre  -> 
+            sprintf "Getting quote (%s) : %s" 
+            <| getExprName quoteExpr
+            <| formatType quoteExpr.Type
+        | Post -> 
+            sprintf "Got quote (%s) : %s" 
+            <| getExprName quoteExpr
+            <| formatType quoteExpr.Type
+
     let private formatExpr stage expr state =
         match expr with
-        | Application applicationState -> formatApplicationExpr stage applicationState state
-        | Call          callState -> formatCallExpr stage callState state
-        | Coerce            coerceState -> formatCoerceExpr stage coerceState
+        | Application applicationState   -> formatApplicationExpr stage applicationState state
+        | Call callState                 -> formatCallExpr stage callState state
+        | Coerce coerceState             -> formatCoerceExpr stage coerceState
         | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
-        | FieldGet fieldGetState -> formatFieldGet stage fieldGetState state
-        | FieldSet fieldSetState -> formatFieldSet stage fieldSetState
-        | ForIntegerRangeLoop forState -> formatFor stage forState
-        | IfThenElse ifState -> formatIf stage ifState state
-        | Lambda _ -> formatlambdaExpr stage expr.Type
-        | Let letState -> formatLetExpr stage letState state
+        | FieldGet fieldGetState         -> formatFieldGet stage fieldGetState state
+        | FieldSet fieldSetState         -> formatFieldSet stage fieldSetState
+        | ForIntegerRangeLoop forState   -> formatFor stage forState
+        | IfThenElse ifState             -> formatIf stage ifState state
+        | Lambda _                       -> formatlambdaExpr stage expr.Type
+        | Let letState                   -> formatLetExpr stage letState state
         | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState state
-        | NewArray newArrayState -> formatNewArray stage newArrayState state
-        | NewObject  newObjectState -> formatNewObject stage newObjectState state
-        | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
-        | NewTuple  _ -> formatNewTupleExpr stage expr.Type state
+        | NewArray newArrayState         -> formatNewArray stage newArrayState state
+        | NewObject  newObjectState      -> formatNewObject stage newObjectState state
+        | NewRecord  newRecordState      -> formatNewRecordExpr stage newRecordState state
+        | NewTuple  _                    -> formatNewTupleExpr stage expr.Type state
         | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state
-        | PropertyGet propertyGetState -> formatPropertyGet stage propertyGetState state
-        | PropertySet propertySetState -> formatPropertySet stage propertySetState
-        //| QuoteRaw            _ -> "QuoteRaw"
-        //| QuoteTyped          _ -> "QuoteTyped"
-        | Sequential sequentialState -> formatSequential stage sequentialState
-        | TryFinally tryFinallyState -> formatTryFinally stage tryFinallyState state
-        | TryWith tryWithState -> formatTryWith stage tryWithState state
-        | TupleGet tupleGetState -> formatTupleGet stage tupleGetState state
-        | TypeTest   typeTestState -> formatTypeTest stage typeTestState state
-        | UnionCaseTest unionCaseState -> formatUnionCaseTest stage unionCaseState state
-        | Value valueState -> formatValueExpr stage valueState
-        | VarSet varSetState -> formatVarSet stage varSetState
-        | Var variable -> formatVariableExpr stage variable state
-        | WhileLoop _ -> formatWhileLoop stage
-        | _ -> failwithf "Expression %O is not supported" expr
+        | PropertyGet propertyGetState   -> formatPropertyGet stage propertyGetState state
+        | PropertySet propertySetState   -> formatPropertySet stage propertySetState
+        | QuoteRaw quoteExpr             -> formatQuote stage quoteExpr
+        | QuoteTyped quoteExpr           -> formatQuote stage quoteExpr
+        | Sequential sequentialState     -> formatSequential stage sequentialState
+        | TryFinally tryFinallyState     -> formatTryFinally stage tryFinallyState state
+        | TryWith tryWithState           -> formatTryWith stage tryWithState state
+        | TupleGet tupleGetState         -> formatTupleGet stage tupleGetState state
+        | TypeTest typeTestState         -> formatTypeTest stage typeTestState state
+        | UnionCaseTest unionCaseState   -> formatUnionCaseTest stage unionCaseState state
+        | Value valueState               -> formatValueExpr stage valueState
+        | VarSet varSetState             -> formatVarSet stage varSetState
+        | Var variable                   -> formatVariableExpr stage variable state
+        | WhileLoop _                    -> formatWhileLoop stage
+        | _                              -> failwithf "Expression %O is not supported" expr
 
     let private postPerformanceInspector config (startTime : DateTime) expr state =
         let endTime = DateTime.Now

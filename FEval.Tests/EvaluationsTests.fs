@@ -1537,15 +1537,15 @@ type EvaluationsTest() =
         assertEval <@ 64 >>> 2 @> 16
 
     (*
-    Let (x, Quote (Value (4)), Call (Some (x), ToString, []))
+    Quote (Value (4))
     *)
     [<TestMethod>]
     member this.``Evaluate typed code quotation``() = 
-        assertEval <@ let x = <@ 4 @> in x.ToString() @> "Value (4)"
+        assertEval <@ <@ 4 @> @> <@ 4 @>
 
     (*
-    Let (x, Quote (Value (7)), Call (Some (x), ToString, []))
+    Quote (Value (7))
     *)
     [<TestMethod>]
     member this.``Evaluate raw code quotation``() = 
-        assertEval <@ let x = <@@ 7 @@> in x.ToString() @> "Value (7)"
+        assertEval <@ <@@ 7 @@> @> <@@ 7 @@>

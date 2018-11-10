@@ -4,6 +4,21 @@ module Reflection =
     open System
     open System.Reflection
     open Microsoft.FSharp.Reflection
+    open Microsoft.FSharp.Quotations
+
+    let private typeofExpr = typeof<Expr>
+    let private genericExprTypeDefinition = typeof<Expr<obj>>.GetGenericTypeDefinition()
+    
+    let private getPrivateProperty (targetType : Type) target name =
+        targetType.InvokeMember(
+            name, 
+            BindingFlags.GetProperty ||| BindingFlags.Instance ||| BindingFlags.NonPublic,
+            null, 
+            target, 
+            null)
+
+    let private getPrivateCtors (targetType : Type) =
+        targetType.GetConstructors(BindingFlags.NonPublic ||| BindingFlags.Instance)
 
     // Public functions
     
@@ -63,3 +78,10 @@ module Reflection =
 
     let getType obj =
         obj.GetType()
+
+    let convertExprToTyped (expr : Expr) targetType =
+        let genericExprType = genericExprTypeDefinition.MakeGenericType([| targetType |])
+        let tree = getPrivateProperty typeofExpr expr "Tree"
+        let ctors = getPrivateCtors genericExprType
+        
+        ctors.[0].Invoke [| tree ; expr.CustomAttributes |]

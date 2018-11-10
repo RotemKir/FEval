@@ -546,3 +546,23 @@ type PerformanceInspectorTests() =
                 "End   - Got variable x, Returned 4 : Int32"
                 "End   - Recursive let x : Int32 returned 4 : Int32"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - typed code quotation``() = 
+        assertInspectors
+            <@ <@ 4 @> @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Getting quote (Value) : Int32"
+                "End   - Got quote (Value) : Int32"
+            |]
+              
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - raw code quotation``() = 
+        assertInspectors
+            <@ <@@ 7 @@> @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Getting quote (Value) : Int32"
+                "End   - Got quote (Value) : Int32"
+            |]
