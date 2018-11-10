@@ -10,17 +10,19 @@ module PerformanceInspector =
     open System
     open System.IO
 
+    type MessageFormatter = DateTime -> Expr -> EvaluationState -> string
+    
     type Config =
         {
             HandleMessage : string -> unit
-            PreMessageFormatter : DateTime -> Expr -> EvaluationState -> string
-            PostMessageFormatter : DateTime -> Expr -> EvaluationState -> TimeSpan -> string
+            PreMessageFormatter : MessageFormatter
+            PostMessageFormatter : TimeSpan -> MessageFormatter
         }
 
     // Private functions
 
-    let private formatStateLastValue state =
-        formatValue <| Evaluator.getLastValue state
+    let private formatStateLastValue evalState =
+        formatValue <| Evaluator.getLastValue evalState
 
     let private formatValueExpr stage (value, valueType : Type) =
         match stage with
@@ -29,7 +31,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Got value %s" <| formatValue value valueType 
             
-    let private formatCallExpr stage (instanceExpr, methodInfo, _) state =
+    let private formatCallExpr stage (instanceExpr, methodInfo, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Calling %s" 
@@ -37,53 +39,53 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Called %s, Returned %s" 
             <| formatMethod methodInfo instanceExpr
-            <| formatStateLastValue state methodInfo.ReturnType
+            <| formatStateLastValue evalState methodInfo.ReturnType
 
-    let private formatNewUnionCaseExpr stage (unionCaseInfo : UnionCaseInfo, _) state =
+    let private formatNewUnionCaseExpr stage (unionCaseInfo, _) evalState =
         match stage with
         | Pre  -> 
-            sprintf "Creating %s : %s" unionCaseInfo.Name 
-            <| formatType unionCaseInfo.DeclaringType
+            sprintf "Creating %s" 
+            <| formatUnionCaseInfo unionCaseInfo
         | Post -> 
             sprintf "Created %s" 
-            <| formatStateLastValue state unionCaseInfo.DeclaringType
+            <| formatStateLastValue evalState unionCaseInfo.DeclaringType
 
-    let private formatNewRecordExpr stage (recordType : Type, _) state =
+    let private formatNewRecordExpr stage (recordType : Type, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Creating new %s" recordType.Name
         | Post -> 
             sprintf "Created %s" 
-            <| formatStateLastValue state recordType
+            <| formatStateLastValue evalState recordType
                 
-    let private formatNewTupleExpr stage (tupleType : Type) state =
+    let private formatNewTupleExpr stage (tupleType : Type) evalState =
         match stage with
         | Pre  -> 
             sprintf "Creating new tuple %s" 
             <| formatType tupleType 
         | Post -> 
             sprintf "Created tuple %s" 
-            <| formatStateLastValue state tupleType
+            <| formatStateLastValue evalState tupleType
 
-    let private formatNewArray stage (arrayType, _) state =
+    let private formatNewArray stage (arrayType, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Creating new array %s" 
             <| formatType arrayType 
         | Post -> 
             sprintf "Created array %s"
-            <| formatStateLastValue state arrayType
+            <| formatStateLastValue evalState arrayType
 
-    let private formatLetExpr stage (variable : Var, _, body : Expr) state =
+    let private formatLetExpr stage (variable : Var, _, body : Expr) evalState =
         match stage with
         | Pre  -> 
             sprintf "Let %s" 
             <| formatVariable variable
         | Post -> 
             sprintf "Let %s returned %s" variable.Name 
-            <| formatStateLastValue state body.Type
+            <| formatStateLastValue evalState body.Type
     
-    let private formatVariableExpr stage variable state =
+    let private formatVariableExpr stage variable evalState =
         match stage with
         | Pre  -> 
             sprintf "Getting variable %s" 
@@ -91,7 +93,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Got variable %s, Returned %s" 
             <| variable.Name
-            <| formatStateLastValue state variable.Type
+            <| formatStateLastValue evalState variable.Type
     
     let private formatlambdaExpr stage functionType =
         match stage with
@@ -102,7 +104,7 @@ module PerformanceInspector =
             sprintf "Created lambda %s" 
             <| formatType functionType
 
-    let private formatApplicationExpr stage (funcExpr : Expr, _) state =
+    let private formatApplicationExpr stage (funcExpr : Expr, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Applying function %s" 
@@ -110,7 +112,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Applied function %s, Returned %s" 
             <| formatType funcExpr.Type
-            <| (formatStateLastValue state <| getFunctionReturnType funcExpr.Type)
+            <| (formatStateLastValue evalState <| getFunctionReturnType funcExpr.Type)
     
     let private formatCoerceExpr stage (expr : Expr, coerceType) =
         match stage with
@@ -123,7 +125,7 @@ module PerformanceInspector =
             <| formatType expr.Type 
             <| formatType coerceType
     
-    let private formatNewObject stage (constructorInfo, _) state =
+    let private formatNewObject stage (constructorInfo, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Creating new object %s" 
@@ -132,7 +134,7 @@ module PerformanceInspector =
             sprintf "Created new object %s" 
             <| formatType constructorInfo.DeclaringType
 
-    let private formatPropertyGet stage (instanceExpr, propertyInfo, _) state =
+    let private formatPropertyGet stage (instanceExpr, propertyInfo, _) evalState =
         match stage with
         | Pre  -> 
             sprintf "Getting property %s" 
@@ -140,7 +142,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Got property %s, Returned %s"
             <| formatProperty propertyInfo instanceExpr
-            <| formatStateLastValue state propertyInfo.PropertyType
+            <| formatStateLastValue evalState propertyInfo.PropertyType
     
     let private formatPropertySet stage (instanceExpr, propertyInfo, _, _) =
         match stage with
@@ -171,7 +173,7 @@ module PerformanceInspector =
             sprintf "Created default value for %s" 
             <| formatType defaultValueType
         
-    let private formatFieldGet stage (instanceExpr, fieldInfo) state =
+    let private formatFieldGet stage (instanceExpr, fieldInfo) evalState =
         match stage with
         | Pre  -> 
             sprintf "Getting field %s" 
@@ -179,7 +181,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Got field %s, Returned %s"
             <| formatField fieldInfo instanceExpr
-            <| formatStateLastValue state fieldInfo.FieldType
+            <| formatStateLastValue evalState fieldInfo.FieldType
     
     let private formatFieldSet stage (instanceExpr, fieldInfo, _) =
         match stage with
@@ -208,15 +210,15 @@ module PerformanceInspector =
             sprintf "Ran for loop on %s" 
             <| formatVariable variable
 
-    let private formatIf stage (_, thenExpr : Expr, _) state =
+    let private formatIf stage (_, thenExpr : Expr, _) evalState =
         match stage with
         | Pre  -> 
             "Evaluating if"
         | Post -> 
             sprintf "Evaluated if, Returned %s" 
-            <| formatStateLastValue state thenExpr.Type
+            <| formatStateLastValue evalState thenExpr.Type
 
-    let private formatTupleGet stage (tupleExpr : Expr, index) state =
+    let private formatTupleGet stage (tupleExpr : Expr, index) evalState =
         match stage with
         | Pre  -> 
             sprintf "Getting value from tuple %s at index %i"
@@ -226,9 +228,9 @@ module PerformanceInspector =
             sprintf "Got value from tuple %s at index %i, Retuned %s"
             <| formatType tupleExpr.Type
             <| index
-            <| (formatStateLastValue state <| getTupleItemType tupleExpr.Type index)
+            <| (formatStateLastValue evalState <| getTupleItemType tupleExpr.Type index)
 
-    let private formatUnionCaseTest stage (_, unionCaseInfo) state =
+    let private formatUnionCaseTest stage (_, unionCaseInfo) evalState =
         match stage with
         | Pre  -> 
             sprintf "Checking if union matches %s"
@@ -236,9 +238,9 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Checked if union matches %s, Returned %s"
             <| formatUnionCaseInfo unionCaseInfo
-            <| formatStateLastValue state typeof<bool>
+            <| formatStateLastValue evalState typeof<bool>
 
-    let private formatTypeTest stage (expr : Expr, expectedType) state =
+    let private formatTypeTest stage (expr : Expr, expectedType) evalState =
         match stage with
         | Pre  -> 
             sprintf "Testing if %s is %s"
@@ -248,30 +250,30 @@ module PerformanceInspector =
             sprintf "Tested if %s is %s, Returned %s"
             <| formatType expr.Type
             <| formatType expectedType
-            <| formatStateLastValue state typeof<bool>
+            <| formatStateLastValue evalState typeof<bool>
 
-    let private formatTryWith stage (bodyExpr : Expr, _, _, _, _) state =
+    let private formatTryWith stage (bodyExpr : Expr, _, _, _, _) evalState =
         match stage with
         | Pre  -> 
             "Handling with try with"
         | Post -> 
             sprintf "Handled with try with, Returned %s"
-            <| formatStateLastValue state bodyExpr.Type
+            <| formatStateLastValue evalState bodyExpr.Type
 
-    let private formatTryFinally stage (bodyExpr : Expr, _) state =
+    let private formatTryFinally stage (bodyExpr : Expr, _) evalState =
         match stage with
         | Pre  -> 
             "Handling with try finally"
         | Post -> 
             sprintf "Handled with try finally, Returned %s"
-            <| formatStateLastValue state bodyExpr.Type
+            <| formatStateLastValue evalState bodyExpr.Type
 
     let private formatWhileLoop stage =
         match stage with
         | Pre  -> "Running while loop"
         | Post -> "Ran while loop"
 
-    let private formatLetRecursive stage (variableBindings, expr : Expr) state =
+    let private formatLetRecursive stage (variableBindings, expr : Expr) evalState =
         let variables = List.map fst variableBindings
         
         match stage with
@@ -281,7 +283,7 @@ module PerformanceInspector =
         | Post -> 
             sprintf "Recursive let %s returned %s" 
             <| formatVariables variables 
-            <| formatStateLastValue state expr.Type
+            <| formatStateLastValue evalState expr.Type
     
     let private formatQuote stage (quoteExpr : Expr) =
         match stage with
@@ -294,64 +296,64 @@ module PerformanceInspector =
             <| getExprName quoteExpr
             <| formatType quoteExpr.Type
 
-    let private formatExpr stage expr state =
+    let private formatExpr stage expr evalState =
         match expr with
-        | Application applicationState   -> formatApplicationExpr stage applicationState state
-        | Call callState                 -> formatCallExpr stage callState state
+        | Application applicationState   -> formatApplicationExpr stage applicationState evalState
+        | Call callState                 -> formatCallExpr stage callState evalState
         | Coerce coerceState             -> formatCoerceExpr stage coerceState
         | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
-        | FieldGet fieldGetState         -> formatFieldGet stage fieldGetState state
+        | FieldGet fieldGetState         -> formatFieldGet stage fieldGetState evalState
         | FieldSet fieldSetState         -> formatFieldSet stage fieldSetState
         | ForIntegerRangeLoop forState   -> formatFor stage forState
-        | IfThenElse ifState             -> formatIf stage ifState state
+        | IfThenElse ifState             -> formatIf stage ifState evalState
         | Lambda _                       -> formatlambdaExpr stage expr.Type
-        | Let letState                   -> formatLetExpr stage letState state
-        | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState state
-        | NewArray newArrayState         -> formatNewArray stage newArrayState state
-        | NewObject  newObjectState      -> formatNewObject stage newObjectState state
-        | NewRecord  newRecordState      -> formatNewRecordExpr stage newRecordState state
-        | NewTuple  _                    -> formatNewTupleExpr stage expr.Type state
-        | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState state
-        | PropertyGet propertyGetState   -> formatPropertyGet stage propertyGetState state
+        | Let letState                   -> formatLetExpr stage letState evalState
+        | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState evalState
+        | NewArray newArrayState         -> formatNewArray stage newArrayState evalState
+        | NewObject  newObjectState      -> formatNewObject stage newObjectState evalState
+        | NewRecord  newRecordState      -> formatNewRecordExpr stage newRecordState evalState
+        | NewTuple  _                    -> formatNewTupleExpr stage expr.Type evalState
+        | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState evalState
+        | PropertyGet propertyGetState   -> formatPropertyGet stage propertyGetState evalState
         | PropertySet propertySetState   -> formatPropertySet stage propertySetState
         | QuoteRaw quoteExpr             -> formatQuote stage quoteExpr
         | QuoteTyped quoteExpr           -> formatQuote stage quoteExpr
         | Sequential sequentialState     -> formatSequential stage sequentialState
-        | TryFinally tryFinallyState     -> formatTryFinally stage tryFinallyState state
-        | TryWith tryWithState           -> formatTryWith stage tryWithState state
-        | TupleGet tupleGetState         -> formatTupleGet stage tupleGetState state
-        | TypeTest typeTestState         -> formatTypeTest stage typeTestState state
-        | UnionCaseTest unionCaseState   -> formatUnionCaseTest stage unionCaseState state
+        | TryFinally tryFinallyState     -> formatTryFinally stage tryFinallyState evalState
+        | TryWith tryWithState           -> formatTryWith stage tryWithState evalState
+        | TupleGet tupleGetState         -> formatTupleGet stage tupleGetState evalState
+        | TypeTest typeTestState         -> formatTypeTest stage typeTestState evalState
+        | UnionCaseTest unionCaseState   -> formatUnionCaseTest stage unionCaseState evalState
         | Value valueState               -> formatValueExpr stage valueState
         | VarSet varSetState             -> formatVarSet stage varSetState
-        | Var variable                   -> formatVariableExpr stage variable state
+        | Var variable                   -> formatVariableExpr stage variable evalState
         | WhileLoop _                    -> formatWhileLoop stage
         | _                              -> failwithf "Expression %O is not supported" expr
 
-    let private postPerformanceInspector config (startTime : DateTime) expr state =
+    let private postPerformanceInspector config (startTime : DateTime) expr evalState =
         let endTime = DateTime.Now
         let elapsedTime = endTime.Subtract(startTime)
-        config.HandleMessage <| config.PostMessageFormatter endTime expr state elapsedTime
+        config.HandleMessage <| config.PostMessageFormatter elapsedTime endTime expr evalState 
     
     // Public functions
 
-    let defaultPreMessageFormatter time expr state =
+    let defaultPreMessageFormatter time expr evalState =
         sprintf "%O - Start - %s" 
             time
-            <| formatExpr Pre expr state
+            <| formatExpr Pre expr evalState
         
-    let defaultPostMessageFormatter time expr state (elapsed : TimeSpan) =
+    let defaultPostMessageFormatter (elapsed : TimeSpan) time expr evalState  =
         sprintf "%O - End   - %s, Elapsed - %.3f ms" 
             time 
-            <| formatExpr Post expr state
+            <| formatExpr Post expr evalState
             <| elapsed.TotalMilliseconds
 
     let saveToFile fileName message =
         File.AppendAllText (fileName, message)
 
-    let createNew config expr state =
+    let createNew config expr evalState =
         let startTime = DateTime.Now
-        config.HandleMessage <| config.PreMessageFormatter startTime expr state
+        config.HandleMessage <| config.PreMessageFormatter startTime expr evalState
         Some <| postPerformanceInspector config startTime
 
     let filePerformanceInspector fileName =

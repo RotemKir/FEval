@@ -8,9 +8,15 @@ type EvaluationState =
         LastValue      : obj
         Variables      : Map<string, obj>
         RecVariables   : Dictionary<string, obj>
-        EvalFunc       : Expr -> EvaluationState -> EvaluationState
-        Inspectors     : (Expr -> EvaluationState -> (Expr -> EvaluationState -> unit) option) seq
+        EvalFunc       : EvaluationFunc
+        Inspectors     : PreInspcetor seq
     }
+
+and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
+
+and PreInspcetor = Expr -> EvaluationState -> PostInspector option
+
+and PostInspector = Expr -> EvaluationState -> unit
         
 [<RequireQualifiedAccess>]
 module Evaluator =
