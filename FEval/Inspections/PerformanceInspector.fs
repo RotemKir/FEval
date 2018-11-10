@@ -6,17 +6,19 @@ module PerformanceInspector =
     open FEval.TypeFormatters
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
-    open Microsoft.FSharp.Reflection
     open System
-    open System.IO
 
-    type MessageFormatter = DateTime -> Expr -> EvaluationState -> string
+    type InspectionResult =
+        | PreResult of time : DateTime * message : string
+        | PostResult of time : DateTime * message : string * elapsed : TimeSpan
+
+    type Inspector = DateTime -> Expr -> EvaluationState -> InspectionResult
     
     type Config =
         {
-            HandleMessage : string -> unit
-            PreMessageFormatter : MessageFormatter
-            PostMessageFormatter : TimeSpan -> MessageFormatter
+            HandleInspectionResult : InspectionResult -> unit
+            PreInspector : Inspector
+            PostInspector : TimeSpan -> Inspector
         }
 
     // Private functions
@@ -333,33 +335,17 @@ module PerformanceInspector =
     let private postPerformanceInspector config (startTime : DateTime) expr evalState =
         let endTime = DateTime.Now
         let elapsedTime = endTime.Subtract(startTime)
-        config.HandleMessage <| config.PostMessageFormatter elapsedTime endTime expr evalState 
+        config.HandleInspectionResult <| config.PostInspector elapsedTime endTime expr evalState 
     
     // Public functions
 
-    let defaultPreMessageFormatter time expr evalState =
-        sprintf "%O - Start - %s" 
-            time
-            <| formatExpr Pre expr evalState
+    let defaultPreInspector time expr evalState =
+        PreResult (time, formatExpr Pre expr evalState)
         
-    let defaultPostMessageFormatter (elapsed : TimeSpan) time expr evalState  =
-        sprintf "%O - End   - %s, Elapsed - %.3f ms" 
-            time 
-            <| formatExpr Post expr evalState
-            <| elapsed.TotalMilliseconds
-
-    let saveToFile fileName message =
-        File.AppendAllText (fileName, message)
+    let defaultPostInspector elapsed time expr evalState  =
+        PostResult (time, formatExpr Post expr evalState, elapsed)
 
     let createNew config expr evalState =
         let startTime = DateTime.Now
-        config.HandleMessage <| config.PreMessageFormatter startTime expr evalState
+        config.HandleInspectionResult <| config.PreInspector startTime expr evalState
         Some <| postPerformanceInspector config startTime
-
-    let filePerformanceInspector fileName =
-        createNew 
-            {
-                HandleMessage = saveToFile fileName
-                PreMessageFormatter = defaultPreMessageFormatter
-                PostMessageFormatter = defaultPostMessageFormatter
-            }
