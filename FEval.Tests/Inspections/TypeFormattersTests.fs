@@ -273,6 +273,26 @@ type TypeFormattersTests() =
         Assert.AreEqual("some class : ChildClass", result)
             
     [<TestMethod>]
+    member this.``formatVariables - no variables - returns empty list``() = 
+        let result = formatVariables [||]
+        Assert.AreEqual(String.Empty, result)
+    
+    [<TestMethod>]
+    member this.``formatVariables - one variable - returns formatted variable``() = 
+        let result = formatVariables [| new Var("number", typeof<int>) |]
+        Assert.AreEqual("number : Int32", result)
+
+    [<TestMethod>]
+    member this.``formatVariables - several variables - returns formatted variables separated by ,``() = 
+        let result = formatVariables 
+                        [| 
+                            new Var("number", typeof<int>) 
+                            new Var("text", typeof<string>) 
+                            new Var("isTrue", typeof<bool>) 
+                        |]
+        Assert.AreEqual("number : Int32, text : String, isTrue : Boolean", result)
+
+    [<TestMethod>]
     member this.``formatMethod - has no instance - returns method declaring type and method name``() = 
         let result = formatMethod (typeof<int>.GetMethod("GetHashCode")) None
         Assert.AreEqual("Int32.GetHashCode()", result)

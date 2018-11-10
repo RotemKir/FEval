@@ -82,6 +82,10 @@ module TypeFormatters =
     let formatVariable (variable : Var) =
         sprintf "%s : %s" variable.Name <| formatType variable.Type
     
+    let formatVariables (variables : Var seq) =
+        Seq.map formatVariable variables
+        |> String.concat ", "
+
     let formatParameters parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
 

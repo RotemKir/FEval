@@ -532,3 +532,17 @@ type PerformanceInspectorTests() =
                 "End   - Got value false : Boolean"
                 "End   - Ran while loop"
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate performance inspector - recursive let``() = 
+        assertInspectors
+            <@ let rec x = 4 in x @>
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            [| 
+                "Start - Recursive let x : Int32"
+                "Start - Getting value 4 : Int32"
+                "End   - Got value 4 : Int32"
+                "Start - Getting variable x : Int32"
+                "End   - Got variable x, Returned 4 : Int32"
+                "End   - Recursive let x : Int32 returned 4 : Int32"
+            |]

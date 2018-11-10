@@ -42,37 +42,46 @@ module PerformanceInspector =
     let private formatNewUnionCaseExpr stage (unionCaseInfo : UnionCaseInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating %s : %s" unionCaseInfo.Name <| formatType unionCaseInfo.DeclaringType
+            sprintf "Creating %s : %s" unionCaseInfo.Name 
+            <| formatType unionCaseInfo.DeclaringType
         | Post -> 
-            sprintf "Created %s" <| formatStateLastValue state unionCaseInfo.DeclaringType
+            sprintf "Created %s" 
+            <| formatStateLastValue state unionCaseInfo.DeclaringType
 
     let private formatNewRecordExpr stage (recordType : Type, _) state =
         match stage with
         | Pre  -> 
             sprintf "Creating new %s" recordType.Name
         | Post -> 
-            sprintf "Created %s" <| formatStateLastValue state recordType
+            sprintf "Created %s" 
+            <| formatStateLastValue state recordType
                 
     let private formatNewTupleExpr stage (tupleType : Type) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating new tuple %s" <| formatType tupleType 
+            sprintf "Creating new tuple %s" 
+            <| formatType tupleType 
         | Post -> 
-            sprintf "Created tuple %s" <| formatStateLastValue state tupleType
+            sprintf "Created tuple %s" 
+            <| formatStateLastValue state tupleType
 
     let private formatNewArray stage (arrayType, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating new array %s" <| formatType arrayType 
+            sprintf "Creating new array %s" 
+            <| formatType arrayType 
         | Post -> 
-            sprintf "Created array %s" <| formatStateLastValue state arrayType
+            sprintf "Created array %s"
+            <| formatStateLastValue state arrayType
 
     let private formatLetExpr stage (variable : Var, _, body : Expr) state =
         match stage with
         | Pre  -> 
-            sprintf "Let %s" <| formatVariable variable
+            sprintf "Let %s" 
+            <| formatVariable variable
         | Post -> 
-            sprintf "Let %s returned %s" variable.Name <| formatStateLastValue state body.Type
+            sprintf "Let %s returned %s" variable.Name 
+            <| formatStateLastValue state body.Type
     
     let private formatVariableExpr stage variable state =
         match stage with
@@ -87,14 +96,17 @@ module PerformanceInspector =
     let private formatlambdaExpr stage functionType =
         match stage with
         | Pre  -> 
-            sprintf "Creating lambda %s" <| formatType functionType
+            sprintf "Creating lambda %s" 
+            <| formatType functionType
         | Post -> 
-            sprintf "Created lambda %s" <| formatType functionType
+            sprintf "Created lambda %s" 
+            <| formatType functionType
 
     let private formatApplicationExpr stage (funcExpr : Expr, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Applying function %s" <| formatType funcExpr.Type
+            sprintf "Applying function %s" 
+            <| formatType funcExpr.Type
         | Post -> 
             sprintf "Applied function %s, Returned %s" 
             <| formatType funcExpr.Type
@@ -103,14 +115,19 @@ module PerformanceInspector =
     let private formatCoerceExpr stage (expr : Expr, coerceType) =
         match stage with
         | Pre  -> 
-            sprintf "Coercing %s to %s" <| formatType expr.Type <| formatType coerceType
+            sprintf "Coercing %s to %s" 
+            <| formatType expr.Type 
+            <| formatType coerceType
         | Post -> 
-            sprintf "Coerced %s to %s" <| formatType expr.Type <| formatType coerceType
+            sprintf "Coerced %s to %s" 
+            <| formatType expr.Type 
+            <| formatType coerceType
     
     let private formatNewObject stage (constructorInfo, _) state =
         match stage with
         | Pre  -> 
-            sprintf "Creating new object %s" <| formatCtor constructorInfo
+            sprintf "Creating new object %s" 
+            <| formatCtor constructorInfo
         | Post -> 
             sprintf "Created new object %s" 
             <| formatType constructorInfo.DeclaringType
@@ -254,6 +271,18 @@ module PerformanceInspector =
         | Pre  -> "Running while loop"
         | Post -> "Ran while loop"
 
+    let private formatLetRecursive stage (variableBindings, expr : Expr) state =
+        let variables = List.map fst variableBindings
+        
+        match stage with
+        | Pre  -> 
+            sprintf "Recursive let %s" 
+            <| formatVariables variables 
+        | Post -> 
+            sprintf "Recursive let %s returned %s" 
+            <| formatVariables variables 
+            <| formatStateLastValue state expr.Type
+    
     let private formatExpr stage expr state =
         match expr with
         | Application applicationState -> formatApplicationExpr stage applicationState state
@@ -266,7 +295,7 @@ module PerformanceInspector =
         | IfThenElse ifState -> formatIf stage ifState state
         | Lambda _ -> formatlambdaExpr stage expr.Type
         | Let letState -> formatLetExpr stage letState state
-        //| LetRecursive        _ -> "LetRecursive"
+        | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState state
         | NewArray newArrayState -> formatNewArray stage newArrayState state
         | NewObject  newObjectState -> formatNewObject stage newObjectState state
         | NewRecord  newRecordState -> formatNewRecordExpr stage newRecordState state
