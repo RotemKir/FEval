@@ -13,14 +13,12 @@ module PerformanceInspector =
     type InspectionResult =
         | PreResult of time : DateTime * message : string
         | PostResult of time : DateTime * message : string * elapsed : TimeSpan
-
-    type Inspector = DateTime -> Expr -> EvaluationState -> InspectionResult
-    
+            
     type Config =
         {
             HandleInspectionResult : InspectionResult -> unit
-            PreInspector : Inspector
-            PostInspector : TimeSpan -> Inspector
+            PreInspector : Inspector<InspectionResult>
+            PostInspector : TimeSpan -> Inspector<InspectionResult>
         }
 
     // Private functions
@@ -129,7 +127,7 @@ module PerformanceInspector =
             <| formatType expr.Type 
             <| formatType coerceType
     
-    let private formatNewObject stage (constructorInfo, _) evalState =
+    let private formatNewObject stage (constructorInfo, _) =
         match stage with
         | Pre  -> 
             sprintf "Creating new object %s" 
@@ -314,8 +312,8 @@ module PerformanceInspector =
         | Let letState                   -> formatLetExpr stage letState evalState
         | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState evalState
         | NewArray newArrayState         -> formatNewArray stage newArrayState evalState
-        | NewObject  newObjectState      -> formatNewObject stage newObjectState evalState
-        | NewRecord  newRecordState      -> formatNewRecordExpr stage newRecordState evalState
+        | NewObject newObjectState       -> formatNewObject stage newObjectState
+        | NewRecord newRecordState       -> formatNewRecordExpr stage newRecordState evalState
         | NewTuple  _                    -> formatNewTupleExpr stage expr.Type evalState
         | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState evalState
         | PropertyGet propertyGetState   -> formatPropertyGet stage propertyGetState evalState
