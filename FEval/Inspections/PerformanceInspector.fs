@@ -1,9 +1,11 @@
-﻿namespace FEval
+﻿namespace FEval.Inspections
 
 [<RequireQualifiedAccess>]
 module PerformanceInspector =
-    open FEval.CommonInspections
-    open FEval.TypeFormatters
+    open FEval
+    open FEval.Inspections.Persistance
+    open FEval.Inspections.CommonInspections
+    open FEval.Inspections.TypeFormatters
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open System
@@ -22,7 +24,7 @@ module PerformanceInspector =
         }
 
     // Private functions
-
+    
     let private formatStateLastValue evalState =
         formatValue <| Evaluator.getLastValue evalState
 
@@ -349,3 +351,35 @@ module PerformanceInspector =
         let startTime = DateTime.Now
         config.HandleInspectionResult <| config.PreInspector startTime expr evalState
         Some <| postPerformanceInspector config startTime
+
+    let stringInspectionResultFormatter inspectionResult =
+        match inspectionResult with
+        | PreResult (time, message) ->
+            sprintf "%s - Start - %s" 
+            <| formatTimeForLog time <| message
+        | PostResult (time, message, elapsed) ->
+            sprintf "%s - End   - %s, Elapsed - %.3f ms"
+            <| formatTimeForLog time <| message <| elapsed.TotalMilliseconds
+            
+    let csvInspectionResultFormatter inspectionResult =
+        match inspectionResult with
+        | PreResult (time, message) ->
+            sprintf "%s,Start,\"%s\"" 
+            <| formatTimeForLog time <| formatCsvLine message
+        | PostResult (time, message, elapsed) ->
+            sprintf "%s,End,\"%s\",%.3f" 
+            <| formatTimeForLog time <| formatCsvLine message <| elapsed.TotalMilliseconds
+
+    let createFileLogConfig formatter fileName =
+        {
+            HandleInspectionResult = appendLineToFile fileName formatter
+            PreInspector = defaultPreInspector
+            PostInspector = defaultPostInspector
+        }
+
+    let createDefaultFileLogConfig = 
+        createFileLogConfig stringInspectionResultFormatter
+        
+    let createCsvLogConfig fileName =
+        setFileHeader fileName "Time,Stage,Message,Elapsed (ms)"
+        createFileLogConfig csvInspectionResultFormatter fileName

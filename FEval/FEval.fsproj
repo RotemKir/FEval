@@ -49,6 +49,7 @@
     <Compile Include="Loops.fs" />
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
+    <Compile Include="Inspections\Persistance.fs" />
     <Compile Include="Inspections\CommonInspections.fs" />
     <Compile Include="Inspections\TypeChecks.fs" />
     <Compile Include="Inspections\TypeFormatters.fs" />

@@ -1,7 +1,7 @@
 ﻿namespace FEval.Tests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval
+open FEval.Inspections
 open FEval.Evaluations
 open FEval.Tests.TestHelpers
 open System.Collections.Generic
@@ -365,7 +365,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - for loop``() = 
         assertInspectors
             <@  let mutable x = 0 in for i = 1 to 3 do x <- x + i @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list |])
             [| 
                 "Let x : Int32"
                 "Getting value 0 : Int32"

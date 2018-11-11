@@ -1,12 +1,12 @@
-﻿namespace FEval
+﻿namespace FEval.Inspections
 
 module TypeFormatters =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Reflection
     open System
     open System.Reflection
-    open FEval.CommonInspections
-    open FEval.TypeChecks
+    open FEval.Inspections.CommonInspections
+    open FEval.Inspections.TypeChecks
 
     // Private functions
 

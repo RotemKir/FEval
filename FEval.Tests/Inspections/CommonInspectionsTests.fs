@@ -1,7 +1,7 @@
 ﻿namespace FEval.Tests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval.CommonInspections
+open FEval.Inspections.CommonInspections
 open FEval.Tests.TestHelpers
 
 [<TestClass>]
