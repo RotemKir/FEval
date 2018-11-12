@@ -17,8 +17,8 @@ module PerformanceInspector =
     type Config =
         {
             HandleInspectionResult : InspectionResult -> unit
-            PreInspector : Inspector<InspectionResult>
-            PostInspector : TimeSpan -> Inspector<InspectionResult>
+            PreInspector : Inspector<InspectionResult option>
+            PostInspector : TimeSpan -> Inspector<InspectionResult option>
         }
 
     // Private functions
@@ -332,23 +332,36 @@ module PerformanceInspector =
         | WhileLoop _                    -> formatWhileLoop stage
         | _                              -> failwithf "Expression %O is not supported" expr
 
-    let private postPerformanceInspector config (startTime : DateTime) expr evalState =
+    let private postPerformanceInspector config (startTime : DateTime) inspectionEvent evalState =
         let endTime = DateTime.Now
         let elapsedTime = endTime.Subtract(startTime)
-        config.HandleInspectionResult <| config.PostInspector elapsedTime endTime expr evalState 
-    
+        let postInspectionResult = config.PostInspector elapsedTime endTime inspectionEvent evalState 
+        
+        match postInspectionResult with
+        | Some result -> config.HandleInspectionResult result
+        | None        -> ignore()         
+        
+    let private handlePreInspectionResult config startTime result =
+        config.HandleInspectionResult result 
+        Some <| postPerformanceInspector config startTime
+        
     // Public functions
 
-    let defaultPreInspector time expr evalState =
-        PreResult (time, formatExpr Pre expr evalState)
-        
-    let defaultPostInspector elapsed time expr evalState  =
-        PostResult (time, formatExpr Post expr evalState, elapsed)
+    let defaultPreInspector time inspectionEvent evalState =
+        inspectExprEvent inspectionEvent 
+        <| (fun expr -> PreResult (time, formatExpr Pre expr evalState))
 
-    let createNew config expr evalState =
+    let defaultPostInspector elapsed time inspectionEvent evalState  =
+        inspectExprEvent inspectionEvent 
+        <| (fun expr -> PostResult (time, formatExpr Post expr evalState, elapsed))
+
+    let createNew config inspectionEvent evalState =
         let startTime = DateTime.Now
-        config.HandleInspectionResult <| config.PreInspector startTime expr evalState
-        Some <| postPerformanceInspector config startTime
+        let preInspectionResult = config.PreInspector startTime inspectionEvent evalState
+
+        Option.bind 
+            (handlePreInspectionResult config startTime)
+            preInspectionResult
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with

@@ -9,7 +9,7 @@ module CommonInspections =
 
     type InpectionStage = Pre | Post
 
-    type Inspector<'a> = DateTime -> Expr -> EvaluationState -> 'a
+    type Inspector<'a> = DateTime -> InspectionEvent -> EvaluationState -> 'a
 
     let getExprName expr =
         match expr with
@@ -56,3 +56,8 @@ module CommonInspections =
 
     let getFunctionReturnType funcType =
         snd <| FSharpType.GetFunctionElements funcType
+    
+    let inspectExprEvent inspectionEvent exprInspection =
+        match inspectionEvent with
+        | ExprEvent expr -> Some <| exprInspection expr
+        | _              -> None

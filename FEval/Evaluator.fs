@@ -2,6 +2,7 @@
 
 open Microsoft.FSharp.Quotations
 open System.Collections.Generic
+open System.Reflection
 
 type EvaluationState =
     {
@@ -14,9 +15,13 @@ type EvaluationState =
 
 and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
 
-and PreInspcetor = Expr -> EvaluationState -> PostInspector option
+and InspectionEvent =
+    | ExprEvent of Expr
+    | MethodEvent of MethodInfo
 
-and PostInspector = Expr -> EvaluationState -> unit
+and PreInspcetor = InspectionEvent -> EvaluationState -> PostInspector option
+
+and PostInspector = InspectionEvent -> EvaluationState -> unit
         
 [<RequireQualifiedAccess>]
 module Evaluator =
@@ -38,19 +43,17 @@ module Evaluator =
 
     let private actOnVariable (variable : Var) recVarAction varAction state =
         if state.RecVariables.ContainsKey(variable.Name)
-        then
-            recVarAction variable
-        else
-            varAction variable
+        then recVarAction variable
+        else varAction variable
     
-    let private runPreInspectors expr state =
-        Seq.map (fun i -> i expr state) state.Inspectors
+    let private runPreInspectors inspectionEvent state =
+        Seq.map (fun i -> i inspectionEvent state) state.Inspectors
         |> Seq.filter Option.isSome
         |> Seq.map Option.get
         |> Seq.toArray
         
-    let private runPostInspectors inspectors expr state =
-        Seq.iter (fun i -> i expr state) inspectors
+    let private runPostInspectors inspectors inspectionEvent state =
+        Seq.iter (fun i -> i inspectionEvent state) inspectors
 
     // Public Functions
 
@@ -95,9 +98,9 @@ module Evaluator =
         state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
-        let postInspectors = runPreInspectors expr state
+        let postInspectors = runPreInspectors <| ExprEvent expr <| state
         let newState = state.EvalFunc expr state
-        runPostInspectors postInspectors expr newState
+        runPostInspectors postInspectors <| ExprEvent expr <| newState
         newState
 
     let evalExprAndGetLastValue expr state =
