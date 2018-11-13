@@ -17,7 +17,7 @@ and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
 
 and InspectionEvent =
     | ExprEvent of Expr
-    | MethodEvent of MethodInfo
+    | MethodEvent of method : MethodBase * parameters : obj array * result : obj option
 
 and PreInspcetor = InspectionEvent -> EvaluationState -> PostInspector option
 
@@ -123,3 +123,9 @@ module Evaluator =
             EvalFunc = evalFunc
             Inspectors = inspectors
         }
+
+    let invokeMethod instance methodInfo parameters state =
+        let postInspectors = runPreInspectors <| MethodEvent(methodInfo, parameters, None) <| state
+        let result = Reflection.invokeMethod instance methodInfo parameters
+        runPostInspectors postInspectors <| MethodEvent(methodInfo, parameters, Some result) <| state
+        result

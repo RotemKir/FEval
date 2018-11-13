@@ -5,7 +5,6 @@ module Evaluations =
     open Microsoft.FSharp.Quotations.Patterns
     open FEval.ExceptionHandling
     open FEval.Loops
-    open FEval.Reflection
     open System
     open System.Reflection
     
@@ -56,34 +55,37 @@ module Evaluations =
             |> Evaluator.getLastValueAndState
 
     let private getMethodOverride methodInfo =
-        match getMethodFullName methodInfo |> Map.tryFind <| methodOverrides with
+        match Reflection.getMethodFullName methodInfo |> Map.tryFind <| methodOverrides with
         | Some methodOverride -> methodOverride
         | _                   -> methodInfo
 
     let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
         let (instance, newState) = evalInstanceExpr state instanceExpr
-        Evaluator.evalExprs parameterExprs newState
-        |> invokeMethod instance (getMethodOverride methodInfo)
+        Evaluator.invokeMethod 
+        <| instance 
+        <| getMethodOverride methodInfo 
+        <| Evaluator.evalExprs parameterExprs newState 
+        <| newState
         |> Evaluator.setLastValue newState
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 
-        |> makeUnion unionCaseInfo
+        |> Reflection.makeUnion unionCaseInfo
         |> Evaluator.setLastValue state
 
     let private evalNewRecord state (recordType, exprs) = 
         Evaluator.evalExprs exprs state 
-        |> makeRecord recordType
+        |> Reflection.makeRecord recordType
         |> Evaluator.setLastValue state
 
     let private evalNewTuple state exprs tupleType =
         Evaluator.evalExprs exprs state
-        |> makeTuple tupleType
+        |> Reflection.makeTuple tupleType
         |> Evaluator.setLastValue state
     
     let private evalNewArray state (arrayType, exprs) =
         Evaluator.evalExprs exprs state
-        |> makeArray arrayType
+        |> Reflection.makeArray arrayType
         |> Evaluator.setLastValue state
 
     let private evalLet state (letVariable, letExpr, body) =
@@ -107,14 +109,14 @@ module Evaluations =
 
     let private evalLambda state (variable : Var, expr : Expr) =
         createLambdaBody state variable expr
-        |> makeFunction variable.Type expr.Type 
+        |> Reflection.makeFunction variable.Type expr.Type 
         |> Evaluator.setLastValue state
 
     let private evalApplication state (funcExpr, valueExpr) =
         let func = Evaluator.evalExprAndGetLastValue funcExpr state
         let value = Evaluator.evalExprAndGetLastValue valueExpr state
-        let method = getMethodInfo func "Invoke"
-        invokeMethod func method [|value|]
+        let method = Reflection.getMethodInfo func "Invoke"
+        Reflection.invokeMethod func method [|value|]
         |> Evaluator.setLastValue state 
 
     let private evalCoerce state (expr, _) =
@@ -122,7 +124,7 @@ module Evaluations =
 
     let private evalNewObject state (constructorInfo, parameterExprs) =
         Evaluator.evalExprs parameterExprs state
-        |> invokeCtor constructorInfo
+        |> Reflection.invokeCtor constructorInfo
         |> Evaluator.setLastValue state
 
     let private evalSequential state (firstExpr, secondExpr) = 
@@ -132,7 +134,7 @@ module Evaluations =
     let private evalPropertyGet state (instanceExpr, propertyInfo, parameterExprs) =
         let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.evalExprs parameterExprs newState
-        |> invokeGetProperty instance propertyInfo
+        |> Reflection.invokeGetProperty instance propertyInfo
         |> Evaluator.setLastValue newState
 
     let private evalPropertySet state (instanceExpr, propertyInfo, indexerExprs, valueExpr) =
@@ -141,16 +143,16 @@ module Evaluations =
             Evaluator.evalExpr valueExpr newState1
             |> Evaluator.getLastValueAndState
         Evaluator.evalExprs indexerExprs newState2
-        |> invokeSetProperty instance propertyInfo value
+        |> Reflection.invokeSetProperty instance propertyInfo value
         |> Evaluator.setLastValue newState2
 
     let private evalDefaultValue state defaultType =
-        createNewInstance defaultType
+        Reflection.createNewInstance defaultType
         |> Evaluator.setLastValue state
 
     let private evalFieldGet state (instanceExpr, fieldInfo) =
         let (instance, newState1) = evalInstanceExpr state instanceExpr
-        invokeGetField instance fieldInfo
+        Reflection.invokeGetField instance fieldInfo
         |> Evaluator.setLastValue newState1
         
     let private evalFieldSet state (instanceExpr, fieldInfo, valueExpr) =
@@ -158,7 +160,7 @@ module Evaluations =
         let (value, newState2) = 
             Evaluator.evalExpr valueExpr newState1
             |> Evaluator.getLastValueAndState
-        invokeSetField instance fieldInfo value
+        Reflection.invokeSetField instance fieldInfo value
         |> Evaluator.setLastValue newState2
 
     let private evalFor state (loopVar, startExpr, endExpr, bodyExpr) =
@@ -183,16 +185,16 @@ module Evaluations =
 
     let private evalTupleGet state (tupleExpr, index) =
         Evaluator.evalExprAndGetLastValue tupleExpr state
-        |> getTupleField index
+        |> Reflection.getTupleField index
         |> Evaluator.setLastValue state
 
     let private evalUnionCaseTest state (unionExpr, unionCaseInfo) =
         Evaluator.evalExprAndGetLastValue unionExpr state
-        |> getUnionCaseInfo = unionCaseInfo
+        |> Reflection.getUnionCaseInfo = unionCaseInfo
         |> Evaluator.setLastValue state
 
     let private evalTypeTest state (expr, expectedType : Type) =
-        Evaluator.evalExprAndGetLastValue expr state |> getType 
+        Evaluator.evalExprAndGetLastValue expr state |> Reflection.getType 
         |> expectedType.IsAssignableFrom    
         |> Evaluator.setLastValue state
 
@@ -240,7 +242,7 @@ module Evaluations =
         Evaluator.setLastValue
 
     let private evalQuoteTyped state quoteExpr =
-        convertExprToTyped quoteExpr quoteExpr.Type
+        Reflection.convertExprToTyped quoteExpr quoteExpr.Type
         |> Evaluator.setLastValue state
 
     let private evalExpr = 

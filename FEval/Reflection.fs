@@ -1,5 +1,6 @@
 ﻿namespace FEval
 
+[<RequireQualifiedAccess>]
 module Reflection =
     open System
     open System.Reflection
