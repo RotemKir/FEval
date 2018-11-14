@@ -48,6 +48,7 @@
     <Compile Include="Inspections\TypeChecksTests.fs" />
     <Compile Include="Inspections\TypeFormattersTests.fs" />
     <Compile Include="Inspections\PerformanceInspectorTests.fs" />
+    <Compile Include="Inspections\MethodCallInspectorTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

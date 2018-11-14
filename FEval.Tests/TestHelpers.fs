@@ -2,10 +2,22 @@
 
 module TestHelpers =
     open System
+    open System.Collections.Generic
     open Microsoft.FSharp.Quotations
+    open Microsoft.VisualStudio.TestTools.UnitTesting
+    open FEval.Evaluations
 
     let createValueExpr<'a>() =
         Some <| Expr.Value (null, typeof<'a>)
+
+    let assertMessages (expected : string array) (actual : List<string>) =
+        Assert.AreEqual(expected.Length, actual.Count)
+        Array.iteri (fun i s -> StringAssert.Contains(actual.[i], s, sprintf "Item %i" i)) expected
+
+    let assertInspectors expr createInspectors expectedMessages =
+        let messageList = new List<string>()
+        evalWith expr <| createInspectors messageList |> ignore
+        assertMessages expectedMessages messageList
 
     type Person =
         {

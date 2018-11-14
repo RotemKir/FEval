@@ -21,7 +21,8 @@ and InspectionEvent =
 
 and MethodEventDetails =
     {
-        Method : MethodBase
+        Method : MethodInfo
+        Instance : obj
         Parameters : obj array 
         Result : obj option
     }
@@ -61,6 +62,17 @@ module Evaluator =
         
     let private runPostInspectors inspectors inspectionEvent state =
         Seq.iter (fun i -> i inspectionEvent state) inspectors
+
+    let private createPreMethodEventDetails instance methodInfo parameters =
+        {
+            Method = methodInfo 
+            Instance = instance
+            Parameters = parameters 
+            Result = None
+        }
+    
+    let private createPostMethodEventDetails preMethodEventDetails result =
+        { preMethodEventDetails  with Result = Some result }
 
     // Public Functions
 
@@ -132,12 +144,12 @@ module Evaluator =
         }
 
     let invokeMethod instance methodInfo parameters state =
-        let preMethodEventDetails = {Method = methodInfo ; Parameters = parameters ; Result = None}
+        let preMethodEventDetails = createPreMethodEventDetails instance methodInfo parameters
         let postInspectors = runPreInspectors <| MethodEvent(preMethodEventDetails ) <| state
         
         let result = Reflection.invokeMethod instance methodInfo parameters
         
-        let postMethodEventDetails = { preMethodEventDetails with Result = Some result }
+        let postMethodEventDetails = createPostMethodEventDetails preMethodEventDetails result
         runPostInspectors postInspectors <| MethodEvent(postMethodEventDetails) <| state
         
         result

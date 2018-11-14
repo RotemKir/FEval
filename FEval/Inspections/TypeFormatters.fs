@@ -94,10 +94,15 @@ module TypeFormatters =
         | [||] -> String.Empty
         | _    -> sprintf "[%s]" <| formatParameters parameters
 
+    let formatMethodName (methodInfo : MethodInfo) declaringType =
+        sprintf "%s.%s" <| formatType declaringType <| methodInfo.Name
+
     let formatMethod (methodInfo : MethodInfo) instanceExpr =
-        let typeName = formatType <| getDeclaringType instanceExpr methodInfo.DeclaringType
-        let parameters = formatParameters <| methodInfo.GetParameters()
-        sprintf "%s.%s(%s)" typeName methodInfo.Name parameters 
+        let declaringType = getDeclaringType instanceExpr methodInfo.DeclaringType
+        let parameters = methodInfo.GetParameters()
+        sprintf "%s(%s)" 
+            <| formatMethodName methodInfo declaringType
+            <| formatParameters parameters
         
     let formatCtor (constructorInfo : ConstructorInfo) =
         sprintf "%s(%s)" 

@@ -2,38 +2,29 @@
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspections
-open FEval.Evaluations
 open FEval.Tests.TestHelpers
 open System.Collections.Generic
 
 [<TestClass>]
 type PerformanceInspectorTests() =
+    
     let addMessageToList (list : List<string>) inspectionResult =
         match inspectionResult with
         | PerformanceInspector.PreResult (_, message)     -> list.Add(message)
         | PerformanceInspector.PostResult (_, message, _) -> list.Add(message)
 
-    let mockPerformanceInspectorConfig messageList : PerformanceInspector.Config =
+    let mockConfig messageList : PerformanceInspector.Config =
         {
             HandleInspectionResult = addMessageToList messageList
             PreInspector = PerformanceInspector.defaultPreInspector
             PostInspector = PerformanceInspector.defaultPostInspector
         }
 
-    let assertMessages (expected : string array) (actual : List<string>) =
-        Assert.AreEqual(expected.Length, actual.Count)
-        Array.iteri (fun i s -> StringAssert.Contains(actual.[i], s, sprintf "Item %i" i)) expected
-
-    let assertInspectors expr createInspectors expectedMessages =
-        let messageList = new List<string>()
-        evalWith expr <| createInspectors messageList |> ignore
-        assertMessages expectedMessages messageList
-
     [<TestMethod>]
     member this.``Evaluate performance inspector - value``() = 
         assertInspectors
             <@ 4 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Getting value 4 : Int32" 
                 "Got value 4 : Int32" 
@@ -43,7 +34,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - call static method``() = 
         assertInspectors
             <@ abs -3 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Calling Operators.Abs(Int32)"
                 "Getting value -3 : Int32"
@@ -55,7 +46,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - none union case``() = 
         assertInspectors
             <@ None @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating None : Option<Object>"
                 "Created None : Option<Object>" 
@@ -65,7 +56,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - some union case``() = 
         assertInspectors
             <@ Some 16 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating Some : Option<Int32>"
                 "Getting value 16 : Int32" 
@@ -77,7 +68,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - new record``() = 
         assertInspectors
             <@ { FirstName = "First" ; LastName = "Last" } @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating new Person"
                 "Getting value \"First\" : String" 
@@ -91,7 +82,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - new tuple``() = 
         assertInspectors
             <@ (16, "Text", true) @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating new tuple (Int32, String, Boolean)"
                 "Getting value 16 : Int32" 
@@ -107,7 +98,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - new array``() = 
         assertInspectors
             <@ [|1 ; 2 ; 3|] @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating new array Int32"
                 "Getting value 1 : Int32" 
@@ -123,7 +114,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - let statement``() = 
         assertInspectors
             <@ let x = 18 in x @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : Int32"
                 "Getting value 18 : Int32" 
@@ -137,7 +128,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - function application``() = 
         assertInspectors
             <@ let f x = x + 1 in f 3 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let f : (Int32 -> Int32)"
                 "Creating lambda (Int32 -> Int32)"
@@ -161,7 +152,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - call instance method``() = 
         assertInspectors
             <@ let x = 3 in x.ToString() @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : Int32"
                 "Getting value 3 : Int32"
@@ -177,7 +168,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - coerce to object``() = 
         assertInspectors
             <@ let x = "Hello" in x :> obj @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : String"
                 "Getting value \"Hello\" : String"
@@ -193,7 +184,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - create new object``() = 
         assertInspectors
             <@ new ChildClass("Hello") @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Creating new object ChildClass(String)"
                 "Getting value \"Hello\" : String"
@@ -205,7 +196,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - get property``() = 
         assertInspectors
             <@ let x = new ChildClass("Hello") in x.NameProperty @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : ChildClass"
                 "Creating new object ChildClass(String)"
@@ -227,7 +218,7 @@ type PerformanceInspectorTests() =
             child.NameProperty <- "World"
             child.NameProperty 
             @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let child : ChildClass"
                 "Creating new object ChildClass(String)"
@@ -256,7 +247,7 @@ type PerformanceInspectorTests() =
             let indexerClass = new IndexerClass()
             indexerClass.[2]
             @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let indexerClass : IndexerClass"
                 "Creating new object IndexerClass()"
@@ -277,7 +268,7 @@ type PerformanceInspectorTests() =
             let indexerClass = new IndexerClass()
             indexerClass.[2] <- "Lovely Two"
             @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let indexerClass : IndexerClass"
                 "Creating new object IndexerClass()"
@@ -297,7 +288,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - struct default value``() = 
         assertInspectors
             <@  let struct1 = new Struct() in struct1 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let struct1 : Struct"
                 "Creating default value for Struct"
@@ -311,7 +302,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - get field``() = 
         assertInspectors
             <@  let field = new FieldClass(54) in field.number @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let field : FieldClass"
                 "Creating new object FieldClass(Int32)"
@@ -329,7 +320,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - set field``() = 
         assertInspectors
             <@  let field = new FieldClass(54) in field.number <- 73 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let field : FieldClass"
                 "Creating new object FieldClass(Int32)"
@@ -349,7 +340,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - var set``() = 
         assertInspectors
             <@  let mutable x = 3 in x <- 18 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : Int32"
                 "Getting value 3 : Int32"
@@ -365,7 +356,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - for loop``() = 
         assertInspectors
             <@  let mutable x = 0 in for i = 1 to 3 do x <- x + i @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list |])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list |])
             [| 
                 "Let x : Int32"
                 "Getting value 0 : Int32"
@@ -410,7 +401,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - if then else``() = 
         assertInspectors
             <@ if true then 4 else 5 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Evaluating if"
                 "Getting value true : Boolean"
@@ -424,7 +415,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - tuple get``() = 
         assertInspectors
             <@ let (a, b) = (1, 2) in a @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let patternInput : (Int32, Int32)"
                 "Creating new tuple (Int32, Int32)"
@@ -454,7 +445,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - union case test``() = 
         assertInspectors
             <@ match UnionB with | UnionA -> true | _ -> false @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let matchValue : Union"
                 "Creating UnionB : Union"
@@ -477,7 +468,7 @@ type PerformanceInspectorTests() =
             let x : obj = 6 :> obj           
             match x with | :? int -> true | _ -> false
             @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Let x : Object"
                 "Coercing Int32 to Object"
@@ -499,7 +490,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - try with``() = 
         assertInspectors
             <@ try 4 with | _ -> 5 @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Handling with try with"
                 "Getting value 4 : Int32"
@@ -511,7 +502,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - try finally``() = 
         assertInspectors
             <@ try 4 finally ignore() @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Handling with try finally"
                 "Getting value 4 : Int32"
@@ -527,7 +518,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - while loop``() = 
         assertInspectors
             <@ while false do ignore() @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Running while loop"
                 "Getting value false : Boolean"
@@ -539,7 +530,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - recursive let``() = 
         assertInspectors
             <@ let rec x = 4 in x @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Recursive let x : Int32"
                 "Getting value 4 : Int32"
@@ -553,7 +544,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - typed code quotation``() = 
         assertInspectors
             <@ <@ 4 @> @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Getting quote (Value) : Int32"
                 "Got quote (Value) : Int32"
@@ -563,7 +554,7 @@ type PerformanceInspectorTests() =
     member this.``Evaluate performance inspector - raw code quotation``() = 
         assertInspectors
             <@ <@@ 7 @@> @>
-            (fun list -> [| PerformanceInspector.createNew <| mockPerformanceInspectorConfig list|])
+            (fun list -> [| PerformanceInspector.createNew <| mockConfig list|])
             [| 
                 "Getting quote (Value) : Int32"
                 "Got quote (Value) : Int32"
