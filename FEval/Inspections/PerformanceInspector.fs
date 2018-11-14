@@ -357,11 +357,10 @@ module PerformanceInspector =
 
     let createNew config inspectionEvent evalState =
         let startTime = DateTime.Now
-        let preInspectionResult = config.PreInspector startTime inspectionEvent evalState
 
         Option.bind 
-            (handlePreInspectionResult config startTime)
-            preInspectionResult
+            <| handlePreInspectionResult config startTime
+            <| config.PreInspector startTime inspectionEvent evalState
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with

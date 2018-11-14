@@ -61,3 +61,8 @@ module CommonInspections =
         match inspectionEvent with
         | ExprEvent expr -> Some <| exprInspection expr
         | _              -> None
+
+    let inspectMethodEvent inspectionEvent methodInspection =
+        match inspectionEvent with
+        | MethodEvent methodEventDetails -> Some <| methodInspection methodEventDetails 
+        | _                              -> None
