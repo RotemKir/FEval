@@ -3,6 +3,7 @@
 [<RequireQualifiedAccess>]
 module PerformanceInspector =
     open FEval
+    open FEval.EvaluationTypes
     open FEval.Inspections.Persistance
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters

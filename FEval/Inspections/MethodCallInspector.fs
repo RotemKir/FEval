@@ -2,10 +2,10 @@
 
 [<RequireQualifiedAccess>]
 module MethodCallInspector =
-    open System
-    open FEval
+    open FEval.EvaluationTypes
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
+    open System
     open System.Reflection
 
     type InspectionResult = 

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Methods.fs" />
+    <Compile Include="EvaluationTypes.fs" />
     <Compile Include="Reflection.fs" />
     <Compile Include="Evaluator.fs" />
     <Compile Include="ExceptionHandling.fs" />

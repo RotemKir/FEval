@@ -4,12 +4,7 @@ module CommonInspections =
     open Microsoft.FSharp.Quotations.Patterns
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Reflection
-    open System
-    open FEval
-
-    type InpectionStage = Pre | Post
-
-    type Inspector<'a> = DateTime -> InspectionEvent -> EvaluationState -> 'a
+    open FEval.EvaluationTypes
 
     let getExprName expr =
         match expr with

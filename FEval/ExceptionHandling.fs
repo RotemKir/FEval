@@ -4,6 +4,7 @@ module ExceptionHandling =
     open System
     open System.Reflection
     open Microsoft.FSharp.Quotations
+    open FEval.EvaluationTypes
 
     exception EvaluationException of Exception * EvaluationState
 

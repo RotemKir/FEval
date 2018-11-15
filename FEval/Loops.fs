@@ -1,6 +1,7 @@
 ﻿namespace FEval
 
 module Loops =
+    open FEval.EvaluationTypes
     open Microsoft.FSharp.Quotations
 
     type LoopConfiguration =
