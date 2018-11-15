@@ -98,7 +98,7 @@ module TypeFormatters =
         sprintf "%s.%s" <| formatType declaringType <| methodInfo.Name
 
     let formatMethod (methodInfo : MethodInfo) instanceExpr =
-        let declaringType = getDeclaringType instanceExpr methodInfo.DeclaringType
+        let declaringType = getExprType instanceExpr methodInfo.DeclaringType
         let parameters = methodInfo.GetParameters()
         sprintf "%s(%s)" 
             <| formatMethodName methodInfo declaringType
@@ -110,12 +110,12 @@ module TypeFormatters =
         <| formatParameters (constructorInfo.GetParameters())
 
     let formatProperty (propertyInfo : PropertyInfo) instanceExpr =
-        let typeName = formatType <| getDeclaringType instanceExpr propertyInfo.DeclaringType
+        let typeName = formatType <| getExprType instanceExpr propertyInfo.DeclaringType
         let parameters = formatIndexerParameters <| propertyInfo.GetIndexParameters()
         sprintf "%s.%s%s" typeName propertyInfo.Name parameters
 
     let formatField (fieldInfo : FieldInfo) instanceExpr =
-        let typeName = formatType <| getDeclaringType instanceExpr fieldInfo.DeclaringType
+        let typeName = formatType <| getExprType instanceExpr fieldInfo.DeclaringType
         sprintf "%s.%s" typeName fieldInfo.Name
 
     let formatUnionCaseInfo (unionCaseInfo : UnionCaseInfo) =

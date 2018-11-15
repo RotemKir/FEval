@@ -40,10 +40,16 @@ module CommonInspections =
         | WhileLoop           _ -> "WhileLoop"
         |                     _ -> failwithf "Expression %O is not supported" expr
     
-    let getDeclaringType (instanceExpr : Expr option) declaringType =
-        match instanceExpr with
-        | Some expr -> expr.Type
-        | None      -> declaringType
+    let private getTypeWithDefault instance getInstanceType defaultType =
+        match instance with
+        | Some value -> getInstanceType value
+        | None       -> defaultType
+
+    let getExprType (instanceExpr : Expr option) =
+        getTypeWithDefault instanceExpr (fun expr -> expr.Type)
+
+    let getInstanceType instance =
+        getTypeWithDefault <| Option.ofObj instance <| (fun i -> i.GetType())
 
     let getTupleItemType tupleType index =
         FSharpType.GetTupleElements tupleType
