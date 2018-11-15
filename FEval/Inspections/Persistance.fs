@@ -14,7 +14,7 @@ module Persistance =
         line.Replace("\"", "\"\"")
 
     let formatTimeForLog (time : DateTime) =
-        time.ToString("dd/MM/yyyy hh:mm:ss.zzz")
+        time.ToString("dd/MM/yyyy hh:mm:ss.fff")
 
     let setFileHeader fileName header =
         if not <| File.Exists(fileName)

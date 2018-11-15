@@ -7,6 +7,7 @@ module MethodCallInspector =
     open FEval.Inspections.TypeFormatters
     open System
     open System.Reflection
+    open FEval.Inspections.Persistance
 
     type InspectionResult = 
         {
@@ -61,3 +62,27 @@ module MethodCallInspector =
 
     let createNew config inspectionEvent _ =
         preInspector config inspectionEvent
+
+    let stringInspectionResultFormatter inspectionResult =
+        sprintf "%s - %s - %s" 
+            <| formatTimeForLog inspectionResult.Time 
+            <| inspectionResult.Method 
+            <| inspectionResult.Message
+            
+    let csvInspectionResultFormatter inspectionResult =
+        sprintf "%s,%s,\"%s\""
+            <| formatTimeForLog inspectionResult.Time 
+            <| inspectionResult.Method 
+            <| formatCsvLine inspectionResult.Message
+        
+    let createFileLogConfig formatter fileName =
+        {
+            HandleInspectionResult = appendLineToFile fileName formatter
+        }
+
+    let createDefaultFileLogConfig = 
+        createFileLogConfig stringInspectionResultFormatter
+        
+    let createCsvLogConfig fileName =
+        setFileHeader fileName "Time,Method,Message"
+        createFileLogConfig csvInspectionResultFormatter fileName
