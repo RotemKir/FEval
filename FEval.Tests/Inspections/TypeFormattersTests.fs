@@ -293,6 +293,11 @@ type TypeFormattersTests() =
         Assert.AreEqual("number : Int32, text : String, isTrue : Boolean", result)
 
     [<TestMethod>]
+    member this.``formatMethodName - returns formatted type and method name``() = 
+        let result = formatMethodName (typeof<int>.GetMethod("GetHashCode")) typeof<int>
+        Assert.AreEqual("Int32.GetHashCode", result)
+
+    [<TestMethod>]
     member this.``formatMethod - has no instance - returns method declaring type and method name``() = 
         let result = formatMethod (typeof<int>.GetMethod("GetHashCode")) None
         Assert.AreEqual("Int32.GetHashCode()", result)
