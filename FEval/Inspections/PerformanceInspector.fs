@@ -4,7 +4,7 @@
 module PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
-    open FEval.Inspections.Persistance
+    open FEval.Inspections.Logging
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
     open Microsoft.FSharp.Quotations
@@ -15,11 +15,6 @@ module PerformanceInspector =
         | PreResult of time : DateTime * message : string
         | PostResult of time : DateTime * message : string * elapsed : TimeSpan
             
-    type Config =
-        {
-            HandleInspectionResult : InspectionResult -> unit
-        }
-
     // Private functions
     
     let private formatStateLastValue inspectionContext =
@@ -342,51 +337,54 @@ module PerformanceInspector =
             <| inspectionContext.InspectionEvent 
             <| createPreResult inspectionContext
 
-    let private postInspector config (startTime : DateTime) inspectionContext =
+    let private postInspector logAction (startTime : DateTime) inspectionContext =
         let elapsedTime = inspectionContext.Time.Subtract(startTime)
         inspectExprEvent 
             <| inspectionContext.InspectionEvent 
             <| createPostResult inspectionContext elapsedTime
         |> Option.get
-        |> config.HandleInspectionResult
+        |> logAction
 
-    let private handlePreInspectionResult config startTime result =
-        config.HandleInspectionResult result 
-        Some <| postInspector config startTime
+    let private handlePreInspectionResult logAction startTime result =
+        logAction result 
+        Some <| postInspector logAction startTime
 
     // Public functions
 
-    let createNew config inspectionContext =
+    let createNew logAction inspectionContext =
         Option.bind
-            <| handlePreInspectionResult config inspectionContext.Time
+            <| handlePreInspectionResult logAction inspectionContext.Time
             <| preInspector inspectionContext
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with
         | PreResult (time, message) ->
             sprintf "%s - Start - %s" 
-            <| formatTimeForLog time <| message
+                <| formatDateTimeForLog time <| message
         | PostResult (time, message, elapsed) ->
             sprintf "%s - End   - %s, Elapsed - %.3f ms"
-            <| formatTimeForLog time <| message <| elapsed.TotalMilliseconds
+                <| formatDateTimeForLog time <| message <| elapsed.TotalMilliseconds
             
     let csvInspectionResultFormatter inspectionResult =
         match inspectionResult with
         | PreResult (time, message) ->
-            sprintf "%s,Start,\"%s\"" 
-            <| formatTimeForLog time <| formatCsvLine message
+            sprintf "\"%s\",Start,\"%s\"" 
+                <| formatDateTimeForLog time 
+                <| formatCsvLine message
         | PostResult (time, message, elapsed) ->
-            sprintf "%s,End,\"%s\",%.3f" 
-            <| formatTimeForLog time <| formatCsvLine message <| elapsed.TotalMilliseconds
+            sprintf "\"%s\",End,\"%s\",%.3f" 
+                <| formatDateTimeForLog time 
+                <| formatCsvLine message 
+                <| elapsed.TotalMilliseconds
 
-    let createFileLogConfig formatter fileName =
+    let defaultLogConfig =
         {
-            HandleInspectionResult = appendLineToFile fileName formatter
+            Formatter = stringInspectionResultFormatter
+            Header = None
         }
 
-    let createDefaultFileLogConfig = 
-        createFileLogConfig stringInspectionResultFormatter
-        
-    let createCsvLogConfig fileName =
-        setFileHeader fileName "Time,Stage,Message,Elapsed (ms)"
-        createFileLogConfig csvInspectionResultFormatter fileName
+    let csvLogConfig =
+        {
+            Formatter = csvInspectionResultFormatter
+            Header = Some "Time,Stage,Message,Elapsed (ms)"
+        }

@@ -7,18 +7,13 @@ module MethodCallInspector =
     open FEval.Inspections.TypeFormatters
     open System
     open System.Reflection
-    open FEval.Inspections.Persistance
+    open FEval.Inspections.Logging
 
     type InspectionResult = 
         {
             Time : DateTime 
             Method : string 
             Message : string
-        }
-
-    type Config =
-        {
-            HandleInspectionResult : InspectionResult -> unit
         }
 
     let private formatParamter parameterValue (parameterInfo : ParameterInfo) =
@@ -46,40 +41,40 @@ module MethodCallInspector =
             Message = formatMethodCall methodEventDetails
         }
 
-    let private postInspector config startTime inspectionContext =
+    let private postInspector logAction startTime inspectionContext =
         inspectMethodEvent 
             <| inspectionContext.InspectionEvent 
             <| createInspectionResult startTime
         |> Option.get
-        |> config.HandleInspectionResult
+        |> logAction
 
     // Public Functions
 
-    let createNew config inspectionContext =
+    let createNew logAction inspectionContext =
         inspectMethodEvent
             <| inspectionContext.InspectionEvent
-            <| (fun _ -> postInspector config inspectionContext.Time)
+            <| (fun _ -> postInspector logAction inspectionContext.Time)
 
     let stringInspectionResultFormatter inspectionResult =
         sprintf "%s - %s - %s" 
-            <| formatTimeForLog inspectionResult.Time 
+            <| formatDateTimeForLog inspectionResult.Time 
             <| inspectionResult.Method 
             <| inspectionResult.Message
             
     let csvInspectionResultFormatter inspectionResult =
         sprintf "%s,%s,\"%s\""
-            <| formatTimeForLog inspectionResult.Time 
+            <| formatDateTimeForLog inspectionResult.Time 
             <| inspectionResult.Method 
             <| formatCsvLine inspectionResult.Message
         
-    let createFileLogConfig formatter fileName =
+    let defaultLogConfig =
         {
-            HandleInspectionResult = appendLineToFile fileName formatter
+            Formatter = stringInspectionResultFormatter
+            Header = None
         }
 
-    let createDefaultFileLogConfig = 
-        createFileLogConfig stringInspectionResultFormatter
-        
-    let createCsvLogConfig fileName =
-        setFileHeader fileName "Time,Method,Message"
-        createFileLogConfig csvInspectionResultFormatter fileName
+    let csvLogConfig =
+        {
+            Formatter = csvInspectionResultFormatter
+            Header = Some "Time,Method,Message"
+        }
