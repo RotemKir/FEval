@@ -16,8 +16,6 @@ type PerformanceInspectorTests() =
     let mockConfig messageList : PerformanceInspector.Config =
         {
             HandleInspectionResult = addMessageToList messageList
-            PreInspector = PerformanceInspector.defaultPreInspector
-            PostInspector = PerformanceInspector.defaultPostInspector
         }
 
     [<TestMethod>]

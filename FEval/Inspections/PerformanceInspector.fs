@@ -18,8 +18,6 @@ module PerformanceInspector =
     type Config =
         {
             HandleInspectionResult : InspectionResult -> unit
-            PreInspector : Inspector<InspectionResult option>
-            PostInspector : TimeSpan -> Inspector<InspectionResult option>
         }
 
     // Private functions
@@ -333,31 +331,35 @@ module PerformanceInspector =
         | WhileLoop _                    -> formatWhileLoop inspectionContext
         | _                              -> failwithf "Expression %O is not supported" expr
 
-    let private postPerformanceInspector config (startTime : DateTime) inspectionContext =
+    let private createPreResult inspectionContext expr =
+        PreResult (inspectionContext.Time, formatExpr inspectionContext expr)
+
+    let private createPostResult inspectionContext elapsedTime expr =
+        PostResult (inspectionContext.Time, formatExpr inspectionContext expr, elapsedTime)
+
+    let private preInspector inspectionContext =
+        inspectExprEvent 
+            <| inspectionContext.InspectionEvent 
+            <| createPreResult inspectionContext
+
+    let private postInspector config (startTime : DateTime) inspectionContext =
         let elapsedTime = inspectionContext.Time.Subtract(startTime)
-        let postInspectionResult = config.PostInspector elapsedTime inspectionContext        
-        match postInspectionResult with
-        | Some result -> config.HandleInspectionResult result
-        | None        -> ignore()         
-        
+        inspectExprEvent 
+            <| inspectionContext.InspectionEvent 
+            <| createPostResult inspectionContext elapsedTime
+        |> Option.get
+        |> config.HandleInspectionResult
+
     let private handlePreInspectionResult config startTime result =
         config.HandleInspectionResult result 
-        Some <| postPerformanceInspector config startTime
-        
+        Some <| postInspector config startTime
+
     // Public functions
 
-    let defaultPreInspector inspectionContext =
-        inspectExprEvent inspectionContext.InspectionEvent 
-        <| (fun expr -> PreResult (inspectionContext.Time, formatExpr inspectionContext expr))
-
-    let defaultPostInspector elapsed inspectionContext =
-        inspectExprEvent inspectionContext.InspectionEvent 
-        <| (fun expr -> PostResult (inspectionContext.Time, formatExpr inspectionContext expr, elapsed))
-
     let createNew config inspectionContext =
-        Option.bind 
+        Option.bind
             <| handlePreInspectionResult config inspectionContext.Time
-            <| config.PreInspector inspectionContext
+            <| preInspector inspectionContext
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with
@@ -380,8 +382,6 @@ module PerformanceInspector =
     let createFileLogConfig formatter fileName =
         {
             HandleInspectionResult = appendLineToFile fileName formatter
-            PreInspector = defaultPreInspector
-            PostInspector = defaultPostInspector
         }
 
     let createDefaultFileLogConfig = 
