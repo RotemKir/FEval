@@ -3,6 +3,7 @@
 open Microsoft.FSharp.Quotations
 open FEval.EvaluationTypes
 open System.Collections.Generic
+open System
         
 [<RequireQualifiedAccess>]
 module Evaluator =
@@ -27,14 +28,14 @@ module Evaluator =
         then recVarAction variable
         else varAction variable
     
-    let private runPreInspectors inspectionEvent state =
-        Seq.map (fun i -> i inspectionEvent state) state.Inspectors
+    let private runPreInspectors inspectionContext =
+        Seq.map (fun i -> i inspectionContext) inspectionContext.EvaluationState.Inspectors
         |> Seq.filter Option.isSome
         |> Seq.map Option.get
         |> Seq.toArray
         
-    let private runPostInspectors inspectors inspectionEvent state =
-        Seq.iter (fun i -> i inspectionEvent state) inspectors
+    let private runPostInspectors inspectors inspectionContext =
+        Seq.iter (fun i -> i inspectionContext) inspectors
 
     let private createPreMethodEventDetails instance methodInfo parameters =
         {
@@ -46,6 +47,22 @@ module Evaluator =
     
     let private createPostMethodEventDetails preMethodEventDetails result =
         { preMethodEventDetails  with Result = Some result }
+
+    let private createPreInspectionContext inspectionEvent state =
+            {
+                InspectionStage = InspectionStage.Pre
+                InspectionEvent = inspectionEvent
+                Time = DateTime.Now
+                EvaluationState =  state
+            }
+            
+    let private createPostInspectionContext inspectionEvent state =
+            {
+                InspectionStage = InspectionStage.Post
+                InspectionEvent = inspectionEvent
+                Time = DateTime.Now
+                EvaluationState =  state
+            }
 
     // Public Functions
 
@@ -90,10 +107,14 @@ module Evaluator =
         state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
-        let postInspectors = runPreInspectors <| ExprEvent expr <| state
-        let newState = state.EvalFunc expr state
-        runPostInspectors postInspectors <| ExprEvent expr <| newState
-        newState
+        let preInspectionContext = createPreInspectionContext <| ExprEvent expr <| state
+        let postInspectors = runPreInspectors preInspectionContext
+        
+        let postState = state.EvalFunc expr state
+        
+        let postInspectionContext = createPostInspectionContext <| ExprEvent expr <| postState
+        runPostInspectors postInspectors postInspectionContext
+        postState
 
     let evalExprAndGetLastValue expr state =
         evalExpr expr state
@@ -118,11 +139,13 @@ module Evaluator =
 
     let invokeMethod instance methodInfo parameters state =
         let preMethodEventDetails = createPreMethodEventDetails instance methodInfo parameters
-        let postInspectors = runPreInspectors <| MethodEvent(preMethodEventDetails ) <| state
+        let preInspectionContext = createPreInspectionContext <| MethodEvent(preMethodEventDetails) <| state
+        let postInspectors = runPreInspectors preInspectionContext
         
         let result = Reflection.invokeMethod instance methodInfo parameters
         
         let postMethodEventDetails = createPostMethodEventDetails preMethodEventDetails result
-        runPostInspectors postInspectors <| MethodEvent(postMethodEventDetails) <| state
+        let postInspectionContext = createPostInspectionContext <| MethodEvent(postMethodEventDetails) <| state
+        runPostInspectors postInspectors postInspectionContext
         
         result

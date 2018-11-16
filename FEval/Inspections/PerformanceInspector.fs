@@ -24,82 +24,82 @@ module PerformanceInspector =
 
     // Private functions
     
-    let private formatStateLastValue evalState =
-        formatValue <| Evaluator.getLastValue evalState
+    let private formatStateLastValue inspectionContext =
+        formatValue <| Evaluator.getLastValue inspectionContext.EvaluationState
 
-    let private formatValueExpr stage (value, valueType : Type) =
-        match stage with
+    let private formatValueExpr inspectionContext (value, valueType : Type) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting value %s" <| formatValue value valueType 
         | Post -> 
             sprintf "Got value %s" <| formatValue value valueType 
             
-    let private formatCallExpr stage (instanceExpr, methodInfo, _) evalState =
-        match stage with
+    let private formatCallExpr inspectionContext (instanceExpr, methodInfo, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Calling %s" 
             <| formatMethod methodInfo instanceExpr
         | Post -> 
             sprintf "Called %s, Returned %s" 
             <| formatMethod methodInfo instanceExpr
-            <| formatStateLastValue evalState methodInfo.ReturnType
+            <| formatStateLastValue inspectionContext methodInfo.ReturnType
 
-    let private formatNewUnionCaseExpr stage (unionCaseInfo, _) evalState =
-        match stage with
+    let private formatNewUnionCaseExpr inspectionContext (unionCaseInfo, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating %s" 
             <| formatUnionCaseInfo unionCaseInfo
         | Post -> 
             sprintf "Created %s" 
-            <| formatStateLastValue evalState unionCaseInfo.DeclaringType
+            <| formatStateLastValue inspectionContext unionCaseInfo.DeclaringType
 
-    let private formatNewRecordExpr stage (recordType : Type, _) evalState =
-        match stage with
+    let private formatNewRecordExpr inspectionContext (recordType : Type, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating new %s" recordType.Name
         | Post -> 
             sprintf "Created %s" 
-            <| formatStateLastValue evalState recordType
+            <| formatStateLastValue inspectionContext recordType
                 
-    let private formatNewTupleExpr stage (tupleType : Type) evalState =
-        match stage with
+    let private formatNewTupleExpr inspectionContext (tupleType : Type)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating new tuple %s" 
             <| formatType tupleType 
         | Post -> 
             sprintf "Created tuple %s" 
-            <| formatStateLastValue evalState tupleType
+            <| formatStateLastValue inspectionContext tupleType
 
-    let private formatNewArray stage (arrayType, _) evalState =
-        match stage with
+    let private formatNewArray inspectionContext (arrayType, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating new array %s" 
             <| formatType arrayType 
         | Post -> 
             sprintf "Created array %s"
-            <| formatStateLastValue evalState arrayType
+            <| formatStateLastValue inspectionContext arrayType
 
-    let private formatLetExpr stage (variable : Var, _, body : Expr) evalState =
-        match stage with
+    let private formatLetExpr inspectionContext (variable : Var, _, body : Expr)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Let %s" 
             <| formatVariable variable
         | Post -> 
             sprintf "Let %s returned %s" variable.Name 
-            <| formatStateLastValue evalState body.Type
+            <| formatStateLastValue inspectionContext body.Type
     
-    let private formatVariableExpr stage variable evalState =
-        match stage with
+    let private formatVariableExpr inspectionContext variable  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting variable %s" 
             <| formatVariable variable
         | Post -> 
             sprintf "Got variable %s, Returned %s" 
             <| variable.Name
-            <| formatStateLastValue evalState variable.Type
+            <| formatStateLastValue inspectionContext variable.Type
     
-    let private formatlambdaExpr stage functionType =
-        match stage with
+    let private formatlambdaExpr inspectionContext functionType =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating lambda %s" 
             <| formatType functionType
@@ -107,18 +107,18 @@ module PerformanceInspector =
             sprintf "Created lambda %s" 
             <| formatType functionType
 
-    let private formatApplicationExpr stage (funcExpr : Expr, _) evalState =
-        match stage with
+    let private formatApplicationExpr inspectionContext (funcExpr : Expr, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Applying function %s" 
             <| formatType funcExpr.Type
         | Post -> 
             sprintf "Applied function %s, Returned %s" 
             <| formatType funcExpr.Type
-            <| (formatStateLastValue evalState <| getFunctionReturnType funcExpr.Type)
+            <| (formatStateLastValue inspectionContext <| getFunctionReturnType funcExpr.Type)
     
-    let private formatCoerceExpr stage (expr : Expr, coerceType) =
-        match stage with
+    let private formatCoerceExpr inspectionContext (expr : Expr, coerceType) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Coercing %s to %s" 
             <| formatType expr.Type 
@@ -128,8 +128,8 @@ module PerformanceInspector =
             <| formatType expr.Type 
             <| formatType coerceType
     
-    let private formatNewObject stage (constructorInfo, _) =
-        match stage with
+    let private formatNewObject inspectionContext (constructorInfo, _) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating new object %s" 
             <| formatCtor constructorInfo
@@ -137,18 +137,18 @@ module PerformanceInspector =
             sprintf "Created new object %s" 
             <| formatType constructorInfo.DeclaringType
 
-    let private formatPropertyGet stage (instanceExpr, propertyInfo, _) evalState =
-        match stage with
+    let private formatPropertyGet inspectionContext (instanceExpr, propertyInfo, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting property %s" 
             <| formatProperty propertyInfo instanceExpr
         | Post -> 
             sprintf "Got property %s, Returned %s"
             <| formatProperty propertyInfo instanceExpr
-            <| formatStateLastValue evalState propertyInfo.PropertyType
+            <| formatStateLastValue inspectionContext propertyInfo.PropertyType
     
-    let private formatPropertySet stage (instanceExpr, propertyInfo, _, _) =
-        match stage with
+    let private formatPropertySet inspectionContext (instanceExpr, propertyInfo, _, _) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Setting property %s" 
             <| formatProperty propertyInfo instanceExpr
@@ -156,8 +156,8 @@ module PerformanceInspector =
             sprintf "Set property %s"
             <| formatProperty propertyInfo instanceExpr
 
-    let private formatSequential stage (firstExpr, secondExpr) =
-        match stage with
+    let private formatSequential inspectionContext (firstExpr, secondExpr) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Performing %s and then %s" 
             <| getExprName firstExpr
@@ -167,8 +167,8 @@ module PerformanceInspector =
             <| getExprName firstExpr
             <| getExprName secondExpr
 
-    let private formatDefaultValue stage defaultValueType =
-        match stage with
+    let private formatDefaultValue inspectionContext defaultValueType =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Creating default value for %s" 
             <| formatType defaultValueType
@@ -176,18 +176,18 @@ module PerformanceInspector =
             sprintf "Created default value for %s" 
             <| formatType defaultValueType
         
-    let private formatFieldGet stage (instanceExpr, fieldInfo) evalState =
-        match stage with
+    let private formatFieldGet inspectionContext (instanceExpr, fieldInfo)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting field %s" 
             <| formatField fieldInfo instanceExpr
         | Post -> 
             sprintf "Got field %s, Returned %s"
             <| formatField fieldInfo instanceExpr
-            <| formatStateLastValue evalState fieldInfo.FieldType
+            <| formatStateLastValue inspectionContext fieldInfo.FieldType
     
-    let private formatFieldSet stage (instanceExpr, fieldInfo, _) =
-        match stage with
+    let private formatFieldSet inspectionContext (instanceExpr, fieldInfo, _) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Setting field %s" 
             <| formatField fieldInfo instanceExpr
@@ -195,8 +195,8 @@ module PerformanceInspector =
             sprintf "Set field %s"
             <| formatField fieldInfo instanceExpr
     
-    let private formatVarSet stage (variable, _) =
-        match stage with
+    let private formatVarSet inspectionContext (variable, _) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Setting variable %s" 
             <| formatVariable variable
@@ -204,8 +204,8 @@ module PerformanceInspector =
             sprintf "Set variable %s"
             <| formatVariable variable
 
-    let private formatFor stage (variable, _, _, _) =
-        match stage with
+    let private formatFor inspectionContext (variable, _, _, _) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Running for loop on %s" 
             <| formatVariable variable
@@ -213,16 +213,16 @@ module PerformanceInspector =
             sprintf "Ran for loop on %s" 
             <| formatVariable variable
 
-    let private formatIf stage (_, thenExpr : Expr, _) evalState =
-        match stage with
+    let private formatIf inspectionContext (_, thenExpr : Expr, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             "Evaluating if"
         | Post -> 
             sprintf "Evaluated if, Returned %s" 
-            <| formatStateLastValue evalState thenExpr.Type
+            <| formatStateLastValue inspectionContext thenExpr.Type
 
-    let private formatTupleGet stage (tupleExpr : Expr, index) evalState =
-        match stage with
+    let private formatTupleGet inspectionContext (tupleExpr : Expr, index)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting value from tuple %s at index %i"
             <| formatType tupleExpr.Type
@@ -231,20 +231,20 @@ module PerformanceInspector =
             sprintf "Got value from tuple %s at index %i, Retuned %s"
             <| formatType tupleExpr.Type
             <| index
-            <| (formatStateLastValue evalState <| getTupleItemType tupleExpr.Type index)
+            <| (formatStateLastValue inspectionContext <| getTupleItemType tupleExpr.Type index)
 
-    let private formatUnionCaseTest stage (_, unionCaseInfo) evalState =
-        match stage with
+    let private formatUnionCaseTest inspectionContext (_, unionCaseInfo)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Checking if union matches %s"
             <| formatUnionCaseInfo unionCaseInfo
         | Post -> 
             sprintf "Checked if union matches %s, Returned %s"
             <| formatUnionCaseInfo unionCaseInfo
-            <| formatStateLastValue evalState typeof<bool>
+            <| formatStateLastValue inspectionContext typeof<bool>
 
-    let private formatTypeTest stage (expr : Expr, expectedType) evalState =
-        match stage with
+    let private formatTypeTest inspectionContext (expr : Expr, expectedType)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Testing if %s is %s"
             <| formatType expr.Type
@@ -253,43 +253,43 @@ module PerformanceInspector =
             sprintf "Tested if %s is %s, Returned %s"
             <| formatType expr.Type
             <| formatType expectedType
-            <| formatStateLastValue evalState typeof<bool>
+            <| formatStateLastValue inspectionContext typeof<bool>
 
-    let private formatTryWith stage (bodyExpr : Expr, _, _, _, _) evalState =
-        match stage with
+    let private formatTryWith inspectionContext (bodyExpr : Expr, _, _, _, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             "Handling with try with"
         | Post -> 
             sprintf "Handled with try with, Returned %s"
-            <| formatStateLastValue evalState bodyExpr.Type
+            <| formatStateLastValue inspectionContext bodyExpr.Type
 
-    let private formatTryFinally stage (bodyExpr : Expr, _) evalState =
-        match stage with
+    let private formatTryFinally inspectionContext (bodyExpr : Expr, _)  =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             "Handling with try finally"
         | Post -> 
             sprintf "Handled with try finally, Returned %s"
-            <| formatStateLastValue evalState bodyExpr.Type
+            <| formatStateLastValue inspectionContext bodyExpr.Type
 
-    let private formatWhileLoop stage =
-        match stage with
+    let private formatWhileLoop inspectionContext =
+        match inspectionContext.InspectionStage with
         | Pre  -> "Running while loop"
         | Post -> "Ran while loop"
 
-    let private formatLetRecursive stage (variableBindings, expr : Expr) evalState =
+    let private formatLetRecursive inspectionContext (variableBindings, expr : Expr)  =
         let variables = List.map fst variableBindings
         
-        match stage with
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Recursive let %s" 
             <| formatVariables variables 
         | Post -> 
             sprintf "Recursive let %s returned %s" 
             <| formatVariables variables 
-            <| formatStateLastValue evalState expr.Type
+            <| formatStateLastValue inspectionContext expr.Type
     
-    let private formatQuote stage (quoteExpr : Expr) =
-        match stage with
+    let private formatQuote inspectionContext (quoteExpr : Expr) =
+        match inspectionContext.InspectionStage with
         | Pre  -> 
             sprintf "Getting quote (%s) : %s" 
             <| getExprName quoteExpr
@@ -299,45 +299,43 @@ module PerformanceInspector =
             <| getExprName quoteExpr
             <| formatType quoteExpr.Type
 
-    let private formatExpr stage expr evalState =
+    let private formatExpr inspectionContext expr =
         match expr with
-        | Application applicationState   -> formatApplicationExpr stage applicationState evalState
-        | Call callState                 -> formatCallExpr stage callState evalState
-        | Coerce coerceState             -> formatCoerceExpr stage coerceState
-        | DefaultValue defaultValueState -> formatDefaultValue stage defaultValueState
-        | FieldGet fieldGetState         -> formatFieldGet stage fieldGetState evalState
-        | FieldSet fieldSetState         -> formatFieldSet stage fieldSetState
-        | ForIntegerRangeLoop forState   -> formatFor stage forState
-        | IfThenElse ifState             -> formatIf stage ifState evalState
-        | Lambda _                       -> formatlambdaExpr stage expr.Type
-        | Let letState                   -> formatLetExpr stage letState evalState
-        | LetRecursive letRecursiveState -> formatLetRecursive stage letRecursiveState evalState
-        | NewArray newArrayState         -> formatNewArray stage newArrayState evalState
-        | NewObject newObjectState       -> formatNewObject stage newObjectState
-        | NewRecord newRecordState       -> formatNewRecordExpr stage newRecordState evalState
-        | NewTuple  _                    -> formatNewTupleExpr stage expr.Type evalState
-        | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr stage newUnionCaseState evalState
-        | PropertyGet propertyGetState   -> formatPropertyGet stage propertyGetState evalState
-        | PropertySet propertySetState   -> formatPropertySet stage propertySetState
-        | QuoteRaw quoteExpr             -> formatQuote stage quoteExpr
-        | QuoteTyped quoteExpr           -> formatQuote stage quoteExpr
-        | Sequential sequentialState     -> formatSequential stage sequentialState
-        | TryFinally tryFinallyState     -> formatTryFinally stage tryFinallyState evalState
-        | TryWith tryWithState           -> formatTryWith stage tryWithState evalState
-        | TupleGet tupleGetState         -> formatTupleGet stage tupleGetState evalState
-        | TypeTest typeTestState         -> formatTypeTest stage typeTestState evalState
-        | UnionCaseTest unionCaseState   -> formatUnionCaseTest stage unionCaseState evalState
-        | Value valueState               -> formatValueExpr stage valueState
-        | VarSet varSetState             -> formatVarSet stage varSetState
-        | Var variable                   -> formatVariableExpr stage variable evalState
-        | WhileLoop _                    -> formatWhileLoop stage
+        | Application applicationState   -> formatApplicationExpr inspectionContext applicationState 
+        | Call callState                 -> formatCallExpr inspectionContext callState 
+        | Coerce coerceState             -> formatCoerceExpr inspectionContext coerceState
+        | DefaultValue defaultValueState -> formatDefaultValue inspectionContext defaultValueState
+        | FieldGet fieldGetState         -> formatFieldGet inspectionContext fieldGetState 
+        | FieldSet fieldSetState         -> formatFieldSet inspectionContext fieldSetState
+        | ForIntegerRangeLoop forState   -> formatFor inspectionContext forState
+        | IfThenElse ifState             -> formatIf inspectionContext ifState 
+        | Lambda _                       -> formatlambdaExpr inspectionContext expr.Type
+        | Let letState                   -> formatLetExpr inspectionContext letState 
+        | LetRecursive letRecursiveState -> formatLetRecursive inspectionContext letRecursiveState 
+        | NewArray newArrayState         -> formatNewArray inspectionContext newArrayState 
+        | NewObject newObjectState       -> formatNewObject inspectionContext newObjectState
+        | NewRecord newRecordState       -> formatNewRecordExpr inspectionContext newRecordState 
+        | NewTuple  _                    -> formatNewTupleExpr inspectionContext expr.Type 
+        | NewUnionCase newUnionCaseState -> formatNewUnionCaseExpr inspectionContext newUnionCaseState 
+        | PropertyGet propertyGetState   -> formatPropertyGet inspectionContext propertyGetState 
+        | PropertySet propertySetState   -> formatPropertySet inspectionContext propertySetState
+        | QuoteRaw quoteExpr             -> formatQuote inspectionContext quoteExpr
+        | QuoteTyped quoteExpr           -> formatQuote inspectionContext quoteExpr
+        | Sequential sequentialState     -> formatSequential inspectionContext sequentialState
+        | TryFinally tryFinallyState     -> formatTryFinally inspectionContext tryFinallyState 
+        | TryWith tryWithState           -> formatTryWith inspectionContext tryWithState 
+        | TupleGet tupleGetState         -> formatTupleGet inspectionContext tupleGetState 
+        | TypeTest typeTestState         -> formatTypeTest inspectionContext typeTestState 
+        | UnionCaseTest unionCaseState   -> formatUnionCaseTest inspectionContext unionCaseState 
+        | Value valueState               -> formatValueExpr inspectionContext valueState
+        | VarSet varSetState             -> formatVarSet inspectionContext varSetState
+        | Var variable                   -> formatVariableExpr inspectionContext variable 
+        | WhileLoop _                    -> formatWhileLoop inspectionContext
         | _                              -> failwithf "Expression %O is not supported" expr
 
-    let private postPerformanceInspector config (startTime : DateTime) inspectionEvent evalState =
-        let endTime = DateTime.Now
-        let elapsedTime = endTime.Subtract(startTime)
-        let postInspectionResult = config.PostInspector elapsedTime endTime inspectionEvent evalState 
-        
+    let private postPerformanceInspector config (startTime : DateTime) inspectionContext =
+        let elapsedTime = inspectionContext.Time.Subtract(startTime)
+        let postInspectionResult = config.PostInspector elapsedTime inspectionContext        
         match postInspectionResult with
         | Some result -> config.HandleInspectionResult result
         | None        -> ignore()         
@@ -348,20 +346,18 @@ module PerformanceInspector =
         
     // Public functions
 
-    let defaultPreInspector time inspectionEvent evalState =
-        inspectExprEvent inspectionEvent 
-        <| (fun expr -> PreResult (time, formatExpr Pre expr evalState))
+    let defaultPreInspector inspectionContext =
+        inspectExprEvent inspectionContext.InspectionEvent 
+        <| (fun expr -> PreResult (inspectionContext.Time, formatExpr inspectionContext expr))
 
-    let defaultPostInspector elapsed time inspectionEvent evalState  =
-        inspectExprEvent inspectionEvent 
-        <| (fun expr -> PostResult (time, formatExpr Post expr evalState, elapsed))
+    let defaultPostInspector elapsed inspectionContext =
+        inspectExprEvent inspectionContext.InspectionEvent 
+        <| (fun expr -> PostResult (inspectionContext.Time, formatExpr inspectionContext expr, elapsed))
 
-    let createNew config inspectionEvent evalState =
-        let startTime = DateTime.Now
-
+    let createNew config inspectionContext =
         Option.bind 
-            <| handlePreInspectionResult config startTime
-            <| config.PreInspector startTime inspectionEvent evalState
+            <| handlePreInspectionResult config inspectionContext.Time
+            <| config.PreInspector inspectionContext
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with

@@ -30,10 +30,18 @@ module EvaluationTypes =
             Result : obj option
         }
 
-    and PreInspcetor = InspectionEvent -> EvaluationState -> PostInspector option
+    and Inspector<'a> = InspectionContext -> 'a
 
-    and PostInspector = InspectionEvent -> EvaluationState -> unit
+    and PreInspcetor = Inspector<PostInspector option>
 
-    and InpectionStage = Pre | Post
+    and PostInspector = Inspector<unit>
 
-    and Inspector<'a> = DateTime -> InspectionEvent -> EvaluationState -> 'a
+    and InspectionStage = Pre | Post
+
+    and InspectionContext =
+        {
+            InspectionStage : InspectionStage
+            InspectionEvent : InspectionEvent
+            Time : DateTime
+            EvaluationState : EvaluationState
+        }

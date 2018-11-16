@@ -46,22 +46,19 @@ module MethodCallInspector =
             Message = formatMethodCall methodEventDetails
         }
 
-    let private postInspector config startTime inspectionEvent _ =
+    let private postInspector config startTime inspectionContext =
         inspectMethodEvent 
-            <| inspectionEvent 
+            <| inspectionContext.InspectionEvent 
             <| createInspectionResult startTime
         |> Option.get
         |> config.HandleInspectionResult
 
-    let private preInspector config inspectionEvent =
-        match inspectionEvent with
-        | MethodEvent _ -> Some <| postInspector config DateTime.Now
-        | _             -> None
-
     // Public Functions
 
-    let createNew config inspectionEvent _ =
-        preInspector config inspectionEvent
+    let createNew config inspectionContext =
+        inspectMethodEvent
+            <| inspectionContext.InspectionEvent
+            <| (fun _ -> postInspector config inspectionContext.Time)
 
     let stringInspectionResultFormatter inspectionResult =
         sprintf "%s - %s - %s" 
