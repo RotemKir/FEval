@@ -76,6 +76,10 @@ module Evaluator =
         { state with LastValue = value }
 
     let setVar (variable : Var) value state =
+        let setVariableEventDetails = { Variable = variable ; Value = value }
+        let setVariableInspectionEvent = SetVariableEvent (setVariableEventDetails)
+        runPreInspectors <| createPreInspectionContext setVariableInspectionEvent state |> ignore
+
         actOnVariable variable
             (fun v -> setRecVariable v value state)
             (fun v -> { state with Variables = Map.add variable.Name value state.Variables })

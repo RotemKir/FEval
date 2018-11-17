@@ -56,6 +56,7 @@
     <Compile Include="Inspections\TypeFormatters.fs" />
     <Compile Include="Inspections\PerformanceInspector.fs" />
     <Compile Include="Inspections\MethodCallInspector.fs" />
+    <Compile Include="Inspections\DataSetInspector.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>

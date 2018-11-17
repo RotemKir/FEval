@@ -21,6 +21,7 @@ module EvaluationTypes =
     and InspectionEvent =
         | ExprEvent of Expr
         | MethodEvent of MethodEventDetails
+        | SetVariableEvent of SetVariableEventDetails
 
     and MethodEventDetails =
         {
@@ -28,6 +29,12 @@ module EvaluationTypes =
             Instance : obj
             Parameters : obj array 
             Result : obj option
+        }
+
+    and SetVariableEventDetails =
+        {
+            Variable : Var
+            Value : obj
         }
 
     and Inspector<'a> = InspectionContext -> 'a
