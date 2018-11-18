@@ -22,6 +22,7 @@ module EvaluationTypes =
         | ExprEvent of Expr
         | MethodEvent of MethodEventDetails
         | SetVariableEvent of SetVariableEventDetails
+        | SetPropertyEvent of SetPropertyEventDetails
 
     and MethodEventDetails =
         {
@@ -35,6 +36,14 @@ module EvaluationTypes =
         {
             Variable : Var
             Value : obj
+        }
+
+    and SetPropertyEventDetails =
+        {
+            Property : PropertyInfo
+            Instance : obj
+            Value : obj
+            IndexerParameters : obj array
         }
 
     and Inspector<'a> = InspectionContext -> 'a

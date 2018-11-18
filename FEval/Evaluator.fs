@@ -153,3 +153,16 @@ module Evaluator =
         runPostInspectors postInspectors postInspectionContext
         
         result
+
+    let invokeSetProperty instance propertyinfo value indexerParameters state = 
+        let setPropertyEventDetails = 
+            { 
+                Property = propertyinfo
+                Instance = instance
+                Value = value 
+                IndexerParameters = indexerParameters
+            }
+        let setPropertyInspectionEvent = SetPropertyEvent (setPropertyEventDetails)
+        runPreInspectors <| createPreInspectionContext setPropertyInspectionEvent state |> ignore
+  
+        Reflection.invokeSetProperty instance propertyinfo value indexerParameters 
