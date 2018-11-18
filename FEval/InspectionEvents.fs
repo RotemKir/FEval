@@ -64,31 +64,27 @@ module InspectionEvents =
         runPostInspectors postInspectors postInspectionContext
 
     let private preInvokeMethodInspections (instance, methodInfo, parameters, evaluationState) =
-        let preMethodEventDetails = createPreMethodEventDetails instance methodInfo parameters
-        let methodEvent = MethodEvent(preMethodEventDetails)
-        let preInspectionContext = createPreInspectionContext methodEvent evaluationState
-        runPreInspectors preInspectionContext
+        let methodEvent = MethodEvent <| createPreMethodEventDetails instance methodInfo parameters
+        runPreInspectors <| createPreInspectionContext methodEvent evaluationState
     
     let private postInvokeMethodInspections (instance, methodInfo, parameters, evaluationState) postInspectors result =
-        let postMethodEventDetails = createPostMethodEventDetails instance methodInfo parameters result
-        let methodEvent = MethodEvent(postMethodEventDetails)
+        let methodEvent = MethodEvent <| createPostMethodEventDetails instance methodInfo parameters result
         let postInspectionContext = createPostInspectionContext methodEvent evaluationState
         runPostInspectors postInspectors postInspectionContext
 
     let private preSetVariableInspections (variable, value, evaluationState) =
-        let setVariableEventDetails = { Variable = variable ; Value = value }
-        let setVariableInspectionEvent = SetVariableEvent (setVariableEventDetails)
+        let setVariableInspectionEvent = SetVariableEvent { Variable = variable ; Value = value }
         runPreInspectors <| createPreInspectionContext setVariableInspectionEvent evaluationState
 
     let private preSetPropertyInspections (instance, propertyinfo, value, indexerParameters, evaluationState) =
-        let setPropertyEventDetails = 
-            { 
-                Property = propertyinfo
-                Instance = instance
-                Value = value 
-                IndexerParameters = indexerParameters
-            }
-        let setPropertyInspectionEvent = SetPropertyEvent (setPropertyEventDetails)
+        let setPropertyInspectionEvent = 
+            SetPropertyEvent 
+                { 
+                    Property = propertyinfo
+                    Instance = instance
+                    Value = value 
+                    IndexerParameters = indexerParameters
+                }
         runPreInspectors <| createPreInspectionContext setPropertyInspectionEvent evaluationState
   
     // Public functions
