@@ -62,10 +62,10 @@ module Evaluations =
     let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
         let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.invokeMethod 
-        <| instance 
-        <| getMethodOverride methodInfo 
-        <| Evaluator.evalExprs parameterExprs newState 
-        <| newState
+            <| instance 
+            <| getMethodOverride methodInfo 
+            <| Evaluator.evalExprs parameterExprs newState 
+            <| newState
         |> Evaluator.setLastValue newState
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
@@ -142,8 +142,13 @@ module Evaluations =
         let (value, newState2) = 
             Evaluator.evalExpr valueExpr newState1
             |> Evaluator.getLastValueAndState
-        Evaluator.evalExprs indexerExprs newState2
-        |> Reflection.invokeSetProperty instance propertyInfo value
+        let indexerParameters = Evaluator.evalExprs indexerExprs newState2
+        Evaluator.invokeSetProperty
+            <| instance 
+            <| propertyInfo
+            <| value
+            <| indexerParameters
+            <| newState2
         |> Evaluator.setLastValue newState2
 
     let private evalDefaultValue state defaultType =

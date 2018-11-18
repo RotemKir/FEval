@@ -2,6 +2,7 @@
 
 open Microsoft.FSharp.Quotations
 open FEval.EvaluationTypes
+open FEval.InspectionEvents
 open System.Collections.Generic
 open System
         
@@ -27,43 +28,7 @@ module Evaluator =
         if state.RecVariables.ContainsKey(variable.Name)
         then recVarAction variable
         else varAction variable
-    
-    let private runPreInspectors inspectionContext =
-        Seq.map (fun i -> i inspectionContext) inspectionContext.EvaluationState.Inspectors
-        |> Seq.filter Option.isSome
-        |> Seq.map Option.get
-        |> Seq.toArray
-        
-    let private runPostInspectors inspectors inspectionContext =
-        Seq.iter (fun i -> i inspectionContext) inspectors
-
-    let private createPreMethodEventDetails instance methodInfo parameters =
-        {
-            Method = methodInfo 
-            Instance = instance
-            Parameters = parameters 
-            Result = None
-        }
-    
-    let private createPostMethodEventDetails preMethodEventDetails result =
-        { preMethodEventDetails  with Result = Some result }
-
-    let private createPreInspectionContext inspectionEvent state =
-            {
-                InspectionStage = InspectionStage.Pre
-                InspectionEvent = inspectionEvent
-                Time = DateTime.Now
-                EvaluationState =  state
-            }
             
-    let private createPostInspectionContext inspectionEvent state =
-            {
-                InspectionStage = InspectionStage.Post
-                InspectionEvent = inspectionEvent
-                Time = DateTime.Now
-                EvaluationState =  state
-            }
-
     // Public Functions
 
     let getLastValue state =
@@ -76,14 +41,13 @@ module Evaluator =
         { state with LastValue = value }
 
     let setVar (variable : Var) value state =
-        let setVariableEventDetails = { Variable = variable ; Value = value }
-        let setVariableInspectionEvent = SetVariableEvent (setVariableEventDetails)
-        runPreInspectors <| createPreInspectionContext setVariableInspectionEvent state |> ignore
-
-        actOnVariable variable
-            (fun v -> setRecVariable v value state)
-            (fun v -> { state with Variables = Map.add variable.Name value state.Variables })
-            state
+        setVariableWithInspections
+            <| (variable, value, state)
+            <| (fun () ->
+                actOnVariable variable
+                    (fun v -> setRecVariable v value state)
+                    (fun _ -> { state with Variables = Map.add variable.Name value state.Variables })
+                    state)
 
     let getVar (variable : Var) state =
         actOnVariable variable
@@ -111,14 +75,9 @@ module Evaluator =
         state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
-        let preInspectionContext = createPreInspectionContext <| ExprEvent expr <| state
-        let postInspectors = runPreInspectors preInspectionContext
-        
-        let postState = state.EvalFunc expr state
-        
-        let postInspectionContext = createPostInspectionContext <| ExprEvent expr <| postState
-        runPostInspectors postInspectors postInspectionContext
-        postState
+        evalExprWithInspections 
+            <| (expr, state)
+            <| (fun () -> state.EvalFunc expr state)
 
     let evalExprAndGetLastValue expr state =
         evalExpr expr state
@@ -142,27 +101,11 @@ module Evaluator =
         }
 
     let invokeMethod instance methodInfo parameters state =
-        let preMethodEventDetails = createPreMethodEventDetails instance methodInfo parameters
-        let preInspectionContext = createPreInspectionContext <| MethodEvent(preMethodEventDetails) <| state
-        let postInspectors = runPreInspectors preInspectionContext
-        
-        let result = Reflection.invokeMethod instance methodInfo parameters
-        
-        let postMethodEventDetails = createPostMethodEventDetails preMethodEventDetails result
-        let postInspectionContext = createPostInspectionContext <| MethodEvent(postMethodEventDetails) <| state
-        runPostInspectors postInspectors postInspectionContext
-        
-        result
+        invokeMethodWithInspections
+            <| (instance, methodInfo, parameters, state)
+            <| (fun () -> Reflection.invokeMethod instance methodInfo parameters)
 
     let invokeSetProperty instance propertyinfo value indexerParameters state = 
-        let setPropertyEventDetails = 
-            { 
-                Property = propertyinfo
-                Instance = instance
-                Value = value 
-                IndexerParameters = indexerParameters
-            }
-        let setPropertyInspectionEvent = SetPropertyEvent (setPropertyEventDetails)
-        runPreInspectors <| createPreInspectionContext setPropertyInspectionEvent state |> ignore
-  
-        Reflection.invokeSetProperty instance propertyinfo value indexerParameters 
+        invokeSetPropertyWithInspections
+            <| (instance, propertyinfo, value, indexerParameters, state)
+            <| (fun () -> Reflection.invokeSetProperty instance propertyinfo value indexerParameters)
