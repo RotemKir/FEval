@@ -49,10 +49,10 @@ module InspectionEvents =
 
     let private emptyPostInspections _ _ _ = ignore()
 
-    let private runWithInspections preAction postAction data action =
-        let preActionResult = preAction data
+    let private runWithInspections preInspection postInspection data action =
+        let postInspectors = preInspection data
         let actionResult = action()
-        postAction data preActionResult actionResult
+        postInspection data postInspectors actionResult
         actionResult
 
     let private preExprInspection (expr, evaluationState) =
