@@ -16,20 +16,12 @@ module MethodCallInspector =
             Message : string
         }
 
-    let private formatParamter parameterValue (parameterInfo : ParameterInfo) =
-        formatValue parameterValue parameterInfo.ParameterType
-
-    let private formatParameters (methodInfo : MethodInfo) parameters =
-        Seq.map2 formatParamter <| parameters <| methodInfo.GetParameters()
-        |> String.concat ", "
-        |> sprintf "(%s)"
-
     let private formatResult (methodInfo : MethodInfo) result =
         formatValue <| Option.get result <| methodInfo.ReturnType
 
     let private formatMethodCall (methodEventDetails : MethodEventDetails) =
-        sprintf "%s -> %s" 
-            <| formatParameters methodEventDetails.Method methodEventDetails.Parameters
+        sprintf "(%s) -> %s" 
+            <| formatParameterValues (methodEventDetails.Method.GetParameters()) methodEventDetails.Parameters
             <| formatResult methodEventDetails.Method methodEventDetails.Result
             
     let private createInspectionResult startTime (methodEventDetails : MethodEventDetails) =

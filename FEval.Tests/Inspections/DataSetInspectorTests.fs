@@ -67,3 +67,23 @@ type DataSetInspectorTests() =
                 "i - 10 : Int32" 
                 "i - 11 : Int32" 
             |]
+            
+    [<TestMethod>]
+    member this.``Evaluate data set inspector - set property expression``() = 
+        assertInspectors
+            <@ let child = new ChildClass("Hello") in child.NameProperty <- "World" @>
+            (fun list -> [| DataSetInspector.createNew <| addMessageToList list |])
+            [| 
+                "child - ChildClass"
+                "ChildClass.NameProperty - \"World\" : String" 
+            |]
+            
+    [<TestMethod>]
+    member this.``Evaluate data set inspector - set indexer property expression``() = 
+        assertInspectors
+            <@  let indexerClass = new IndexerClass() in indexerClass.[2] <- "Lovely Two" @>
+            (fun list -> [| DataSetInspector.createNew <| addMessageToList list |])
+            [| 
+                "indexerClass - IndexerClass"
+                "IndexerClass.Item[2 : Int32] - \"Lovely Two\" : String" 
+            |]

@@ -334,36 +334,68 @@ type TypeFormattersTests() =
         Assert.AreEqual("Exception(String, Exception)", result)
     
     [<TestMethod>]
+    member this.``formatPropertyName - returns declaring type name and property name()``() = 
+        let result = formatPropertyName
+                        <| typeof<Exception>.GetProperty("Message")
+                        <| typeof<string>
+        Assert.AreEqual("String.Message", result)
+
+    [<TestMethod>]
     member this.``formatProperty - has instance - returns instance type name and property name()``() = 
         let result = formatProperty 
-                        (typeof<Exception>.GetProperty("Message")) 
+                        <| typeof<Exception>.GetProperty("Message")
                         <| createValueExpr<string>()
         Assert.AreEqual("String.Message", result)
     
     [<TestMethod>]
     member this.``formatProperty - has no instance - returns declaring type name and property name()``() = 
-        let result = formatProperty (typeof<Exception>.GetProperty("Message")) None
+        let result = formatProperty <| typeof<Exception>.GetProperty("Message") <| None
         Assert.AreEqual("Exception.Message", result)
         
     [<TestMethod>]
-    member this.``formatParameters - has no parameters - returns empty string``() = 
-        let result = formatParameters (typeof<int>.GetMethod("GetHashCode").GetParameters())
+    member this.``formatParameterTypes - has no parameters - returns empty string``() = 
+        let result = formatParameterTypes [||]
         Assert.AreEqual(String.Empty, result)
         
     [<TestMethod>]
-    member this.``formatParameters - has parameters - returns types separated by ,``() = 
-        let result = formatParameters (typeof<string>.GetMethod("Insert").GetParameters())
+    member this.``formatParameterTypes - has parameters - returns types separated by ,``() = 
+        let result = formatParameterTypes <| typeof<string>.GetMethod("Insert").GetParameters()
         Assert.AreEqual("Int32, String", result)
         
     [<TestMethod>]
-    member this.``formatIndexerParameters - has no parameters - returns empty string``() = 
-        let result = formatIndexerParameters (typeof<BaseClass>.GetProperty("NameProperty").GetIndexParameters())
+    member this.``formatParameterValues - has no parameters - returns empty string``() = 
+        let result = formatParameterValues [||] [||] 
         Assert.AreEqual(String.Empty, result)
         
     [<TestMethod>]
-    member this.``formatIndexerParameters - has parameters - returns [types separated by ,]``() = 
-        let result = formatIndexerParameters (typeof<IndexerClass>.GetProperty("Item").GetIndexParameters())
+    member this.``formatParameterValues - has parameters - returns types and values separated by ,``() = 
+        let result = formatParameterValues 
+                     <| typeof<string>.GetMethod("Insert").GetParameters()
+                     <| [| 2 :> obj ; "Hello" :> obj |] 
+        Assert.AreEqual("2 : Int32, \"Hello\" : String", result)
+
+    [<TestMethod>]
+    member this.``formatIndexerParameterTypes - has no parameters - returns empty string``() = 
+        let result = formatIndexerParameterTypes [||]
+        Assert.AreEqual(String.Empty, result)
+        
+    [<TestMethod>]
+    member this.``formatIndexerParameterTypes - has parameters - returns [types separated by ,]``() = 
+        let result = formatIndexerParameterTypes 
+                     <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
         Assert.AreEqual("[Int32]", result)
+        
+    [<TestMethod>]
+    member this.``formatIndexerParameterValues - has no parameters - returns empty string``() = 
+        let result = formatIndexerParameterValues [||] [||]
+        Assert.AreEqual(String.Empty, result)
+        
+    [<TestMethod>]
+    member this.``formatIndexerParameterValues - has parameters - returns [types and values separated by ,]``() = 
+        let result = formatIndexerParameterValues 
+                     <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
+                     <| [| 2 :> obj |]
+        Assert.AreEqual("[2 : Int32]", result)
         
     [<TestMethod>]
     member this.``formatField - has instance - returns instance type name and field name``() = 

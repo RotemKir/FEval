@@ -86,13 +86,25 @@ module TypeFormatters =
         Seq.map formatVariable variables
         |> String.concat ", "
 
-    let formatParameters parameters =
+    let formatParameterTypes parameters =
         formatTypes <| getParameterTypes parameters <| ", " <| formatType
 
-    let formatIndexerParameters parameters =
+    let formatParameterValues parameterInfos parameterValues =
+        Seq.map2 
+            <| (fun (info : ParameterInfo) value -> formatValue value info.ParameterType)
+            <| parameterInfos 
+            <| parameterValues 
+        |> String.concat ", "
+
+    let formatIndexerParameterTypes parameters =
         match parameters with
         | [||] -> String.Empty
-        | _    -> sprintf "[%s]" <| formatParameters parameters
+        | _    -> sprintf "[%s]" <| formatParameterTypes parameters
+
+    let formatIndexerParameterValues parameterInfos parameterValues =
+        match parameterInfos with
+        | [||] -> String.Empty
+        | _    -> sprintf "[%s]" <| formatParameterValues parameterInfos parameterValues
 
     let formatMethodName (methodInfo : MethodInfo) declaringType =
         sprintf "%s.%s" <| formatType declaringType <| methodInfo.Name
@@ -102,17 +114,22 @@ module TypeFormatters =
         let parameters = methodInfo.GetParameters()
         sprintf "%s(%s)" 
             <| formatMethodName methodInfo declaringType
-            <| formatParameters parameters
+            <| formatParameterTypes parameters
         
     let formatCtor (constructorInfo : ConstructorInfo) =
         sprintf "%s(%s)" 
         <| formatType constructorInfo.DeclaringType 
-        <| formatParameters (constructorInfo.GetParameters())
+        <| formatParameterTypes (constructorInfo.GetParameters())
+
+    let formatPropertyName (propertyInfo : PropertyInfo) declaringType =
+        let typeName = formatType declaringType
+        sprintf "%s.%s" typeName propertyInfo.Name
 
     let formatProperty (propertyInfo : PropertyInfo) instanceExpr =
-        let typeName = formatType <| getExprType instanceExpr propertyInfo.DeclaringType
-        let parameters = formatIndexerParameters <| propertyInfo.GetIndexParameters()
-        sprintf "%s.%s%s" typeName propertyInfo.Name parameters
+        let declaringType = getExprType instanceExpr propertyInfo.DeclaringType
+        let propertyName = formatPropertyName propertyInfo declaringType 
+        let parameters = formatIndexerParameterTypes <| propertyInfo.GetIndexParameters()
+        sprintf "%s%s" propertyName parameters
 
     let formatField (fieldInfo : FieldInfo) instanceExpr =
         let typeName = formatType <| getExprType instanceExpr fieldInfo.DeclaringType
