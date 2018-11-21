@@ -3,6 +3,7 @@
 [<RequireQualifiedAccess>]
 module MethodCallInspector =
     open FEval.EvaluationTypes
+    open FEval.InspectionEvents
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
     open System
@@ -33,19 +34,18 @@ module MethodCallInspector =
             Message = formatMethodCall methodEventDetails
         }
 
-    let private postInspector logAction startTime inspectionContext =
-        inspectMethodEvent 
-            <| inspectionContext.InspectionEvent 
-            <| createInspectionResult startTime
-        |> Option.get
-        |> logAction
+    let private postInspection (inspectionContext : InspectionContext) eventDetails =
+        createInspectionResult inspectionContext.Time eventDetails
 
+    let private handleInspectionMessage logAction message =
+        match message with
+        | IsPostInspection (preContext, _) & IsMethodEvent eventDetails
+            -> logAction <| postInspection preContext eventDetails
+        | _ -> ignore()
+    
     // Public Functions
 
-    let createNew logAction inspectionContext =
-        inspectMethodEvent
-            <| inspectionContext.InspectionEvent
-            <| (fun _ -> postInspector logAction inspectionContext.Time)
+    let createNew logAction = createInspector <| handleInspectionMessage logAction
 
     let stringInspectionResultFormatter inspectionResult =
         sprintf "%s - %s - %s" 

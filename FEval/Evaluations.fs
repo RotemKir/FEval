@@ -4,6 +4,7 @@ module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open FEval.ExceptionHandling
+    open FEval.InspectionEvents
     open FEval.Loops
     open System
     open System.Reflection
@@ -290,10 +291,13 @@ module Evaluations =
     // Public functions
 
     let evalWith<'a> (expr : Expr<'a>) inspectors : 'a =
-        Evaluator.createNewState evalExpr inspectors
-        |> Evaluator.evalExpr expr 
-        |> Evaluator.getLastValue 
-        :?> 'a
+        try 
+            Evaluator.createNewState evalExpr inspectors
+            |> Evaluator.evalExpr expr 
+            |> Evaluator.getLastValue 
+            :?> 'a
+        finally
+            disposeInspectors inspectors
 
     let eval<'a> (expr : Expr<'a>) : 'a = 
         evalWith expr Seq.empty

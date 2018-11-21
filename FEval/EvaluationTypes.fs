@@ -13,7 +13,7 @@ module EvaluationTypes =
             Variables      : Map<string, obj>
             RecVariables   : Dictionary<string, obj>
             EvalFunc       : EvaluationFunc
-            Inspectors     : PreInspcetor seq
+            Inspectors     : Inspector seq
         }
 
     and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
@@ -46,12 +46,6 @@ module EvaluationTypes =
             IndexerParameters : obj array
         }
 
-    and Inspector<'a> = InspectionContext -> 'a
-
-    and PreInspcetor = Inspector<PostInspector option>
-
-    and PostInspector = Inspector<unit>
-
     and InspectionStage = Pre | Post
 
     and InspectionContext =
@@ -61,3 +55,10 @@ module EvaluationTypes =
             Time : DateTime
             EvaluationState : EvaluationState
         }
+        
+    and InspectionMessage = 
+        | PreInspectionMessage of PreMessage : InspectionContext
+        | PostInspectionMessage of PreMessage : InspectionContext * PostMessage : InspectionContext
+        | Dispose of replyChannel : AsyncReplyChannel<unit>
+         
+    and Inspector = MailboxProcessor<InspectionMessage>

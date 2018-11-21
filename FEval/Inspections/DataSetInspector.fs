@@ -3,6 +3,7 @@
 [<RequireQualifiedAccess>]
 module DataSetInspector =
     open FEval.EvaluationTypes
+    open FEval.InspectionEvents
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
 
@@ -25,12 +26,11 @@ module DataSetInspector =
 
     // Private functions
 
-    let private inspectSetVariable logAction eventDetails =
-        logAction 
-            { 
-                Name = eventDetails.Variable.Name
-                Value = formatValue eventDetails.Value eventDetails.Variable.Type
-            }
+    let private inspectSetVariable eventDetails =
+        { 
+            Name = eventDetails.Variable.Name
+            Value = formatValue eventDetails.Value eventDetails.Variable.Type
+        }
   
     let private formatSetPropertyName eventDetails =
         let declaringType = getInstanceType eventDetails.Instance eventDetails.Property.DeclaringType
@@ -40,18 +40,21 @@ module DataSetInspector =
                                 <| eventDetails.IndexerParameters
         sprintf "%s%s" propertyName indexerParameters
 
-    let private inspectSetProperty logAction eventDetails =
-        logAction 
-            { 
-                Name = formatSetPropertyName eventDetails
-                Value = formatValue eventDetails.Value eventDetails.Property.PropertyType
-            }
+    let private inspectSetProperty eventDetails =
+        { 
+            Name = formatSetPropertyName eventDetails
+            Value = formatValue eventDetails.Value eventDetails.Property.PropertyType
+        }
+
+    let private handleInspectionMessage logAction message =
+        match message with
+        | IsPreInspection _ & IsSetVariableEvent eventDetails
+            -> logAction <| inspectSetVariable eventDetails
+        | IsPreInspection _ & IsSetPropertyEvent eventDetails
+            -> logAction <| inspectSetProperty eventDetails
+        | _ -> ignore()
+    
 
     // Public functions
         
-    let createNew logAction inspectionContext =
-        match inspectionContext.InspectionEvent with
-        | SetVariableEvent eventDetails -> inspectSetVariable logAction eventDetails
-        | SetPropertyEvent eventDetails -> inspectSetProperty logAction eventDetails
-        | _                             -> ignore()
-        None
+    let createNew logAction = createInspector <| handleInspectionMessage logAction

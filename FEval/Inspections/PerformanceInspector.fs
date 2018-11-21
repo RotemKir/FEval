@@ -4,6 +4,7 @@
 module PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
+    open FEval.InspectionEvents
     open FEval.Inspections.Logging
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
@@ -326,35 +327,24 @@ module PerformanceInspector =
         | WhileLoop _                    -> formatWhileLoop inspectionContext
         | _                              -> failwithf "Expression %O is not supported" expr
 
-    let private createPreResult inspectionContext expr =
+    let private preInspection inspectionContext expr =
         PreResult (inspectionContext.Time, formatExpr inspectionContext expr)
 
-    let private createPostResult inspectionContext elapsedTime expr =
-        PostResult (inspectionContext.Time, formatExpr inspectionContext expr, elapsedTime)
-
-    let private preInspector inspectionContext =
-        inspectExprEvent 
-            <| inspectionContext.InspectionEvent 
-            <| createPreResult inspectionContext
-
-    let private postInspector logAction (startTime : DateTime) inspectionContext =
-        let elapsedTime = inspectionContext.Time.Subtract(startTime)
-        inspectExprEvent 
-            <| inspectionContext.InspectionEvent 
-            <| createPostResult inspectionContext elapsedTime
-        |> Option.get
-        |> logAction
-
-    let private handlePreInspectionResult logAction startTime result =
-        logAction result 
-        Some <| postInspector logAction startTime
+    let private postInspection preInspectionContext postInspectionConext expr =
+        let elapsedTime = postInspectionConext.Time.Subtract(preInspectionContext.Time)
+        PostResult (postInspectionConext.Time, formatExpr postInspectionConext expr, elapsedTime)
+        
+    let private handleInspectionMessage logAction message =
+        match message with
+        | IsExprEvent expr & IsPreInspection preContext ->
+            logAction <| preInspection preContext expr
+        | IsExprEvent expr & IsPostInspection (preContext, postContext)-> 
+            logAction <| postInspection preContext postContext expr
+        | _ -> ignore()
 
     // Public functions
 
-    let createNew logAction inspectionContext =
-        Option.bind
-            <| handlePreInspectionResult logAction inspectionContext.Time
-            <| preInspector inspectionContext
+    let createNew logAction = createInspector <| handleInspectionMessage logAction
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with

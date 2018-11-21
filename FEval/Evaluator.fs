@@ -29,6 +29,12 @@ module Evaluator =
         then recVarAction variable
         else varAction variable
             
+    let private setVarInternal variable value state =
+        actOnVariable variable
+            (fun v -> setRecVariable v value state)
+            (fun _ -> { state with Variables = Map.add variable.Name value state.Variables })
+            state
+
     // Public Functions
 
     let getLastValue state =
@@ -41,13 +47,14 @@ module Evaluator =
         { state with LastValue = value }
 
     let setVar (variable : Var) value state =
-        setVariableWithInspections
-            <| (variable, value, state)
-            <| (fun () ->
-                actOnVariable variable
-                    (fun v -> setRecVariable v value state)
-                    (fun _ -> { state with Variables = Map.add variable.Name value state.Variables })
-                    state)
+        let setVariableEventDetails = { Variable = variable ; Value = value }
+        inspect 
+            <| state
+            <| (fun _ -> SetVariableEvent setVariableEventDetails)
+            <| (fun _ -> 
+                let postState = setVarInternal variable value state 
+                in (postState, postState))
+            <| (fun _ -> SetVariableEvent setVariableEventDetails)
 
     let getVar (variable : Var) state =
         actOnVariable variable
@@ -75,9 +82,13 @@ module Evaluator =
         state.RecVariables.Remove(variable.Name) |> ignore
 
     let evalExpr expr state =
-        evalExprWithInspections 
-            <| (expr, state)
-            <| (fun () -> state.EvalFunc expr state)
+        inspect 
+            <| state
+            <| (fun () -> ExprEvent expr)
+            <| (fun () -> 
+                let postState = state.EvalFunc expr state 
+                in (postState, postState))
+            <| (fun _  -> ExprEvent expr)
 
     let evalExprAndGetLastValue expr state =
         evalExpr expr state
@@ -101,11 +112,34 @@ module Evaluator =
         }
 
     let invokeMethod instance methodInfo parameters state =
-        invokeMethodWithInspections
-            <| (instance, methodInfo, parameters, state)
-            <| (fun () -> Reflection.invokeMethod instance methodInfo parameters)
+        let methodEventDetails = 
+            { 
+                Method = methodInfo
+                Instance = instance 
+                Parameters = parameters
+                Result = None 
+            }
+        inspect 
+            <| state
+            <| (fun _ -> MethodEvent methodEventDetails)
+            <| (fun _ -> 
+                let result = Reflection.invokeMethod instance methodInfo parameters 
+                in (result, state))
+            <| (fun result -> MethodEvent { methodEventDetails with Result = Some result})
 
-    let invokeSetProperty instance propertyinfo value indexerParameters state = 
-        invokeSetPropertyWithInspections
-            <| (instance, propertyinfo, value, indexerParameters, state)
-            <| (fun () -> Reflection.invokeSetProperty instance propertyinfo value indexerParameters)
+
+    let invokeSetProperty instance propertyInfo value indexerParameters state = 
+        let setPropertyEventDetails = 
+            {
+                Property = propertyInfo
+                Instance = instance
+                Value = value
+                IndexerParameters = indexerParameters
+            }
+        inspect 
+            <| state
+            <| (fun _ -> SetPropertyEvent setPropertyEventDetails)
+            <| (fun _ -> 
+                let result = Reflection.invokeSetProperty instance propertyInfo value indexerParameters 
+                in (result, state))
+            <| (fun _ -> SetPropertyEvent setPropertyEventDetails)
