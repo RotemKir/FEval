@@ -44,7 +44,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Methods.fs" />
     <Compile Include="EvaluationTypes.fs" />
-    <Compile Include="InspectionEvents.fs" />
+    <Compile Include="EvaluationEvents.fs" />
     <Compile Include="Reflection.fs" />
     <Compile Include="Evaluator.fs" />
     <Compile Include="ExceptionHandling.fs" />

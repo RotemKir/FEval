@@ -3,7 +3,7 @@
 [<RequireQualifiedAccess>]
 module MethodCallInspector =
     open FEval.EvaluationTypes
-    open FEval.InspectionEvents
+    open FEval.EvaluationEvents
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
     open System

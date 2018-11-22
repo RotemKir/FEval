@@ -4,7 +4,7 @@ module Evaluations =
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open FEval.ExceptionHandling
-    open FEval.InspectionEvents
+    open FEval.EvaluationEvents
     open FEval.Loops
     open System
     open System.Reflection

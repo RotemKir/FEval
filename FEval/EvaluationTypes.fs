@@ -18,7 +18,7 @@ module EvaluationTypes =
 
     and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
 
-    and InspectionEvent =
+    and EvaluationEvent =
         | ExprEvent of Expr
         | MethodEvent of MethodEventDetails
         | SetVariableEvent of SetVariableEventDetails
@@ -51,7 +51,7 @@ module EvaluationTypes =
     and InspectionContext =
         {
             InspectionStage : InspectionStage
-            InspectionEvent : InspectionEvent
+            EvaluationEvent : EvaluationEvent
             Time : DateTime
             EvaluationState : EvaluationState
         }

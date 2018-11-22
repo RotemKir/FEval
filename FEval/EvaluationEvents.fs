@@ -1,31 +1,31 @@
 ﻿namespace FEval
 
-module InspectionEvents =
+module EvaluationEvents =
     open FEval.EvaluationTypes
     open System
 
     // Private functions
 
-    let createPreInspectionContext inspectionEvent evaluationState =
+    let createPreInspectionContext evaluationEvent evaluationState =
             {
                 InspectionStage = InspectionStage.Pre
-                InspectionEvent = inspectionEvent
+                EvaluationEvent = evaluationEvent
                 Time = DateTime.Now
                 EvaluationState =  evaluationState
             }
             
-    let createPostInspectionContext inspectionEvent evaluationState =
+    let createPostInspectionContext evaluationEvent evaluationState =
             {
                 InspectionStage = InspectionStage.Post
-                InspectionEvent = inspectionEvent
+                EvaluationEvent = evaluationEvent
                 Time = DateTime.Now
                 EvaluationState =  evaluationState
             }
     
-    let private getInspectionEvent inspectionMessage =
+    let private getEvaluationEvent inspectionMessage =
         match inspectionMessage with
-        | PreInspectionMessage inspectionContext       -> Some inspectionContext.InspectionEvent
-        | PostInspectionMessage (_, inspectionContext) -> Some inspectionContext.InspectionEvent
+        | PreInspectionMessage inspectionContext       -> Some inspectionContext.EvaluationEvent
+        | PostInspectionMessage (_, inspectionContext) -> Some inspectionContext.EvaluationEvent
         | _                                            -> None
 
     let private disposeInspector (inspector : Inspector) =
@@ -82,21 +82,21 @@ module InspectionEvents =
         | _ -> None
     
     let (|IsExprEvent|_|) inspectionMessage =
-        match getInspectionEvent inspectionMessage with 
+        match getEvaluationEvent inspectionMessage with 
         | Some (ExprEvent expr) -> Some expr
         | _                     -> None
 
     let (|IsMethodEvent|_|) inspectionMessage =
-        match getInspectionEvent inspectionMessage with 
+        match getEvaluationEvent inspectionMessage with 
         | Some (MethodEvent eventDetails) -> Some eventDetails
         | _                               -> None
     
     let (|IsSetVariableEvent|_|) inspectionMessage =
-        match getInspectionEvent inspectionMessage with 
+        match getEvaluationEvent inspectionMessage with 
         | Some (SetVariableEvent eventDetails) -> Some eventDetails
         | _                                    -> None
         
     let (|IsSetPropertyEvent|_|) inspectionMessage =
-        match getInspectionEvent inspectionMessage with 
+        match getEvaluationEvent inspectionMessage with 
         | Some (SetPropertyEvent eventDetails) -> Some eventDetails
         | _                                    -> None

@@ -3,7 +3,7 @@
 [<RequireQualifiedAccess>]
 module DataSetInspector =
     open FEval.EvaluationTypes
-    open FEval.InspectionEvents
+    open FEval.EvaluationEvents
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
 

@@ -4,7 +4,7 @@
 module PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
-    open FEval.InspectionEvents
+    open FEval.EvaluationEvents
     open FEval.Inspections.Logging
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters

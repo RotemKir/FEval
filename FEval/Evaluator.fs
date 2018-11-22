@@ -2,7 +2,7 @@
 
 open Microsoft.FSharp.Quotations
 open FEval.EvaluationTypes
-open FEval.InspectionEvents
+open FEval.EvaluationEvents
 open System.Collections.Generic
 open System
         
