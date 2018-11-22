@@ -19,10 +19,11 @@ module EvaluationTypes =
     and EvaluationFunc = Expr -> EvaluationState -> EvaluationState
 
     and EvaluationEvent =
-        | ExprEvent of Expr
-        | MethodEvent of MethodEventDetails
+        | ExprEvent        of Expr
+        | MethodEvent      of MethodEventDetails
         | SetVariableEvent of SetVariableEventDetails
         | SetPropertyEvent of SetPropertyEventDetails
+        | SetFieldEvent    of SetFieldEventDetails
 
     and MethodEventDetails =
         {
@@ -44,6 +45,13 @@ module EvaluationTypes =
             Instance : obj
             Value : obj
             IndexerParameters : obj array
+        }
+
+    and SetFieldEventDetails =
+        {
+            Field : FieldInfo
+            Instance : obj
+            Value : obj
         }
 
     and InspectionStage = Pre | Post

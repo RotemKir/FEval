@@ -166,7 +166,7 @@ module Evaluations =
         let (value, newState2) = 
             Evaluator.evalExpr valueExpr newState1
             |> Evaluator.getLastValueAndState
-        Reflection.invokeSetField instance fieldInfo value
+        Evaluator.invokeSetField instance fieldInfo value newState2
         |> Evaluator.setLastValue newState2
 
     let private evalFor state (loopVar, startExpr, endExpr, bodyExpr) =

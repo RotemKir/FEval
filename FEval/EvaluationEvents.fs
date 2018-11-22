@@ -100,3 +100,8 @@ module EvaluationEvents =
         match getEvaluationEvent inspectionMessage with 
         | Some (SetPropertyEvent eventDetails) -> Some eventDetails
         | _                                    -> None
+        
+    let (|IsSetFieldEvent|_|) inspectionMessage =
+        match getEvaluationEvent inspectionMessage with 
+        | Some (SetFieldEvent eventDetails) -> Some eventDetails
+        | _                                 -> None

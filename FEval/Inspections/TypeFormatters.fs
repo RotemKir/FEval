@@ -130,10 +130,14 @@ module TypeFormatters =
         let propertyName = formatPropertyName propertyInfo declaringType 
         let parameters = formatIndexerParameterTypes <| propertyInfo.GetIndexParameters()
         sprintf "%s%s" propertyName parameters
+    
+    let formatFieldName (fieldInfo : FieldInfo) declaringType =
+        let typeName = formatType declaringType
+        sprintf "%s.%s" typeName fieldInfo.Name
 
     let formatField (fieldInfo : FieldInfo) instanceExpr =
-        let typeName = formatType <| getExprType instanceExpr fieldInfo.DeclaringType
-        sprintf "%s.%s" typeName fieldInfo.Name
+        let declaringType = getExprType instanceExpr fieldInfo.DeclaringType
+        formatFieldName fieldInfo declaringType
 
     let formatUnionCaseInfo (unionCaseInfo : UnionCaseInfo) =
         let typeName = formatType <| unionCaseInfo.DeclaringType

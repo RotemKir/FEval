@@ -294,30 +294,30 @@ type TypeFormattersTests() =
 
     [<TestMethod>]
     member this.``formatMethodName - returns formatted type and method name``() = 
-        let result = formatMethodName (typeof<int>.GetMethod("GetHashCode")) typeof<int>
+        let result = formatMethodName <| typeof<int>.GetMethod("GetHashCode") <| typeof<int>
         Assert.AreEqual("Int32.GetHashCode", result)
 
     [<TestMethod>]
     member this.``formatMethod - has no instance - returns method declaring type and method name``() = 
-        let result = formatMethod (typeof<int>.GetMethod("GetHashCode")) None
+        let result = formatMethod <| typeof<int>.GetMethod("GetHashCode") <| None
         Assert.AreEqual("Int32.GetHashCode()", result)
         
     [<TestMethod>]
     member this.``formatMethod - has no instance, method has parameters - returns method declaring type, method name and parameters``() = 
-        let result = formatMethod (typeof<string>.GetMethod("Insert")) None
+        let result = formatMethod <| typeof<string>.GetMethod("Insert") <| None
         Assert.AreEqual("String.Insert(Int32, String)", result)
         
     [<TestMethod>]
     member this.``formatMethod - has instance - returns instance type and member name``() = 
         let result = formatMethod
-                        (typeof<int>.GetMethod("GetHashCode")) 
+                        <| typeof<int>.GetMethod("GetHashCode")
                         <| createValueExpr<string>()
         Assert.AreEqual("String.GetHashCode()", result)
         
     [<TestMethod>]
     member this.``formatMethod - has instance, method has parameters - returns instance type, method name and parameters``() = 
         let result = formatMethod 
-                        (typeof<string>.GetMethod("Insert"))
+                        <| typeof<string>.GetMethod("Insert")
                         <| createValueExpr<int>()
         Assert.AreEqual("Int32.Insert(Int32, String)", result)
         
@@ -370,8 +370,8 @@ type TypeFormattersTests() =
     [<TestMethod>]
     member this.``formatParameterValues - has parameters - returns types and values separated by ,``() = 
         let result = formatParameterValues 
-                     <| typeof<string>.GetMethod("Insert").GetParameters()
-                     <| [| 2 :> obj ; "Hello" :> obj |] 
+                         <| typeof<string>.GetMethod("Insert").GetParameters()
+                         <| [| 2 :> obj ; "Hello" :> obj |] 
         Assert.AreEqual("2 : Int32, \"Hello\" : String", result)
 
     [<TestMethod>]
@@ -382,7 +382,7 @@ type TypeFormattersTests() =
     [<TestMethod>]
     member this.``formatIndexerParameterTypes - has parameters - returns [types separated by ,]``() = 
         let result = formatIndexerParameterTypes 
-                     <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
+                        <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
         Assert.AreEqual("[Int32]", result)
         
     [<TestMethod>]
@@ -393,20 +393,27 @@ type TypeFormattersTests() =
     [<TestMethod>]
     member this.``formatIndexerParameterValues - has parameters - returns [types and values separated by ,]``() = 
         let result = formatIndexerParameterValues 
-                     <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
-                     <| [| 2 :> obj |]
+                         <| typeof<IndexerClass>.GetProperty("Item").GetIndexParameters()
+                         <| [| 2 :> obj |]
         Assert.AreEqual("[2 : Int32]", result)
-        
+    
+    [<TestMethod>]
+    member this.``formatFieldName - returns declaring type name and field name``() = 
+        let result = formatFieldName
+                        <| typeof<FieldClass>.GetField("number")
+                        <| typeof<string>
+        Assert.AreEqual("String.number", result)
+
     [<TestMethod>]
     member this.``formatField - has instance - returns instance type name and field name``() = 
         let result = formatField
-                        (typeof<FieldClass>.GetField("number")) 
+                        <| typeof<FieldClass>.GetField("number")
                         <| createValueExpr<string>()
         Assert.AreEqual("String.number", result)
     
     [<TestMethod>]
     member this.``formatField - has no instance - returns declaring type name and field name``() = 
-        let result = formatField (typeof<FieldClass>.GetField("number")) None
+        let result = formatField <| typeof<FieldClass>.GetField("number") <| None
         Assert.AreEqual("FieldClass.number", result)
                 
     [<TestMethod>]

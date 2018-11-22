@@ -127,7 +127,6 @@ module Evaluator =
                 in (result, state))
             <| (fun result -> MethodEvent { methodEventDetails with Result = Some result})
 
-
     let invokeSetProperty instance propertyInfo value indexerParameters state = 
         let setPropertyEventDetails = 
             {
@@ -143,3 +142,18 @@ module Evaluator =
                 let result = Reflection.invokeSetProperty instance propertyInfo value indexerParameters 
                 in (result, state))
             <| (fun _ -> SetPropertyEvent setPropertyEventDetails)
+
+    let invokeSetField instance fieldInfo value state = 
+        let setFieldEventDetails = 
+            {
+                Field = fieldInfo
+                Instance = instance
+                Value = value
+            }
+        inspect 
+            <| state
+            <| (fun _ -> SetFieldEvent setFieldEventDetails)
+            <| (fun _ -> 
+                let result = Reflection.invokeSetField instance fieldInfo value
+                in (result, state))
+            <| (fun _ -> SetFieldEvent setFieldEventDetails)

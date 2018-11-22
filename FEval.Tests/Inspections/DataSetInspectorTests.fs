@@ -87,3 +87,13 @@ type DataSetInspectorTests() =
                 "indexerClass - IndexerClass"
                 "IndexerClass.Item[2 : Int32] - \"Lovely Two\" : String" 
             |]
+
+    [<TestMethod>]
+    member this.``Evaluate data set inspector - set field expression``() = 
+        assertInspectors
+            <@ let fieldClass = new FieldClass(4) in fieldClass.number <- 8 @>
+            (fun list -> [| DataSetInspector.createNew <| addMessageToList list |])
+            [| 
+                "fieldClass - FieldClass"
+                "FieldClass.number - 8 : Int32" 
+            |]

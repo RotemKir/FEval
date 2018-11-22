@@ -13,17 +13,6 @@ module DataSetInspector =
             Value : string
         }
 
-        (*
-        Handle the following events:
-        SetVariableEvent for:
-            Let
-            LetRecursive
-            VarSet
-            Lambda
-        SetPropertyEvent
-        SetFieldEvent
-        *)
-
     // Private functions
 
     let private inspectSetVariable eventDetails =
@@ -32,18 +21,28 @@ module DataSetInspector =
             Value = formatValue eventDetails.Value eventDetails.Variable.Type
         }
   
-    let private formatSetPropertyName eventDetails =
+    let private formatSetPropertyName (eventDetails : SetPropertyEventDetails) =
         let declaringType = getInstanceType eventDetails.Instance eventDetails.Property.DeclaringType
         let propertyName = formatPropertyName eventDetails.Property declaringType
         let indexerParameters = formatIndexerParameterValues 
                                 <| eventDetails.Property.GetIndexParameters()
                                 <| eventDetails.IndexerParameters
         sprintf "%s%s" propertyName indexerParameters
-
+               
     let private inspectSetProperty eventDetails =
         { 
             Name = formatSetPropertyName eventDetails
             Value = formatValue eventDetails.Value eventDetails.Property.PropertyType
+        }
+    
+    let private formatSetFieldName (eventDetails : SetFieldEventDetails) =
+        getInstanceType eventDetails.Instance eventDetails.Field.DeclaringType
+        |> formatFieldName eventDetails.Field
+
+    let private inspectSetField eventDetails =
+        { 
+            Name = formatSetFieldName eventDetails
+            Value = formatValue eventDetails.Value eventDetails.Field.FieldType
         }
 
     let private handleInspectionMessage logAction message =
@@ -52,9 +51,10 @@ module DataSetInspector =
             -> logAction <| inspectSetVariable eventDetails
         | IsPreInspection _ & IsSetPropertyEvent eventDetails
             -> logAction <| inspectSetProperty eventDetails
+        | IsPreInspection _ & IsSetFieldEvent eventDetails
+            -> logAction <| inspectSetField eventDetails
         | _ -> ignore()
     
-
     // Public functions
         
     let createNew logAction = createInspector <| handleInspectionMessage logAction
