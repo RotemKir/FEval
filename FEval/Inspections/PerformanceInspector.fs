@@ -13,8 +13,8 @@ module PerformanceInspector =
     open System
 
     type InspectionResult =
-        | PreResult of time : DateTime * message : string
-        | PostResult of time : DateTime * message : string * elapsed : TimeSpan
+        | PreResult of message : string
+        | PostResult of message : string * elapsed : TimeSpan
             
     // Private functions
     
@@ -328,53 +328,47 @@ module PerformanceInspector =
         | _                              -> failwithf "Expression %O is not supported" expr
 
     let private preInspection inspectionContext expr =
-        PreResult (inspectionContext.Time, formatExpr inspectionContext expr)
+        PreResult (formatExpr inspectionContext expr)
 
-    let private postInspection preInspectionContext postInspectionConext expr =
+    let private postInspection 
+        (preInspectionContext : InspectionContext) (postInspectionConext : InspectionContext) expr =
         let elapsedTime = postInspectionConext.Time.Subtract(preInspectionContext.Time)
-        PostResult (postInspectionConext.Time, formatExpr postInspectionConext expr, elapsedTime)
+        PostResult (formatExpr postInspectionConext expr, elapsedTime)
         
-    let private handleInspectionMessage logAction message =
+    let private handleInspectionMessage message =
         match message with
         | IsExprEvent expr & IsPreInspection preContext ->
-            logAction <| preInspection preContext expr
+            Some <| preInspection preContext expr
         | IsExprEvent expr & IsPostInspection (preContext, postContext)-> 
-            logAction <| postInspection preContext postContext expr
-        | _ -> ignore()
+            Some <| postInspection preContext postContext expr
+        | _ -> None
 
     // Public functions
 
-    let createNew logAction = createInspector <| handleInspectionMessage logAction
+    let createNew = createInspector handleInspectionMessage
 
     let stringInspectionResultFormatter inspectionResult =
         match inspectionResult with
-        | PreResult (time, message) ->
-            sprintf "%s - Start - %s" 
-                <| formatDateTimeForLog time <| message
-        | PostResult (time, message, elapsed) ->
-            sprintf "%s - End   - %s, Elapsed - %.3f ms"
-                <| formatDateTimeForLog time <| message <| elapsed.TotalMilliseconds
+        | PreResult message 
+            -> sprintf "Start - %s" message
+        | PostResult (message, elapsed) 
+            -> sprintf "End   - %s, Elapsed - %.3f ms" message elapsed.TotalMilliseconds
             
     let csvInspectionResultFormatter inspectionResult =
         match inspectionResult with
-        | PreResult (time, message) ->
-            sprintf "\"%s\",Start,\"%s\"" 
-                <| formatDateTimeForLog time 
-                <| formatCsvLine message
-        | PostResult (time, message, elapsed) ->
-            sprintf "\"%s\",End,\"%s\",%.3f" 
-                <| formatDateTimeForLog time 
-                <| formatCsvLine message 
-                <| elapsed.TotalMilliseconds
+        | PreResult message ->
+            sprintf "Start,\"%s\"" <| formatCsvLine message
+        | PostResult (message, elapsed) ->
+            sprintf "End,\"%s\",%.3f" <| formatCsvLine message <| elapsed.TotalMilliseconds
 
     let defaultLogConfig =
         {
-            Formatter = stringInspectionResultFormatter
+            Formatter = createStringFormatter stringInspectionResultFormatter
             Header = None
         }
 
     let csvLogConfig =
         {
-            Formatter = csvInspectionResultFormatter
-            Header = Some "Time,Stage,Message,Elapsed (ms)"
+            Formatter = createCsvFormatter csvInspectionResultFormatter
+            Header = Some <| createCsvFileHeader "Stage,Message,Elapsed (ms)"
         }

@@ -12,7 +12,6 @@ module MethodCallInspector =
 
     type InspectionResult = 
         {
-            Time : DateTime 
             Method : string 
             Message : string
         }
@@ -25,48 +24,38 @@ module MethodCallInspector =
             <| formatParameterValues (methodEventDetails.Method.GetParameters()) methodEventDetails.Parameters
             <| formatResult methodEventDetails.Method methodEventDetails.Result
             
-    let private createInspectionResult startTime (methodEventDetails : MethodEventDetails) =
+    let private createInspectionResult (methodEventDetails : MethodEventDetails) =
         let method = methodEventDetails.Method 
         {
-            Time = startTime
             Method = formatMethodName method 
                      <| getInstanceType methodEventDetails.Instance method.DeclaringType
             Message = formatMethodCall methodEventDetails
         }
 
-    let private postInspection (inspectionContext : InspectionContext) eventDetails =
-        createInspectionResult inspectionContext.Time eventDetails
-
-    let private handleInspectionMessage logAction message =
+    let private handleInspectionMessage message =
         match message with
-        | IsPostInspection (preContext, _) & IsMethodEvent eventDetails
-            -> logAction <| postInspection preContext eventDetails
-        | _ -> ignore()
+        | IsPostInspection _ & IsMethodEvent eventDetails
+            -> Some <| createInspectionResult eventDetails
+        | _ -> None
     
     // Public Functions
 
-    let createNew logAction = createInspector <| handleInspectionMessage logAction
+    let createNew = createInspector handleInspectionMessage
 
     let stringInspectionResultFormatter inspectionResult =
-        sprintf "%s - %s - %s" 
-            <| formatDateTimeForLog inspectionResult.Time 
-            <| inspectionResult.Method 
-            <| inspectionResult.Message
+        sprintf "%s - %s" inspectionResult.Method inspectionResult.Message
             
     let csvInspectionResultFormatter inspectionResult =
-        sprintf "%s,%s,\"%s\""
-            <| formatDateTimeForLog inspectionResult.Time 
-            <| inspectionResult.Method 
-            <| formatCsvLine inspectionResult.Message
+        sprintf "%s,\"%s\"" inspectionResult.Method <| formatCsvLine inspectionResult.Message
         
     let defaultLogConfig =
         {
-            Formatter = stringInspectionResultFormatter
+            Formatter = createStringFormatter stringInspectionResultFormatter
             Header = None
         }
 
     let csvLogConfig =
         {
-            Formatter = csvInspectionResultFormatter
-            Header = Some "Time,Method,Message"
+            Formatter = createCsvFormatter csvInspectionResultFormatter
+            Header = Some <| createCsvFileHeader "Method,Message"
         }

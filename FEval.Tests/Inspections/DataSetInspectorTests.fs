@@ -4,12 +4,13 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspections
 open FEval.Tests.TestHelpers
 open System.Collections.Generic
+open FEval.EvaluationTypes
 
 [<TestClass>]
 type DataSetInspectorTests() =
     
-    let addMessageToList (list : List<string>) (inspectionResult : DataSetInspector.InspectionResult) =
-        list.Add(sprintf "%s - %s" inspectionResult.Name inspectionResult.Value)
+    let addMessageToList (list : List<string>) (logEvent : LogEvent<DataSetInspector.InspectionResult>) =
+        list.Add(sprintf "%s - %s" logEvent.InspectionResult.Name logEvent.InspectionResult.Value)
 
     [<TestMethod>]
     member this.``Evaluate data set inspector - let expression``() = 

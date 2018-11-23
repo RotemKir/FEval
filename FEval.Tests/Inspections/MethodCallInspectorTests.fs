@@ -4,12 +4,13 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Tests.TestHelpers
 open FEval.Inspections
 open System.Collections.Generic
+open FEval.EvaluationTypes
 
 [<TestClass>]
 type MethodCallInspectorTests() =
     
-    let addMessageToList (list : List<string>) (inspectionResult : MethodCallInspector.InspectionResult) =
-        list.Add(sprintf "%s - %s" inspectionResult.Method inspectionResult.Message)
+    let addMessageToList (list : List<string>) (logEvent : LogEvent<MethodCallInspector.InspectionResult>) =
+        list.Add(sprintf "%s - %s" logEvent.InspectionResult.Method logEvent.InspectionResult.Message)
 
     [<TestMethod>]
     member this.``Evaluate method call inspector - instance method, no parameters``() = 

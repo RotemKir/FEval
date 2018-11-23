@@ -3,8 +3,9 @@
 module Logging =
     open System.IO
     open System
+    open FEval.EvaluationTypes
 
-    type Formatter<'a> = 'a -> string
+    type Formatter<'a> = LogEvent<'a> -> string
 
     type FileConfig<'a> =
         {
@@ -37,3 +38,24 @@ module Logging =
         then setFileHeader fileName fileConfig.Header.Value
         
         appendLineToFile fileName fileConfig.Formatter
+
+    let createStringFormatter formatter logEvent =
+        sprintf "%A - %s - Process %s (%i) - Thread %i - %s"
+            <| logEvent.RunDetails.RunId
+            <| formatDateTimeForLog logEvent.Time
+            <| logEvent.RunDetails.ProcessName
+            <| logEvent.RunDetails.ProcessId
+            <| logEvent.RunDetails.ThreadId
+            <| formatter logEvent.InspectionResult
+
+    let createCsvFormatter formatter logEvent =
+        sprintf "%A,%s,%s,%i,%i,%s"
+            <| logEvent.RunDetails.RunId
+            <| formatDateTimeForLog logEvent.Time
+            <| logEvent.RunDetails.ProcessName
+            <| logEvent.RunDetails.ProcessId
+            <| logEvent.RunDetails.ThreadId
+            <| formatter logEvent.InspectionResult
+
+    let createCsvFileHeader inspectionHeader =
+        sprintf "Run Id,Time,Process Name,Process Id,ThreadId,%s" inspectionHeader

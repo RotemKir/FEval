@@ -1,13 +1,14 @@
 ﻿namespace FEval
 
-open Microsoft.FSharp.Quotations
-open FEval.EvaluationTypes
-open FEval.EvaluationEvents
-open System.Collections.Generic
-open System
-        
 [<RequireQualifiedAccess>]
 module Evaluator =
+    open System    
+    open System.Collections.Generic
+    open System.Diagnostics
+    open System.Threading
+    open Microsoft.FSharp.Quotations
+    open FEval.EvaluationTypes
+    open FEval.EvaluationEvents
     
     // Private Functions
 
@@ -34,6 +35,17 @@ module Evaluator =
             (fun v -> setRecVariable v value state)
             (fun _ -> { state with Variables = Map.add variable.Name value state.Variables })
             state
+
+    let private createRunDetails() =
+        let currentProcess = Process.GetCurrentProcess()
+        let currentThread = Thread.CurrentThread
+        
+        {
+            RunId = Guid.NewGuid()
+            ProcessId = currentProcess.Id
+            ProcessName = currentProcess.ProcessName
+            ThreadId = currentThread.ManagedThreadId
+        }
 
     // Public Functions
 
@@ -104,6 +116,7 @@ module Evaluator =
 
     let createNewState evalFunc inspectors =
         {
+            RunDetails = createRunDetails()
             LastValue = ()
             Variables = Map.empty<string, obj>
             RecVariables = new Dictionary<string, obj>()

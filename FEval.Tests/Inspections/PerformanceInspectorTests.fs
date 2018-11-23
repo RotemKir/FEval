@@ -4,14 +4,16 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspections
 open FEval.Tests.TestHelpers
 open System.Collections.Generic
+open FEval.EvaluationTypes
+open FEval.Inspections
 
 [<TestClass>]
 type PerformanceInspectorTests() =
     
-    let addMessageToList (list : List<string>) inspectionResult =
-        match inspectionResult with
-        | PerformanceInspector.PreResult (_, message)     -> list.Add(message)
-        | PerformanceInspector.PostResult (_, message, _) -> list.Add(message)
+    let addMessageToList (list : List<string>) (logEvent : LogEvent<PerformanceInspector.InspectionResult>) =
+        match logEvent.InspectionResult with
+        | PerformanceInspector.PreResult message     -> list.Add(message)
+        | PerformanceInspector.PostResult (message, _) -> list.Add(message)
 
     [<TestMethod>]
     member this.``Evaluate performance inspector - value``() = 

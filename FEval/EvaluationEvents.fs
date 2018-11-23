@@ -22,23 +22,40 @@ module EvaluationEvents =
                 EvaluationState =  evaluationState
             }
     
-    let private getEvaluationEvent inspectionMessage =
+    let private getInpectionContext inspectionMessage =
         match inspectionMessage with
-        | PreInspectionMessage inspectionContext       -> Some inspectionContext.EvaluationEvent
-        | PostInspectionMessage (_, inspectionContext) -> Some inspectionContext.EvaluationEvent
+        | PreInspectionMessage inspectionContext       -> Some inspectionContext
+        | PostInspectionMessage (_, inspectionContext) -> Some inspectionContext
         | _                                            -> None
+
+    let private getEvaluationEvent inspectionMessage =
+        getInpectionContext inspectionMessage
+        |> Option.bind (fun context -> Some context.EvaluationEvent)
 
     let private disposeInspector (inspector : Inspector) =
         let disposeAction reply = Dispose(reply)
         inspector.PostAndReply disposeAction 
 
-    let private inspectionLoop messageHandler (inspector : Inspector) =
+    let private createLogEvent inspectionMessage inspectionResult =
+        let inspectionContext = Option.get <| getInpectionContext inspectionMessage
+        {
+            Time = inspectionContext.Time
+            RunDetails = inspectionContext.EvaluationState.RunDetails
+            InspectionResult = inspectionResult
+        }
+
+    let private logInspectionResult inspectionMessage inspectionResult logger =
+        match inspectionResult with
+        | Some result -> logger <| createLogEvent inspectionMessage result
+        | None        -> ignore()
+
+    let private inspectionLoop messageHandler logger (inspector : Inspector) =
         let rec loop() = 
             async {
                 let! message = inspector.Receive()
                 match message with
                 | Dispose reply -> return reply.Reply()
-                | _             -> messageHandler message 
+                | _             -> logInspectionResult message <| messageHandler message <| logger
                 return! loop()
             }
         loop()
@@ -59,8 +76,8 @@ module EvaluationEvents =
     let disposeInspectors inspectors =
         Seq.iter disposeInspector inspectors
 
-    let createInspector messageHandler =
-        MailboxProcessor.Start(inspectionLoop messageHandler)
+    let createInspector messageHandler logger =
+        MailboxProcessor.Start(inspectionLoop messageHandler logger)
 
     let inspect state createPreEvent action createPostEvent =
         let preInspectionContext = createPreInspectionContext <| createPreEvent() <| state

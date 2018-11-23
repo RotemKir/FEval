@@ -11,16 +11,14 @@ module DataSetInspector =
 
     type InspectionResult =
         {
-            Time : DateTime 
             Name : string
             Value : string
         }
 
     // Private functions
 
-    let private inspectSetVariable eventDetails time =
+    let private inspectSetVariable eventDetails =
         { 
-            Time = time
             Name = eventDetails.Variable.Name
             Value = formatValue eventDetails.Value eventDetails.Variable.Type
         }
@@ -33,9 +31,8 @@ module DataSetInspector =
                                 <| eventDetails.IndexerParameters
         sprintf "%s%s" propertyName indexerParameters
                
-    let private inspectSetProperty eventDetails time =
+    let private inspectSetProperty eventDetails =
         { 
-            Time = time
             Name = formatSetPropertyName eventDetails
             Value = formatValue eventDetails.Value eventDetails.Property.PropertyType
         }
@@ -44,47 +41,40 @@ module DataSetInspector =
         getInstanceType eventDetails.Instance eventDetails.Field.DeclaringType
         |> formatFieldName eventDetails.Field
 
-    let private inspectSetField eventDetails time =
+    let private inspectSetField eventDetails =
         { 
-            Time = time
             Name = formatSetFieldName eventDetails
             Value = formatValue eventDetails.Value eventDetails.Field.FieldType
         }
 
-    let private handleInspectionMessage logAction message =
+    let private handleInspectionMessage message =
         match message with
-        | IsPreInspection inspectionContext & IsSetVariableEvent eventDetails
-            -> logAction <| inspectSetVariable eventDetails inspectionContext.Time
-        | IsPreInspection inspectionContext & IsSetPropertyEvent eventDetails
-            -> logAction <| inspectSetProperty eventDetails inspectionContext.Time
-        | IsPreInspection inspectionContext & IsSetFieldEvent eventDetails
-            -> logAction <| inspectSetField eventDetails inspectionContext.Time
-        | _ -> ignore()
+        | IsPreInspection _ & IsSetVariableEvent eventDetails
+            -> Some <| inspectSetVariable eventDetails
+        | IsPreInspection _ & IsSetPropertyEvent eventDetails
+            -> Some <| inspectSetProperty eventDetails
+        | IsPreInspection _ & IsSetFieldEvent eventDetails
+            -> Some <| inspectSetField eventDetails
+        | _ -> None
     
     // Public functions
         
-    let createNew logAction = createInspector <| handleInspectionMessage logAction
+    let createNew = createInspector handleInspectionMessage 
 
     let stringInspectionResultFormatter inspectionResult =
-        sprintf "%s - %s <- %s" 
-            <| formatDateTimeForLog inspectionResult.Time 
-            <| inspectionResult.Name 
-            <| inspectionResult.Value
+        sprintf "%s <- %s" inspectionResult.Name inspectionResult.Value
             
     let csvInspectionResultFormatter inspectionResult =
-        sprintf "%s,%s,\"%s\""
-            <| formatDateTimeForLog inspectionResult.Time 
-            <| inspectionResult.Name 
-            <| inspectionResult.Value
+        sprintf "%s,\"%s\"" inspectionResult.Name  <| formatCsvLine inspectionResult.Value
 
     let defaultLogConfig =
         {
-            Formatter = stringInspectionResultFormatter
+            Formatter = createStringFormatter stringInspectionResultFormatter
             Header = None
         }
 
     let csvLogConfig =
         {
-            Formatter = csvInspectionResultFormatter
-            Header = Some "Time,Name,Value"
+            Formatter = createCsvFormatter csvInspectionResultFormatter
+            Header = Some <| createCsvFileHeader "Name,Value"
         }
