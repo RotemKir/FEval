@@ -37,24 +37,28 @@ module MethodCallInspector =
             -> Some <| createInspectionResult eventDetails
         | _ -> None
     
-    // Public Functions
+    let private csvFileHeader = "Method,Message"
 
-    let createNew = createInspector handleInspectionMessage
-
-    let stringInspectionResultFormatter inspectionResult =
+    let private txtInspectionResultFormatter inspectionResult =
         sprintf "%s - %s" inspectionResult.Method inspectionResult.Message
             
-    let csvInspectionResultFormatter inspectionResult =
+    let private csvInspectionResultFormatter inspectionResult =
         sprintf "%s,\"%s\"" inspectionResult.Method <| formatCsvLine inspectionResult.Message
         
-    let defaultLogConfig =
+    let private txtLogConfig =
         {
-            Formatter = createStringFormatter stringInspectionResultFormatter
+            Formatter = createStringFormatter txtInspectionResultFormatter
             Header = None
         }
 
-    let csvLogConfig =
+    let private csvLogConfig =
         {
             Formatter = createCsvFormatter csvInspectionResultFormatter
-            Header = Some <| createCsvFileHeader "Method,Message"
+            Header = Some <| createCsvFileHeader csvFileHeader
         }
+
+    // Public Functions
+
+    let createNew = createInspector handleInspectionMessage
+    let createTxtLogger = createLogger txtLogConfig
+    let createCsvLogger = createLogger csvLogConfig

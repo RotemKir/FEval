@@ -343,32 +343,36 @@ module PerformanceInspector =
             Some <| postInspection preContext postContext expr
         | _ -> None
 
-    // Public functions
-
-    let createNew = createInspector handleInspectionMessage
-
-    let stringInspectionResultFormatter inspectionResult =
+    let private csvFileHeader = "Stage,Message,Elapsed (ms)"
+    
+    let private txtInspectionResultFormatter inspectionResult =
         match inspectionResult with
         | PreResult message 
             -> sprintf "Start - %s" message
         | PostResult (message, elapsed) 
             -> sprintf "End   - %s, Elapsed - %.3f ms" message elapsed.TotalMilliseconds
             
-    let csvInspectionResultFormatter inspectionResult =
+    let private csvInspectionResultFormatter inspectionResult =
         match inspectionResult with
         | PreResult message ->
             sprintf "Start,\"%s\"" <| formatCsvLine message
         | PostResult (message, elapsed) ->
             sprintf "End,\"%s\",%.3f" <| formatCsvLine message <| elapsed.TotalMilliseconds
-
-    let defaultLogConfig =
+            
+    let private txtLogConfig =
         {
-            Formatter = createStringFormatter stringInspectionResultFormatter
+            Formatter = createStringFormatter txtInspectionResultFormatter
             Header = None
         }
 
-    let csvLogConfig =
+    let private csvLogConfig =
         {
             Formatter = createCsvFormatter csvInspectionResultFormatter
-            Header = Some <| createCsvFileHeader "Stage,Message,Elapsed (ms)"
+            Header = Some <| createCsvFileHeader csvFileHeader
         }
+
+    // Public functions
+
+    let createNew = createInspector handleInspectionMessage
+    let createTxtLogger = createLogger txtLogConfig
+    let createCsvLogger = createLogger csvLogConfig

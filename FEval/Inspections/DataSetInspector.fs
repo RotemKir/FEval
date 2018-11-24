@@ -56,24 +56,28 @@ module DataSetInspector =
             -> Some <| inspectSetField eventDetails
         | _ -> None
     
-    // Public functions
-        
-    let createNew = createInspector handleInspectionMessage 
+    let private csvFileHeader = "Name,Value"
 
-    let stringInspectionResultFormatter inspectionResult =
+    let private txtInspectionResultFormatter inspectionResult =
         sprintf "%s <- %s" inspectionResult.Name inspectionResult.Value
             
-    let csvInspectionResultFormatter inspectionResult =
+    let private csvInspectionResultFormatter inspectionResult =
         sprintf "%s,\"%s\"" inspectionResult.Name  <| formatCsvLine inspectionResult.Value
 
-    let defaultLogConfig =
+    let private txtLogConfig =
         {
-            Formatter = createStringFormatter stringInspectionResultFormatter
+            Formatter = createStringFormatter txtInspectionResultFormatter 
             Header = None
         }
 
-    let csvLogConfig =
+    let private csvLogConfig =
         {
             Formatter = createCsvFormatter csvInspectionResultFormatter
-            Header = Some <| createCsvFileHeader "Name,Value"
+            Header = Some <| createCsvFileHeader csvFileHeader
         }
+
+    // Public functions
+        
+    let createNew = createInspector handleInspectionMessage 
+    let createTxtLogger = createLogger txtLogConfig
+    let createCsvLogger = createLogger csvLogConfig

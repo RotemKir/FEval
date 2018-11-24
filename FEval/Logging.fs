@@ -33,16 +33,16 @@ module Logging =
     let private appendEndOfLine line =
         line + "\r\n"
 
-    let private appendLineToFile fileName formatter data =
+    let private appendLineToFile formatter fileName data =
         fileAppender.Post <| AddLineToFile (fileName, appendEndOfLine <| formatter data)
     
-    let private syncFileApender() =
+    let private syncFileAppender() =
         fileAppender.PostAndReply (fun r -> FileAppenderMessage.Sync r)
 
     // Public functions
     
     let syncLoggers() = 
-        syncFileApender()
+        syncFileAppender()
 
     let formatCsvLine (line : string) =
         line.Replace("\"", "\"\"")
@@ -52,13 +52,7 @@ module Logging =
 
     let setFileHeader fileName header =
         if not <| File.Exists(fileName)
-        then appendLineToFile fileName id header
-
-    let saveToFile fileName fileConfig =
-        if fileConfig.Header.IsSome 
-        then setFileHeader fileName fileConfig.Header.Value
-        
-        appendLineToFile fileName fileConfig.Formatter
+        then appendLineToFile id fileName header
 
     let createStringFormatter formatter logEvent =
         sprintf "%s - %A - %s (%i) - Thread %i - %s"
@@ -80,3 +74,9 @@ module Logging =
 
     let createCsvFileHeader inspectionHeader =
         sprintf "Time,Run Id,Process Name,Process Id,ThreadId,%s" inspectionHeader
+
+    let createLogger fileConfig fileName =
+        if fileConfig.Header.IsSome 
+        then setFileHeader fileName fileConfig.Header.Value
+        
+        appendLineToFile fileConfig.Formatter fileName
