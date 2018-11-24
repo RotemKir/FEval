@@ -77,6 +77,7 @@ module EvaluationTypes =
         | PreInspectionMessage of PreMessage : InspectionContext
         | PostInspectionMessage of PreMessage : InspectionContext * PostMessage : InspectionContext
         | Dispose of replyChannel : AsyncReplyChannel<unit>
+        | Sync of replyChannel : AsyncReplyChannel<unit>
          
     and Inspector = MailboxProcessor<InspectionMessage>
 

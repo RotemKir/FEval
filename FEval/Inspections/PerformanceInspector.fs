@@ -5,9 +5,9 @@ module PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
-    open FEval.Inspections.Logging
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
+    open FEval.Logging
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns
     open System

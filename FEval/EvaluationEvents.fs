@@ -2,6 +2,7 @@
 
 module EvaluationEvents =
     open FEval.EvaluationTypes
+    open FEval.Logging
     open System
 
     // Private functions
@@ -54,8 +55,11 @@ module EvaluationEvents =
             async {
                 let! message = inspector.Receive()
                 match message with
-                | Dispose reply -> return reply.Reply()
-                | _             -> logInspectionResult message <| messageHandler message <| logger
+                | Dispose reply       
+                    -> return reply.Reply()
+                | InspectionMessage.Sync reply 
+                    -> reply.Reply()
+                | _ -> logInspectionResult message <| messageHandler message <| logger
                 return! loop()
             }
         loop()
@@ -65,6 +69,12 @@ module EvaluationEvents =
             <| (fun (i : Inspector) -> i.Post message)
             <| state.Inspectors
         
+    let private syncInspectors state =
+        let syncAction reply = InspectionMessage.Sync reply 
+        Seq.iter 
+            <| (fun (i : Inspector) -> i.PostAndReply syncAction)
+            <| state.Inspectors
+
     let private runPreInspections preInspectionContext =
         postMessage <| PreInspectionMessage preInspectionContext
         
@@ -85,6 +95,8 @@ module EvaluationEvents =
         let (result, postState) = action()
         let postInspectionContext = createPostInspectionContext <| createPostEvent result <| postState
         runPostInspections preInspectionContext postInspectionContext state
+        syncInspectors state
+        syncLoggers()
         result
 
     let (|IsPreInspection|_|) inspectionMessage =

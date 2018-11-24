@@ -1,4 +1,4 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval
 
 module Logging =
     open System.IO
@@ -13,16 +13,37 @@ module Logging =
             Header : string option
         }
 
+    type FileAppenderMessage =
+        | AddLineToFile of fileName : string * line : string
+        | Sync of replyChannel : AsyncReplyChannel<unit>
+
     // Private functions
+
+    let private fileAppender = MailboxProcessor<FileAppenderMessage>.Start(fun inbox ->
+        let rec loop() =
+            async {
+                    let! message = inbox.Receive();
+                    match message with
+                    | AddLineToFile (fileName, line) -> File.AppendAllText (fileName, line)
+                    | FileAppenderMessage.Sync reply -> reply.Reply()
+                    do! loop ()
+            }
+        loop ())
 
     let private appendEndOfLine line =
         line + "\r\n"
 
     let private appendLineToFile fileName formatter data =
-        File.AppendAllText (fileName, appendEndOfLine <| formatter data)
+        fileAppender.Post <| AddLineToFile (fileName, appendEndOfLine <| formatter data)
     
+    let private syncFileApender() =
+        fileAppender.PostAndReply (fun r -> FileAppenderMessage.Sync r)
+
     // Public functions
     
+    let syncLoggers() = 
+        syncFileApender()
+
     let formatCsvLine (line : string) =
         line.Replace("\"", "\"\"")
 
@@ -40,22 +61,22 @@ module Logging =
         appendLineToFile fileName fileConfig.Formatter
 
     let createStringFormatter formatter logEvent =
-        sprintf "%A - %s - Process %s (%i) - Thread %i - %s"
-            <| logEvent.RunDetails.RunId
+        sprintf "%s - %A - %s (%i) - Thread %i - %s"
             <| formatDateTimeForLog logEvent.Time
+            <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
             <| formatter logEvent.InspectionResult
 
     let createCsvFormatter formatter logEvent =
-        sprintf "%A,%s,%s,%i,%i,%s"
-            <| logEvent.RunDetails.RunId
+        sprintf "%s,%A,%s,%i,%i,%s"
             <| formatDateTimeForLog logEvent.Time
+            <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
             <| formatter logEvent.InspectionResult
 
     let createCsvFileHeader inspectionHeader =
-        sprintf "Run Id,Time,Process Name,Process Id,ThreadId,%s" inspectionHeader
+        sprintf "Time,Run Id,Process Name,Process Id,ThreadId,%s" inspectionHeader

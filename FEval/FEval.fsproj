@@ -10,9 +10,10 @@
     <RootNamespace>FEval</RootNamespace>
     <AssemblyName>FEval</AssemblyName>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Name>FEval</Name>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +45,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Methods.fs" />
     <Compile Include="EvaluationTypes.fs" />
+    <Compile Include="Logging.fs" />
     <Compile Include="EvaluationEvents.fs" />
     <Compile Include="Reflection.fs" />
     <Compile Include="Evaluator.fs" />
@@ -51,7 +53,6 @@
     <Compile Include="Loops.fs" />
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
-    <Compile Include="Inspections\Logging.fs" />
     <Compile Include="Inspections\CommonInspections.fs" />
     <Compile Include="Inspections\TypeChecks.fs" />
     <Compile Include="Inspections\TypeFormatters.fs" />

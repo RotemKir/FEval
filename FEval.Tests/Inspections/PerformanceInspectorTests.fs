@@ -1,11 +1,11 @@
 ﻿namespace FEval.Tests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
+open FEval
+open FEval.EvaluationTypes
 open FEval.Inspections
 open FEval.Tests.TestHelpers
 open System.Collections.Generic
-open FEval.EvaluationTypes
-open FEval.Inspections
 
 [<TestClass>]
 type PerformanceInspectorTests() =

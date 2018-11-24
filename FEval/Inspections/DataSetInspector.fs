@@ -5,9 +5,8 @@ module DataSetInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
     open FEval.Inspections.CommonInspections
-    open FEval.Inspections.Logging
+    open FEval.Logging
     open FEval.Inspections.TypeFormatters
-    open System
 
     type InspectionResult =
         {

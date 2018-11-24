@@ -6,9 +6,8 @@ module MethodCallInspector =
     open FEval.EvaluationEvents
     open FEval.Inspections.CommonInspections
     open FEval.Inspections.TypeFormatters
-    open System
+    open FEval.Logging
     open System.Reflection
-    open FEval.Inspections.Logging
 
     type InspectionResult = 
         {
