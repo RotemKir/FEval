@@ -4,6 +4,23 @@ module TypeChecks =
     open System
     open Microsoft.FSharp.Reflection
 
+    let private convertIfType<'t> (value : obj) valueType =
+        if valueType = typeof<'t> 
+        then Some <| (value :?> 't)
+        else None
+
+    let (|IsInt16|_|) = convertIfType<int16>
+    let (|IsInt32|_|) = convertIfType<int32>
+    let (|IsInt64|_|) = convertIfType<int64>
+    let (|IsUInt16|_|) = convertIfType<uint16>
+    let (|IsUInt32|_|) = convertIfType<uint32>
+    let (|IsUInt64|_|) = convertIfType<uint64>
+    let (|IsByte|_|) = convertIfType<byte>
+    let (|IsSByte|_|) = convertIfType<sbyte>
+    let (|IsFloat|_|) = convertIfType<float>
+    let (|IsFloat32|_|) = convertIfType<float32>
+    let (|IsDecimal|_|) = convertIfType<decimal>
+
     let (|IsOption|_|) (valueType : Type) =
         if valueType.Name = "FSharpOption`1"
         then Some valueType

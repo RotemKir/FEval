@@ -27,13 +27,13 @@ module Evaluator =
 
     let private actOnVariable (variable : Var) recVarAction varAction state =
         if state.RecVariables.ContainsKey(variable.Name)
-        then recVarAction variable
-        else varAction variable
+        then recVarAction()
+        else varAction()
             
     let private setVarInternal variable value state =
         actOnVariable variable
-            (fun v -> setRecVariable v value state)
-            (fun _ -> { state with Variables = Map.add variable.Name value state.Variables })
+            (fun() -> setRecVariable variable value state)
+            (fun() -> { state with Variables = Map.add variable.Name value state.Variables })
             state
 
     let private createRunDetails() =
@@ -58,6 +58,12 @@ module Evaluator =
     let setLastValue state value =
         { state with LastValue = value }
 
+    let varExists variable state =
+        actOnVariable variable
+            (fun() -> state.RecVariables.ContainsKey variable.Name)
+            (fun() -> Map.containsKey variable.Name state.Variables)
+            state
+
     let setVar (variable : Var) value state =
         let setVariableEventDetails = { Variable = variable ; Value = value }
         inspect 
@@ -70,8 +76,8 @@ module Evaluator =
 
     let getVar (variable : Var) state =
         actOnVariable variable
-            (fun v -> state.RecVariables.Item v.Name)
-            (fun v -> state.Variables.Item v.Name)
+            (fun() -> state.RecVariables.Item variable.Name)
+            (fun() -> state.Variables.Item variable.Name)
             state
 
     let setLastValueAsVar (variable : Var) state =
