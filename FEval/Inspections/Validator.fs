@@ -1,19 +1,12 @@
 ﻿namespace FEval.Inspections
 
 [<RequireQualifiedAccess>]
-module Valudate =
-    open FEval.EvaluationTypes
-    open FSharp.Quotations
-    open FEval
+module Validator =
     open FEval.Inspections.TypeChecks
     open FEval.Inspections.ValidationTypes
 
-    let private getVariableValue inspectionContext name =
-        let tempVar = new Var(name, typeof<obj>)
-        
-        if Evaluator.varExists tempVar inspectionContext.EvaluationState
-        then Some <| Evaluator.getVar tempVar inspectionContext.EvaluationState
-        else None
+    let private getVariableValue validationContext name =
+        Map.tryFind name validationContext.Variables
 
     let private isZero value =
         match value.GetType() with
@@ -32,22 +25,27 @@ module Valudate =
 
     let private isNotZero = not << isZero
 
-    let createValidationResult isValid errorMessage =
+    let private createValidationResult isValid errorMessage =
         match isValid with
         | true  -> ValidationResult.Ok
         | false -> ValidationResult.Error errorMessage
 
-    let private validateIfVariableExists inspectionContext name isValid =
-        match getVariableValue inspectionContext name with
+    let private validateIfVariableExists validationContext name isValid =
+        match getVariableValue validationContext name with
         | Some value -> isValid value
         | None       -> true
 
-    let private validateIsNotZero inspectionContext name =
-        validateIfVariableExists inspectionContext name isNotZero
+    let private validateIsNotZero validationContext name =
+        validateIfVariableExists validationContext name isNotZero
         |> createValidationResult <| sprintf "Variable %s should not be zero" name
 
-    let private runRule definition inspectionContext =
+    let private runRule validationContext definition =
         match definition with
-        | Variable (name, IsNotZero) -> validateIsNotZero inspectionContext name
-        | Custom rule                -> rule inspectionContext
+        | Variable (name, IsNotZero) -> validateIsNotZero validationContext name
+        | Custom rule                -> rule validationContext
         | _                          -> ValidationResult.Ok
+
+    let runRules validationContext definitions  =
+        Seq.map
+            <| runRule validationContext
+            <| definitions

@@ -1,14 +1,18 @@
 ﻿namespace FEval.Inspections
 
 module ValidationTypes =
-    open FEval.EvaluationTypes
+
+    type ValidationContext =
+        {
+            Variables : Map<string, obj>
+        }
 
     type ValidationResult =
         | Ok
         | Warning of string
         | Error of string
 
-    type Rule = InspectionContext -> ValidationResult
+    type Rule = ValidationContext -> ValidationResult
 
     type RuleTarget =
         | Const of obj

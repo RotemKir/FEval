@@ -60,7 +60,7 @@
     <Compile Include="Inspections\MethodCallInspector.fs" />
     <Compile Include="Inspections\DataSetInspector.fs" />
     <Compile Include="Inspections\ValidationTypes.fs" />
-    <Compile Include="Inspections\ValidationInspector.fs" />
+    <Compile Include="Inspections\Validator.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>
