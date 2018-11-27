@@ -25,25 +25,30 @@ module Validator =
 
     let private isNotZero = not << isZero
 
-    let private createValidationResult isValid errorMessage =
-        match isValid with
-        | true  -> ValidationResult.Ok
-        | false -> ValidationResult.Error errorMessage
+    let private createValidationResult isValid errorLevel errorMessage =
+        match (isValid, errorLevel) with
+        | (true, _)        -> ValidationResult.Ok
+        | (false, Warning) -> ValidationResult.Warning errorMessage
+        | (false, Error)   -> ValidationResult.Error errorMessage
 
     let private validateIfVariableExists validationContext name isValid =
         match getVariableValue validationContext name with
         | Some value -> isValid value
         | None       -> true
 
-    let private validateIsNotZero validationContext name =
-        validateIfVariableExists validationContext name isNotZero
-        |> createValidationResult <| sprintf "Variable %s should not be zero" name
+    let private validateIsNotZero validationContext name errorLevel =
+        createValidationResult 
+            <| validateIfVariableExists validationContext name isNotZero
+            <| errorLevel 
+            <| sprintf "Variable %s should not be zero" name
 
     let private runRule validationContext definition =
         match definition with
-        | Variable (name, IsNotZero) -> validateIsNotZero validationContext name
-        | Custom rule                -> rule validationContext
-        | _                          -> ValidationResult.Ok
+        | Variable (name, IsNotZero, errorLevel) 
+            -> validateIsNotZero validationContext name errorLevel
+        | Custom rule                
+            -> rule validationContext
+        | _ -> ValidationResult.Ok
 
     let runRules validationContext definitions  =
         Seq.map

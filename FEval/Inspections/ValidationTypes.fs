@@ -25,8 +25,12 @@ module ValidationTypes =
         | IsLessThan of RuleTarget
         | IsMoreThan of RuleTarget
 
+    type ErrorLevel =
+        | Warning
+        | Error
+
     type RuleDefinition =
-        | Variable of name : string * test : Test
+        | Variable of name : string * test : Test * errorLevel : ErrorLevel
         | Custom of Rule
 
 

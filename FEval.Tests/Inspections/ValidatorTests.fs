@@ -53,20 +53,27 @@ type ValidatorTests() =
     member this.``runRules - is not zero rule - variable doesn't exist - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [||]
-            <| [| RuleDefinition.Variable ("Var", IsNotZero) |]
+            <| [| RuleDefinition.Variable ("Var", IsNotZero, Error) |]
             <| [| ValidationResult.Ok |]
 
     [<TestMethod>]
-    member this.``runRules - is not zero rule - variable is zero int16 - returns error``() = 
+    member this.``runRules - is not zero error rule - variable is zero int16 - returns error``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 0s :> obj) |]
-            <| [| RuleDefinition.Variable ("Var", IsNotZero) |]
+            <| [| RuleDefinition.Variable ("Var", IsNotZero, Error) |]
             <| [| ValidationResult.Error "Variable Var should not be zero" |]
     
+    [<TestMethod>]
+    member this.``runRules - is not zero warning rule - variable is zero int16 - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 0s :> obj) |]
+            <| [| RuleDefinition.Variable ("Var", IsNotZero, Warning) |]
+            <| [| ValidationResult.Warning "Variable Var should not be zero" |]
+
     [<TestMethod>]
     member this.``runRules - is not zero rule - variable is not zero int16 - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 3s :> obj) |]
-            <| [| RuleDefinition.Variable ("Var", IsNotZero) |]
+            <| [| RuleDefinition.Variable ("Var", IsNotZero, Error) |]
             <| [| ValidationResult.Ok |]
 
