@@ -45,6 +45,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Methods.fs" />
     <Compile Include="EvaluationTypes.fs" />
+    <Compile Include="TypeChecks.fs" />
     <Compile Include="Logging.fs" />
     <Compile Include="EvaluationEvents.fs" />
     <Compile Include="Reflection.fs" />
@@ -54,7 +55,6 @@
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
     <Compile Include="Inspections\CommonInspections.fs" />
-    <Compile Include="Inspections\TypeChecks.fs" />
     <Compile Include="Inspections\TypeFormatters.fs" />
     <Compile Include="Inspections\PerformanceInspector.fs" />
     <Compile Include="Inspections\MethodCallInspector.fs" />

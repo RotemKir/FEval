@@ -6,7 +6,7 @@ module TypeFormatters =
     open System
     open System.Reflection
     open FEval.Inspections.CommonInspections
-    open FEval.Inspections.TypeChecks
+    open FEval.TypeChecks
 
     // Private functions
 

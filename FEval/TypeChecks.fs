@@ -1,4 +1,4 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval
 
 module TypeChecks =
     open System
