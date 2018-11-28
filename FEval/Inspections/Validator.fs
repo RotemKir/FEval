@@ -2,29 +2,12 @@
 
 [<RequireQualifiedAccess>]
 module Validator =
-    open FEval.TypeChecks
+    open FEval.Inspections.ValidationRules
     open FEval.Inspections.ValidationTypes
 
     let private getVariableValue validationContext name =
         Map.tryFind name validationContext.Variables
-
-    let private isZero value =
-        match value.GetType() with
-        | IsInt16   value v -> v = 0s
-        | IsInt32   value v -> v = 0
-        | IsInt64   value v -> v = 0L
-        | IsUInt16  value v -> v = 0us
-        | IsUInt32  value v -> v = 0u
-        | IsUInt64  value v -> v = 0UL
-        | IsByte    value v -> v = 0uy
-        | IsSByte   value v -> v = 0y
-        | IsFloat   value v -> v = 0.0
-        | IsFloat32 value v -> v = 0.0f
-        | IsDecimal value v -> v = 0.0m
-        | _                 -> false
-
-    let private isNotZero = not << isZero
-
+            
     let private createValidationResult isValid errorLevel errorMessage =
         match (isValid, errorLevel) with
         | (true, _)        -> ValidationResult.Ok
