@@ -294,3 +294,192 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", "Hello" :> obj) |]
             <| [| createErrorIfVariable "Var" IsNotZero |]
             <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - variable doesn't exist - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [||]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - int16 - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8s :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - int16 - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8s :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - int16 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3s :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - int32 - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8 :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - int32 - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8 :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - int32 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3 :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - int64 - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8L :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - int64 - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8L :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - int64 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3L :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - uint16 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3us :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - uint32 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3u :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - uint64 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3UL :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+                
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - byte - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3uy :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - sbyte - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8y :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - sbyte - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8y :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - sbyte - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3y :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+                
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - float - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0 :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - float - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0 :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - float - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3.0 :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - float32 - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0f :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - float32 - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0f :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - float32 - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3.0f :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative error rule - decimal - variable is negative - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0m :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Error "Variable Var should not be negative" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is not negative warning rule - decimal - variable is negative - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", -8.0m :> obj) |]
+            <| [| createWarningIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Warning "Variable Var should not be negative" |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - decimal - variable is not negative - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", 3.0m :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is not negative rule - string - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", "Hello" :> obj) |]
+            <| [| createErrorIfVariable "Var" IsNotNegative |]
+            <| [| ValidationResult.Ok |]

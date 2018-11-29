@@ -30,8 +30,14 @@ module ValidationTypes =
         | Error
 
     type RuleDefinition =
-        | Variable of name : string * test : Test * errorLevel : ErrorLevel
+        | Variable of VariableRuleDefinition
         | Custom of Rule
 
+    and VariableRuleDefinition =
+        {
+            VariableName : string
+            Test : Test
+            ErrorLevel : ErrorLevel
+        }
 
 

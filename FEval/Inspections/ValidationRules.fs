@@ -18,12 +18,25 @@ module ValidationRules =
         | IsFloat32 value v -> v = 0.0f
         | IsDecimal value v -> v = 0.0m
         | _                 -> false
+    
+    let isNegative (value : obj) =
+        match value.GetType() with
+        | IsInt16   value v -> v < 0s
+        | IsInt32   value v -> v < 0
+        | IsInt64   value v -> v < 0L
+        | IsSByte   value v -> v < 0y
+        | IsFloat   value v -> v < 0.0
+        | IsFloat32 value v -> v < 0.0f
+        | IsDecimal value v -> v < 0.0m
+        | _                 -> false
 
     let isNotZero : obj -> bool = not << isZero
+    
+    let isNotNegative : obj -> bool = not << isNegative
 
     let createErrorIfVariable name test =
-        Variable (name, test, ErrorLevel.Error)
+        Variable { VariableName = name ; Test = test ; ErrorLevel = ErrorLevel.Error }
     
     let createWarningIfVariable name test =
-        Variable (name, test, ErrorLevel.Warning)
+        Variable { VariableName = name ; Test = test ; ErrorLevel = ErrorLevel.Warning }
 
