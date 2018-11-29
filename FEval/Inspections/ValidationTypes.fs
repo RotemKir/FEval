@@ -18,10 +18,10 @@ module ValidationTypes =
         | Const of obj
         | Variable of name : string
 
-    type Test =
-        | IsNotZero
-        | IsNotNegative
-        | IsNotEmpty
+    type InvalidWhen =
+        | IsZero
+        | IsNegative
+        | IsEmpty
         | IsLessThan of RuleTarget
         | IsMoreThan of RuleTarget
 
@@ -36,7 +36,7 @@ module ValidationTypes =
     and VariableRuleDefinition =
         {
             VariableName : string
-            Test : Test
+            InvalidWhen : InvalidWhen
             ErrorLevel : ErrorLevel
         }
 

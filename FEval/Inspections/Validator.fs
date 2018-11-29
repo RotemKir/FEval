@@ -19,14 +19,15 @@ module Validator =
         | Some value -> isValid value
         | None       -> true
 
-    let private getTestValidation test =
-        match test with
-        | IsNotZero     -> (isNotZero,     fun name -> sprintf "Variable %s should not be zero" name)
-        | IsNotNegative -> (isNotNegative, fun name -> sprintf "Variable %s should not be negative" name)
-        | _             -> invalidOp "Error" 
+    let private getValidation invalidWhen =
+        match invalidWhen with
+        | IsZero     -> (isNotZero,     fun name -> sprintf "Variable '%s' should not be zero" name)
+        | IsNegative -> (isNotNegative, fun name -> sprintf "Variable '%s' should not be negative" name)
+        | IsEmpty    -> (isNotEmpty,    fun name -> sprintf "Variable '%s' should not be empty" name)
+        | _          -> invalidOp "Error" 
 
     let private validateVariable validationContext variableRule =
-        let (validation, errorMessage) = getTestValidation variableRule.Test
+        let (validation, errorMessage) = getValidation variableRule.InvalidWhen
 
         createValidationResult 
             <| validateIfVariableExists validationContext variableRule.VariableName validation

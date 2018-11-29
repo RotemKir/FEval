@@ -20,6 +20,7 @@ module TypeChecks =
     let (|IsFloat|_|) = convertIfType<float>
     let (|IsFloat32|_|) = convertIfType<float32>
     let (|IsDecimal|_|) = convertIfType<decimal>
+    let (|IsString|_|) = convertIfType<string>
 
     let (|IsOption|_|) (valueType : Type) =
         if valueType.Name = "FSharpOption`1"

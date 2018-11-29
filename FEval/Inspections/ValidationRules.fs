@@ -3,6 +3,7 @@
 module ValidationRules =
     open FEval.Inspections.ValidationTypes
     open FEval.TypeChecks
+    open System
 
     let isZero (value : obj) =
         match value.GetType() with
@@ -30,13 +31,20 @@ module ValidationRules =
         | IsDecimal value v -> v < 0.0m
         | _                 -> false
 
+    let isEmpty (value : obj) =
+        match value.GetType() with
+        | IsString value v -> String.IsNullOrEmpty v
+        | _                -> false
+
     let isNotZero : obj -> bool = not << isZero
     
     let isNotNegative : obj -> bool = not << isNegative
-
-    let createErrorIfVariable name test =
-        Variable { VariableName = name ; Test = test ; ErrorLevel = ErrorLevel.Error }
     
-    let createWarningIfVariable name test =
-        Variable { VariableName = name ; Test = test ; ErrorLevel = ErrorLevel.Warning }
+    let isNotEmpty : obj -> bool = not << isEmpty
+    
+    let createErrorIfVariable name invalidWhen =
+        Variable { VariableName = name ; InvalidWhen = invalidWhen ; ErrorLevel = ErrorLevel.Error }
+    
+    let createWarningIfVariable name invalidWhen =
+        Variable { VariableName = name ; InvalidWhen = invalidWhen ; ErrorLevel = ErrorLevel.Warning }
 
