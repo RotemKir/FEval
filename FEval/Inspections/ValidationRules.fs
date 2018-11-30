@@ -5,6 +5,12 @@ module ValidationRules =
     open FEval.TypeChecks
     open System
 
+    let private isEmptyString value =
+        String.IsNullOrEmpty value
+
+    let private isEmptyEnumerable value =
+        Seq.isEmpty <| Seq.cast value
+
     let isZero (value : obj) =
         match value.GetType() with
         | IsInt16   value v -> v = 0s
@@ -33,8 +39,9 @@ module ValidationRules =
 
     let isEmpty (value : obj) =
         match value.GetType() with
-        | IsString value v -> String.IsNullOrEmpty v
-        | _                -> false
+        | IsString      value v -> isEmptyString v
+        | IsIEnumerable value v -> isEmptyEnumerable v
+        | _                     -> false
 
     let isNotZero : obj -> bool = not << isZero
     

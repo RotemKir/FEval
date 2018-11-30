@@ -3,6 +3,7 @@
 module TypeChecks =
     open System
     open Microsoft.FSharp.Reflection
+    open System.Collections
 
     let private convertIfType<'t> (value : obj) valueType =
         if valueType = typeof<'t> 
@@ -21,6 +22,11 @@ module TypeChecks =
     let (|IsFloat32|_|) = convertIfType<float32>
     let (|IsDecimal|_|) = convertIfType<decimal>
     let (|IsString|_|) = convertIfType<string>
+
+    let (|IsIEnumerable|_|) (value : obj) (valueType : Type) =
+        if typeof<IEnumerable>.IsAssignableFrom(valueType)
+        then Some (value :?> IEnumerable)
+        else None
 
     let (|IsOption|_|) (valueType : Type) =
         if valueType.Name = "FSharpOption`1"

@@ -3,6 +3,7 @@
 open FEval.Tests.TestHelpers
 open FEval.TypeChecks
 open Microsoft.VisualStudio.TestTools.UnitTesting
+open System.Collections
 
 [<TestClass>]
 type TypeChecksTests() =
@@ -130,3 +131,38 @@ type TypeChecksTests() =
         match typeof<StructWithToString> with
         | HasToString t -> Assert.AreEqual(typeof<StructWithToString>, t)
         | _             -> Assert.Fail("Shouldn't match this")
+    
+    [<TestMethod>]
+    member this.``IsIEnumerable - type is sequence - matches``() = 
+        let sequence = seq {1 .. 10}
+        match sequence.GetType() with
+        | IsIEnumerable sequence t -> Assert.AreEqual(sequence, t)
+        | _                        -> Assert.Fail("Shouldn't match this")
+    
+    [<TestMethod>]
+    member this.``IsIEnumerable - type is array - matches``() = 
+        let array = [| 1 ; 2 ; 3|]
+        match array.GetType() with
+        | IsIEnumerable array t -> Assert.AreEqual(array, t)
+        | _                     -> Assert.Fail("Shouldn't match this")
+    
+    [<TestMethod>]
+    member this.``IsIEnumerable - type is list - matches``() = 
+        let list = [1 ; 2 ; 3]
+        match list.GetType() with
+        | IsIEnumerable list t -> Assert.AreEqual(list, t)
+        | _                    -> Assert.Fail("Shouldn't match this")
+        
+    [<TestMethod>]
+    member this.``IsIEnumerable - type is map - matches``() = 
+        let map = new Map<string, int> [||]
+        match map.GetType() with
+        | IsIEnumerable map t -> Assert.AreEqual(map, t)
+        | _                   -> Assert.Fail("Shouldn't match this")
+        
+    [<TestMethod>]
+    member this.``IsIEnumerable - type is int - doesn't match``() = 
+        let number = 3
+        match number.GetType() with
+        | IsIEnumerable number t -> Assert.Fail("Shouldn't match this")
+        | _                      -> ignore()

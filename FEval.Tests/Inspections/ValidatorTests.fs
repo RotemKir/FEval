@@ -518,3 +518,69 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", 7 :> obj) |]
             <| [| createErrorIfVariable "Var" IsEmpty |]
             <| [| ValidationResult.Ok |]
+    
+    [<TestMethod>]
+    member this.``runRules - is empty error rule - empty seq - returns error``() = 
+        let seq = Seq.ofArray [||]
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", seq :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Error "Variable 'Var' should not be empty" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is empty warning rule - empty seq - returns warning``() = 
+        let seq = Seq.ofArray [||]
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", seq :> obj) |]
+            <| [| createWarningIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Warning "Variable 'Var' should not be empty" |]
+
+    [<TestMethod>]
+    member this.``runRules - is empty rule - non empty seq - returns ok``() = 
+        let seq = seq {1 .. 10}
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", seq :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Ok |]
+
+    [<TestMethod>]
+    member this.``runRules - is empty error rule - empty array - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [||] :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Error "Variable 'Var' should not be empty" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is empty warning rule - empty array - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [||] :> obj) |]
+            <| [| createWarningIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Warning "Variable 'Var' should not be empty" |]
+
+    [<TestMethod>]
+    member this.``runRules - is empty rule - non empty array - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [|1 ; 2 ; 3|] :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Ok |]
+    
+    [<TestMethod>]
+    member this.``runRules - is empty error rule - empty list - returns error``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [] :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Error "Variable 'Var' should not be empty" |]
+    
+    [<TestMethod>]
+    member this.``runRules - is empty warning rule - empty list - returns warning``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [] :> obj) |]
+            <| [| createWarningIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Warning "Variable 'Var' should not be empty" |]
+
+    [<TestMethod>]
+    member this.``runRules - is empty rule - non empty list - returns ok``() = 
+        testRunRules 
+            <| new Map<string, obj> [| ("Var", [1 ; 2 ; 3] :> obj) |]
+            <| [| createErrorIfVariable "Var" IsEmpty |]
+            <| [| ValidationResult.Ok |]
