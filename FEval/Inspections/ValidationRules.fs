@@ -54,4 +54,3 @@ module ValidationRules =
     
     let createWarningIfVariable name invalidWhen =
         Variable { VariableName = name ; InvalidWhen = invalidWhen ; ErrorLevel = ErrorLevel.Warning }
-

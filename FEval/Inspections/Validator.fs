@@ -5,6 +5,24 @@ module Validator =
     open FEval.Inspections.ValidationRules
     open FEval.Inspections.ValidationTypes
 
+    let private isZeroValidation =
+        {
+            IsValid = isNotZero
+            FormatError = fun name -> sprintf "Variable '%s' should not be zero" name
+        }
+
+    let private isNegativeValidation =
+        {
+            IsValid = isNotNegative
+            FormatError = fun name -> sprintf "Variable '%s' should not be negative" name
+        }
+    
+    let private isEmptyValidation =
+        {
+            IsValid = isNotEmpty
+            FormatError = fun name -> sprintf "Variable '%s' should not be empty" name
+        }
+
     let private getVariableValue validationContext name =
         Map.tryFind name validationContext.Variables
             
@@ -21,18 +39,18 @@ module Validator =
 
     let private getValidation invalidWhen =
         match invalidWhen with
-        | IsZero     -> (isNotZero,     fun name -> sprintf "Variable '%s' should not be zero" name)
-        | IsNegative -> (isNotNegative, fun name -> sprintf "Variable '%s' should not be negative" name)
-        | IsEmpty    -> (isNotEmpty,    fun name -> sprintf "Variable '%s' should not be empty" name)
+        | IsZero     -> isZeroValidation
+        | IsNegative -> isNegativeValidation
+        | IsEmpty    -> isEmptyValidation
         | _          -> invalidOp "Error" 
 
     let private validateVariable validationContext variableRule =
-        let (validation, errorMessage) = getValidation variableRule.InvalidWhen
+        let validation = getValidation variableRule.InvalidWhen
 
         createValidationResult 
-            <| validateIfVariableExists validationContext variableRule.VariableName validation
+            <| validateIfVariableExists validationContext variableRule.VariableName validation.IsValid
             <| variableRule.ErrorLevel 
-            <| errorMessage variableRule.VariableName
+            <| validation.FormatError variableRule.VariableName
 
     let private runRule validationContext definition =
         match definition with
@@ -42,7 +60,7 @@ module Validator =
             -> rule validationContext
         | _ -> ValidationResult.Ok
 
-    let runRules validationContext definitions  =
+    let runRules validationContext definitions =
         Seq.map
             <| runRule validationContext
             <| definitions

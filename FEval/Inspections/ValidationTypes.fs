@@ -40,4 +40,8 @@ module ValidationTypes =
             ErrorLevel : ErrorLevel
         }
 
-
+    type VariableValidation =
+        {
+            IsValid : obj -> bool
+            FormatError : string -> string
+        }
