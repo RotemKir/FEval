@@ -6,31 +6,40 @@ module Validator =
 
     let private getVariableValue validationContext name =
         Map.tryFind name validationContext.Variables
+     
+    let private validateIfVariableExists validationRule validationContext =
+        Option.bind
+            <| fun value -> Some (validationRule.Validation.IsValid value, value) 
+            <| getVariableValue validationContext validationRule.VariableName
+     
+    let private formateMessage value validationRule validationContext =
+        validationRule.Validation.FormatMessage
+            <| validationRule.VariableName 
+            <| value 
+            <| validationContext 
+
+    let private convertReturnTypeToValidationResult validationRule message = 
+        match validationRule.ReturnWhenInvalid with
+        | ReturnWarning -> Warning message
+        | ReturnError   -> Error message
+
+    let private createInvalidResult value validationRule validationContext =
+        formateMessage value validationRule validationContext  
+        |> convertReturnTypeToValidationResult validationRule
             
-    let private createValidationResult isValid errorLevel errorMessage =
-        match (isValid, errorLevel) with
-        | (true, _)              -> ValidationResult.Ok
-        | (false, ReturnWarning) -> ValidationResult.Warning errorMessage
-        | (false, ReturnError)   -> ValidationResult.Error errorMessage
+    let private validateVariable validationRule validationContext =
+        match validateIfVariableExists validationRule validationContext with
+        | Some (false, value) -> createInvalidResult value validationRule validationContext
+        | Some (true, _)      -> Ok 
+        | None                -> Ok
 
-    let private validateIfVariableExists validationContext validationRule =
-        match getVariableValue validationContext validationRule.VariableName with
-        | Some value -> validationRule.Validation.IsValid value
-        | None       -> true
-
-    let private validateVariable validationContext variableRule =
-        createValidationResult 
-            <| validateIfVariableExists validationContext variableRule
-            <| variableRule.ReturnWhenInvalid 
-            <| variableRule.Validation.FormatError variableRule.VariableName
-
-    let private validateCustomRule validationContext customRule =
+    let private validateCustomRule customRule validationContext =
         customRule validationContext
 
     let private runRule validationContext definition =
         match definition with
-        | Variable variableRule -> validateVariable validationContext variableRule
-        | Custom customRule     -> validateCustomRule validationContext customRule
+        | VariableRule variableRule -> validateVariable variableRule validationContext 
+        | CustomRule customRule     -> validateCustomRule customRule validationContext
 
     let runRules validationContext definitions =
         Seq.map

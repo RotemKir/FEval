@@ -1,16 +1,11 @@
 ﻿namespace FEval.Inspections
 
 module ValidationRules =
+    open FEval.Inspections.TypeFormatters
     open FEval.Inspections.ValidationTypes
     open FEval.TypeChecks
     open System
-
-    let private isEmptyString value =
-        String.IsNullOrEmpty value
-
-    let private isEmptyEnumerable value =
-        Seq.isEmpty <| Seq.cast value
-
+       
     let private isZero (value : obj) =
         match value.GetType() with
         | IsInt16   value v -> v = 0s
@@ -26,6 +21,18 @@ module ValidationRules =
         | IsDecimal value v -> v = 0.0m
         | _                 -> false
     
+    let private isZeroFormatter variableName value _ =
+        let valueType = value.GetType()
+        sprintf "Variable '%s', %s, should not be zero"
+            <| variableName
+            <| formatValue value valueType
+
+    let private isZeroValidation =
+        {
+            IsValid = not << isZero
+            FormatMessage = isZeroFormatter
+        }
+
     let private isNegative (value : obj) =
         match value.GetType() with
         | IsInt16   value v -> v < 0s
@@ -37,47 +44,58 @@ module ValidationRules =
         | IsDecimal value v -> v < 0.0m
         | _                 -> false
 
+    let private isNegativeFormatter variableName value _ =
+        let valueType = value.GetType()
+        sprintf "Variable '%s', %s, should not be negative"
+            <| variableName
+            <| formatValue value valueType
+
+    let private isNegativeValidation =
+        {
+            IsValid = not << isNegative
+            FormatMessage = isNegativeFormatter
+        }
+
+    let private isEmptyString value =
+        String.IsNullOrEmpty value
+
+    let private isEmptyEnumerable value =
+        Seq.isEmpty <| Seq.cast value
+
     let private isEmpty (value : obj) =
         match value.GetType() with
         | IsString      value v -> isEmptyString v
         | IsIEnumerable value v -> isEmptyEnumerable v
         | _                     -> false
 
-    let private isNotZero : obj -> bool = not << isZero
-    
-    let private isNotNegative : obj -> bool = not << isNegative
-    
-    let private isNotEmpty : obj -> bool = not << isEmpty
-    
-    let private isZeroRule =
+    let isEmptyFormatter variableName value _ =
+        let valueType = value.GetType()
+        sprintf "Variable '%s', %s, should not be empty"
+            <| variableName
+            <| formatValue value valueType
+
+    let private isEmptyValidation =
         {
-            IsValid = isNotZero
-            FormatError = fun name -> sprintf "Variable '%s' should not be zero" name
+            IsValid = not << isEmpty
+            FormatMessage = isEmptyFormatter
         }
 
-    let private isNegativeRule =
-        {
-            IsValid = isNotNegative
-            FormatError = fun name -> sprintf "Variable '%s' should not be negative" name
-        }
-    
-    let private isEmptyRule =
-        {
-            IsValid = isNotEmpty
-            FormatError = fun name -> sprintf "Variable '%s' should not be empty" name
-        }
-
+    let private formatRuleTarget target =
+        match target with
+        | Value value -> formatValue value <| value.GetType()
+        | _           -> ""
+        
     let private getVariableValidation invalidWhen =
         match invalidWhen with
-        | IsZero     -> isZeroRule
-        | IsNegative -> isNegativeRule
-        | IsEmpty    -> isEmptyRule
+        | IsZero     -> isZeroValidation
+        | IsNegative -> isNegativeValidation
+        | IsEmpty    -> isEmptyValidation
         | _          -> invalidOp "Error" 
-
+           
     let ifVariable name invalidWhen thenReturn =
-        Variable 
-            { 
-                VariableName = name 
-                Validation = getVariableValidation invalidWhen 
+        VariableRule
+            {
+                VariableName = name
+                Validation = getVariableValidation invalidWhen
                 ReturnWhenInvalid = thenReturn
             }

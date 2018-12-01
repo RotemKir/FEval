@@ -7,16 +7,25 @@ open FEval.Inspections.ValidationRules
 [<TestClass>]
 type ValidationRulesTests() =
 
+    let validationContext = 
+        {
+            Variables = new Map<string, obj> [||]
+        }
+
     let assertVariableRule rule assertion =
         match rule with
-        | Variable definition -> assertion definition
-        | _                   -> Assert.Fail("Not a variable rule")
+        | VariableRule definition -> assertion definition
+        | _                       -> Assert.Fail("Not a variable rule")
 
-    let assertVariableRuleErrorMessage rule expectedErrorMessage =
+    let assertVariableRuleErrorMessage rule value expectedErrorMessage =
         assertVariableRule 
             <| rule
             <| fun definition ->
-                let actualErrorMessage = definition.Validation.FormatError definition.VariableName
+                let actualErrorMessage = 
+                    definition.Validation.FormatMessage 
+                        <| definition.VariableName
+                        <| value
+                        <| validationContext
                 Assert.AreEqual(expectedErrorMessage, actualErrorMessage)
 
     let assertVariableRuleIsValid rule value isValid =
@@ -44,10 +53,11 @@ type ValidationRulesTests() =
             <| fun definition -> Assert.AreEqual(ReturnWarning, definition.ReturnWhenInvalid)
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - formats name as error``() = 
+    member this.``ifVariable - is zero - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsZero ReturnError
-            <| "Variable 'Var' should not be zero"
+            <| 0
+            <| "Variable 'Var', 0 : Int32, should not be zero"
                 
     [<TestMethod>]
     member this.``ifVariable - is zero - int16 - is zero - returns is valid false``() = 
@@ -211,10 +221,11 @@ type ValidationRulesTests() =
             <| true
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - formats name as error``() = 
+    member this.``ifVariable - is negative - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsNegative ReturnError
-            <| "Variable 'Var' should not be negative"
+            <| -8
+            <| "Variable 'Var', -8 : Int32, should not be negative"
 
     [<TestMethod>]
     member this.``ifVariable - is negative - int16 - is negative - returns is valid false``() = 
@@ -350,10 +361,11 @@ type ValidationRulesTests() =
             <| true
             
     [<TestMethod>]
-    member this.``ifVariable - is empty - formats name as error``() = 
+    member this.``ifVariable - is empty - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsEmpty ReturnError
-            <| "Variable 'Var' should not be empty"
+            <| [||]
+            <| "Variable 'Var', Object[], should not be empty"
                 
     [<TestMethod>]
     member this.``ifVariable - is empty - string - is empty - returns is valid false``() = 
@@ -361,7 +373,7 @@ type ValidationRulesTests() =
             <| ifVariable "Var" IsEmpty ReturnError
             <| ""
             <| false
-                
+                  
     [<TestMethod>]
     member this.``ifVariable - is empty - string - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 

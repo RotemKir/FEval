@@ -13,7 +13,7 @@ module ValidationTypes =
         | Error of string
     
     type RuleTarget =
-        | Const of obj
+        | Value of obj
         | Variable of name : string
 
     type InvalidWhen =
@@ -28,8 +28,8 @@ module ValidationTypes =
         | ReturnError
 
     type RuleDefinition =
-        | Variable of VariableRuleDefinition
-        | Custom of CustomRule
+        | VariableRule of VariableRuleDefinition
+        | CustomRule of CustomRule
 
     and VariableRuleDefinition =
         {
@@ -41,7 +41,7 @@ module ValidationTypes =
     and VariableValidation =
         {
             IsValid : obj -> bool
-            FormatError : string -> string
+            FormatMessage : string -> obj -> ValidationContext -> string
         }
 
     and CustomRule = ValidationContext -> ValidationResult
