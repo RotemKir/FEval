@@ -11,9 +11,7 @@ module ValidationTypes =
         | Ok
         | Warning of string
         | Error of string
-
-    type Rule = ValidationContext -> ValidationResult
-
+    
     type RuleTarget =
         | Const of obj
         | Variable of name : string
@@ -25,23 +23,25 @@ module ValidationTypes =
         | IsLessThan of RuleTarget
         | IsMoreThan of RuleTarget
 
-    type ErrorLevel =
-        | Warning
-        | Error
+    type ReturnWhenInvalid =
+        | ReturnWarning
+        | ReturnError
 
     type RuleDefinition =
         | Variable of VariableRuleDefinition
-        | Custom of Rule
+        | Custom of CustomRule
 
     and VariableRuleDefinition =
         {
             VariableName : string
-            InvalidWhen : InvalidWhen
-            ErrorLevel : ErrorLevel
+            Validation : VariableValidation
+            ReturnWhenInvalid : ReturnWhenInvalid
         }
 
-    type VariableValidation =
+    and VariableValidation =
         {
             IsValid : obj -> bool
             FormatError : string -> string
         }
+
+    and CustomRule = ValidationContext -> ValidationResult

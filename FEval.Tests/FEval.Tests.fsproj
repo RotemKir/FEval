@@ -51,6 +51,7 @@
     <Compile Include="Inspections\PerformanceInspectorTests.fs" />
     <Compile Include="Inspections\MethodCallInspectorTests.fs" />
     <Compile Include="Inspections\DataSetInspectorTests.fs" />
+    <Compile Include="Inspections\ValidationRulesTests.fs" />
     <Compile Include="Inspections\ValidatorTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>

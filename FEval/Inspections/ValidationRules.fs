@@ -11,7 +11,7 @@ module ValidationRules =
     let private isEmptyEnumerable value =
         Seq.isEmpty <| Seq.cast value
 
-    let isZero (value : obj) =
+    let private isZero (value : obj) =
         match value.GetType() with
         | IsInt16   value v -> v = 0s
         | IsInt32   value v -> v = 0
@@ -26,7 +26,7 @@ module ValidationRules =
         | IsDecimal value v -> v = 0.0m
         | _                 -> false
     
-    let isNegative (value : obj) =
+    let private isNegative (value : obj) =
         match value.GetType() with
         | IsInt16   value v -> v < 0s
         | IsInt32   value v -> v < 0
@@ -37,20 +37,47 @@ module ValidationRules =
         | IsDecimal value v -> v < 0.0m
         | _                 -> false
 
-    let isEmpty (value : obj) =
+    let private isEmpty (value : obj) =
         match value.GetType() with
         | IsString      value v -> isEmptyString v
         | IsIEnumerable value v -> isEmptyEnumerable v
         | _                     -> false
 
-    let isNotZero : obj -> bool = not << isZero
+    let private isNotZero : obj -> bool = not << isZero
     
-    let isNotNegative : obj -> bool = not << isNegative
+    let private isNotNegative : obj -> bool = not << isNegative
     
-    let isNotEmpty : obj -> bool = not << isEmpty
+    let private isNotEmpty : obj -> bool = not << isEmpty
     
-    let createErrorIfVariable name invalidWhen =
-        Variable { VariableName = name ; InvalidWhen = invalidWhen ; ErrorLevel = ErrorLevel.Error }
+    let private isZeroRule =
+        {
+            IsValid = isNotZero
+            FormatError = fun name -> sprintf "Variable '%s' should not be zero" name
+        }
+
+    let private isNegativeRule =
+        {
+            IsValid = isNotNegative
+            FormatError = fun name -> sprintf "Variable '%s' should not be negative" name
+        }
     
-    let createWarningIfVariable name invalidWhen =
-        Variable { VariableName = name ; InvalidWhen = invalidWhen ; ErrorLevel = ErrorLevel.Warning }
+    let private isEmptyRule =
+        {
+            IsValid = isNotEmpty
+            FormatError = fun name -> sprintf "Variable '%s' should not be empty" name
+        }
+
+    let private getVariableValidation invalidWhen =
+        match invalidWhen with
+        | IsZero     -> isZeroRule
+        | IsNegative -> isNegativeRule
+        | IsEmpty    -> isEmptyRule
+        | _          -> invalidOp "Error" 
+
+    let ifVariable name invalidWhen thenReturn =
+        Variable 
+            { 
+                VariableName = name 
+                Validation = getVariableValidation invalidWhen 
+                ReturnWhenInvalid = thenReturn
+            }
