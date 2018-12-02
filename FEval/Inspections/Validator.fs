@@ -14,9 +14,11 @@ module Validator =
      
     let private formateMessage value validationRule validationContext =
         validationRule.Validation.FormatMessage
-            <| validationRule.VariableName 
-            <| value 
-            <| validationContext 
+            {
+                VariableName = validationRule.VariableName 
+                Value = value
+                ValidationContext = validationContext
+            }
 
     let private convertReturnTypeToValidationResult validationRule message = 
         match validationRule.ReturnWhenInvalid with

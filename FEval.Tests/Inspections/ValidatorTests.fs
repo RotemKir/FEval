@@ -13,7 +13,7 @@ type ValidatorTests() =
             Validation =  
                 { 
                     IsValid = fun _ -> isValid
-                    FormatMessage = fun name _ _ -> name 
+                    FormatMessage = fun request -> request.VariableName
                 } 
             ReturnWhenInvalid = errorLevel
         }

@@ -23,9 +23,11 @@ type ValidationRulesTests() =
             <| fun definition ->
                 let actualErrorMessage = 
                     definition.Validation.FormatMessage 
-                        <| definition.VariableName
-                        <| value
-                        <| validationContext
+                        {
+                            VariableName = definition.VariableName
+                            Value = value
+                            ValidationContext = validationContext
+                        }
                 Assert.AreEqual(expectedErrorMessage, actualErrorMessage)
 
     let assertVariableRuleIsValid rule value isValid =

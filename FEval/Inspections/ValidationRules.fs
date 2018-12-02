@@ -21,11 +21,11 @@ module ValidationRules =
         | IsDecimal value v -> v = 0.0m
         | _                 -> false
     
-    let private isZeroFormatter variableName value _ =
-        let valueType = value.GetType()
+    let private isZeroFormatter formatMessageRequest =
+        let valueType = formatMessageRequest.Value.GetType()
         sprintf "Variable '%s', %s, should not be zero"
-            <| variableName
-            <| formatValue value valueType
+            <| formatMessageRequest.VariableName
+            <| formatValue formatMessageRequest.Value valueType
 
     let private isZeroValidation =
         {
@@ -44,11 +44,11 @@ module ValidationRules =
         | IsDecimal value v -> v < 0.0m
         | _                 -> false
 
-    let private isNegativeFormatter variableName value _ =
-        let valueType = value.GetType()
+    let private isNegativeFormatter formatMessageRequest =
+        let valueType = formatMessageRequest.Value.GetType()
         sprintf "Variable '%s', %s, should not be negative"
-            <| variableName
-            <| formatValue value valueType
+            <| formatMessageRequest.VariableName
+            <| formatValue formatMessageRequest.Value valueType
 
     let private isNegativeValidation =
         {
@@ -68,11 +68,11 @@ module ValidationRules =
         | IsIEnumerable value v -> isEmptyEnumerable v
         | _                     -> false
 
-    let isEmptyFormatter variableName value _ =
-        let valueType = value.GetType()
+    let isEmptyFormatter formatMessageRequest =
+        let valueType = formatMessageRequest.Value.GetType()
         sprintf "Variable '%s', %s, should not be empty"
-            <| variableName
-            <| formatValue value valueType
+            <| formatMessageRequest.VariableName
+            <| formatValue formatMessageRequest.Value valueType
 
     let private isEmptyValidation =
         {
