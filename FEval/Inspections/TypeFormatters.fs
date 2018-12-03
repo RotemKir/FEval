@@ -5,7 +5,7 @@ module TypeFormatters =
     open Microsoft.FSharp.Reflection
     open System
     open System.Reflection
-    open FEval.Inspections.CommonInspections
+    open FEval.Inspections.InspectionsCommon
     open FEval.TypeChecks
 
     // Private functions

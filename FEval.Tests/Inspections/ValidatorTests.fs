@@ -2,7 +2,7 @@
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspections
-open FEval.Inspections.ValidationTypes
+open FEval.Inspections.ValidationsCommon
 
 [<TestClass>]
 type ValidatorTests() =

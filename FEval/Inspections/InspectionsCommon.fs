@@ -1,10 +1,9 @@
 ﻿namespace FEval.Inspections
 
-module CommonInspections =
+module InspectionsCommon =
     open Microsoft.FSharp.Quotations.Patterns
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Reflection
-    open FEval.EvaluationTypes
 
     let getExprName expr =
         match expr with

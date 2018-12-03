@@ -1,7 +1,7 @@
 ﻿namespace FEval.Tests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval.Inspections.ValidationTypes
+open FEval.Inspections.ValidationsCommon
 open FEval.Inspections.ValidationRules
 
 [<TestClass>]

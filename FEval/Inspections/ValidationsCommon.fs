@@ -1,6 +1,6 @@
 ﻿namespace FEval.Inspections
 
-module ValidationTypes =
+module ValidationsCommon =
 
     type ValidationContext =
         {

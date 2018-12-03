@@ -2,7 +2,7 @@
 
 module ValidationRules =
     open FEval.Inspections.TypeFormatters
-    open FEval.Inspections.ValidationTypes
+    open FEval.Inspections.ValidationsCommon
     open FEval.TypeChecks
     open System
        

@@ -2,7 +2,7 @@
 
 [<RequireQualifiedAccess>]
 module Validator =
-    open FEval.Inspections.ValidationTypes
+    open FEval.Inspections.ValidationsCommon
          
     let private validateIfVariableExists validationRule validationContext =
         Option.bind
