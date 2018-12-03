@@ -52,3 +52,6 @@ module ValidationTypes =
         }
 
     and CustomRule = ValidationContext -> ValidationResult
+
+    let getVariableValue validationContext name =
+        Map.tryFind name validationContext.Variables

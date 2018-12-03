@@ -3,10 +3,7 @@
 [<RequireQualifiedAccess>]
 module Validator =
     open FEval.Inspections.ValidationTypes
-
-    let private getVariableValue validationContext name =
-        Map.tryFind name validationContext.Variables
-     
+         
     let private validateIfVariableExists validationRule validationContext =
         Option.bind
             <| fun value -> Some (validationRule.Validation.IsValid value, value) 

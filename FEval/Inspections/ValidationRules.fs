@@ -79,18 +79,40 @@ module ValidationRules =
             IsValid = not << isEmpty
             FormatMessage = isEmptyFormatter
         }
+    
+    let private formatValueRuleTarget value =
+        formatValue value <| value.GetType()
 
-    let private formatRuleTarget target =
+    let private formatVariableRuleTarget name validationContext =
+        match getVariableValue validationContext name with
+        | Some value -> sprintf "variable '%s', %s" name <| formatValueRuleTarget value
+        | None       -> "(null)"
+
+    let private formatRuleTarget target validationContext =
         match target with
-        | Value value -> formatValue value <| value.GetType()
-        | _           -> ""
+        | Value value   -> formatValueRuleTarget value
+        | Variable name -> formatVariableRuleTarget name validationContext
+    
+    let isLessThanFormatter target formatMessageRequest =
+        let valueType = formatMessageRequest.Value.GetType()
+        sprintf "Variable '%s', %s, should not be less than %s"
+            <| formatMessageRequest.VariableName
+            <| formatValue formatMessageRequest.Value valueType
+            <| formatRuleTarget target formatMessageRequest.ValidationContext
+
+    let private isLessThanValidation target =
+        {
+            IsValid = fun _ -> true
+            FormatMessage = isLessThanFormatter target
+        }
         
     let private getVariableValidation invalidWhen =
         match invalidWhen with
-        | IsZero     -> isZeroValidation
-        | IsNegative -> isNegativeValidation
-        | IsEmpty    -> isEmptyValidation
-        | _          -> invalidOp "Error" 
+        | IsZero            -> isZeroValidation
+        | IsNegative        -> isNegativeValidation
+        | IsEmpty           -> isEmptyValidation
+        | IsLessThan target -> isLessThanValidation target
+        | _                 -> invalidOp "Error" 
            
     let ifVariable name invalidWhen thenReturn =
         VariableRule

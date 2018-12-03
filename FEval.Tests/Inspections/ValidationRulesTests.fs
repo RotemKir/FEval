@@ -7,7 +7,7 @@ open FEval.Inspections.ValidationRules
 [<TestClass>]
 type ValidationRulesTests() =
 
-    let validationContext = 
+    let emptyValidationContext = 
         {
             Variables = new Map<string, obj> [||]
         }
@@ -17,7 +17,7 @@ type ValidationRulesTests() =
         | VariableRule definition -> assertion definition
         | _                       -> Assert.Fail("Not a variable rule")
 
-    let assertVariableRuleErrorMessage rule value expectedErrorMessage =
+    let assertVariableRuleErrorMessage rule value expectedErrorMessage validationContext =
         assertVariableRule 
             <| rule
             <| fun definition ->
@@ -60,6 +60,7 @@ type ValidationRulesTests() =
             <| ifVariable "Var" IsZero ReturnError
             <| 0
             <| "Variable 'Var', 0 : Int32, should not be zero"
+            <| emptyValidationContext
                 
     [<TestMethod>]
     member this.``ifVariable - is zero - int16 - is zero - returns is valid false``() = 
@@ -228,6 +229,7 @@ type ValidationRulesTests() =
             <| ifVariable "Var" IsNegative ReturnError
             <| -8
             <| "Variable 'Var', -8 : Int32, should not be negative"
+            <| emptyValidationContext
 
     [<TestMethod>]
     member this.``ifVariable - is negative - int16 - is negative - returns is valid false``() = 
@@ -368,6 +370,7 @@ type ValidationRulesTests() =
             <| ifVariable "Var" IsEmpty ReturnError
             <| [||]
             <| "Variable 'Var', Object[], should not be empty"
+            <| emptyValidationContext
                 
     [<TestMethod>]
     member this.``ifVariable - is empty - string - is empty - returns is valid false``() = 
@@ -431,3 +434,32 @@ type ValidationRulesTests() =
             <| ifVariable "Var" IsEmpty ReturnError
             <| [ 1 ; 2 ; 3 ]
             <| true
+            
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - formats name, type and target value as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
+            <| 3
+            <| "Variable 'Var', 3 : Int32, should not be less than 4 : Int32"
+            <| emptyValidationContext
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than variable - formats name, type and target namd and value as error``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
+            }
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3
+            <| "Variable 'Var', 3 : Int32, should not be less than variable 'Other Var', 4 : Int32"
+            <| validationContext
+
+    [<TestMethod>]
+    member this.``ifVariable - is less than variable that doesn't exist - formats name and type as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3
+            <| "Variable 'Var', 3 : Int32, should not be less than (null)"
+            <| emptyValidationContext
+                
