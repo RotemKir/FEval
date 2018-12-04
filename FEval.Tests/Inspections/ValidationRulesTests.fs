@@ -462,4 +462,234 @@ type ValidationRulesTests() =
             <| 3
             <| "Variable 'Var', 3 : Int32, should not be less than (null)"
             <| emptyValidationContext
-                
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int16 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
+            <| 6s
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int16 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
+            <| 4s
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int16 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
+            <| 3s
+            <| false
+            
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int32 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
+            <| 6
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int32 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
+            <| 4
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int32 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
+            <| 3
+            <| false
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int64 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
+            <| 6L
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int64 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
+            <| 4L
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - int64 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
+            <| 3L
+            <| false
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint16 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
+            <| 6us
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint16 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
+            <| 4us
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint16 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
+            <| 3us
+            <| false
+            
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint32 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
+            <| 6u
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint32 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
+            <| 4u
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint32 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
+            <| 3u
+            <| false
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint64 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
+            <| 6UL
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint64 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
+            <| 4UL
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - uint64 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
+            <| 3UL
+            <| false
+
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - byte - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
+            <| 6uy
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - byte - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
+            <| 4uy
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - byte - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
+            <| 3uy
+            <| false
+
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - sbyte - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
+            <| 6y
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - sbyte - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
+            <| 4y
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - sbyte - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
+            <| 3y
+            <| false
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0) ReturnError
+            <| 6.0
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0) ReturnError
+            <| 4.0
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
+            <| 3.0f
+            <| false
+            
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float32 - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
+            <| 6.0f
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float32 - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
+            <| 4.0f
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - float32 - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
+            <| 3.0f
+            <| false
+
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - decimal - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
+            <| 6.0m
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - decimal - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
+            <| 4.0m
+            <| true
+    
+    [<TestMethod>]
+    member this.``ifVariable - is less than value - decimal - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
+            <| 3.0m
+            <| false

@@ -93,16 +93,36 @@ module ValidationRules =
         | Value value   -> formatValueRuleTarget value
         | Variable name -> formatVariableRuleTarget name validationContext
     
-    let isLessThanFormatter target formatMessageRequest =
+    let private isLessThanFormatter target formatMessageRequest =
         let valueType = formatMessageRequest.Value.GetType()
         sprintf "Variable '%s', %s, should not be less than %s"
             <| formatMessageRequest.VariableName
             <| formatValue formatMessageRequest.Value valueType
             <| formatRuleTarget target formatMessageRequest.ValidationContext
 
+    let private isLessThan value (target : obj) =
+        match value.GetType() with
+        | IsInt16   value v -> v < (target :?> int16)
+        | IsInt32   value v -> v < (target :?> int32)
+        | IsInt64   value v -> v < (target :?> int64)
+        | IsUInt16  value v -> v < (target :?> uint16)
+        | IsUInt32  value v -> v < (target :?> uint32)
+        | IsUInt64  value v -> v < (target :?> uint64)
+        | IsByte    value v -> v < (target :?> byte)
+        | IsSByte   value v -> v < (target :?> sbyte)
+        | IsFloat   value v -> v < (target :?> float)
+        | IsFloat32 value v -> v < (target :?> float32)
+        | IsDecimal value v -> v < (target :?> decimal)
+        | _                 -> false
+    
+    let private isLessThanTarget target (value : obj) =
+        match target with
+        | Value targetValue   -> isLessThan value targetValue
+        | _             -> false
+
     let private isLessThanValidation target =
         {
-            IsValid = fun _ -> true
+            IsValid = not << isLessThanTarget target
             FormatMessage = isLessThanFormatter target
         }
         
