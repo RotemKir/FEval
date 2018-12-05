@@ -38,9 +38,15 @@ module ValidationsCommon =
             ReturnWhenInvalid : ReturnWhenInvalid
         }
 
+    and ValidationRequest =
+        {
+            Value : obj
+            ValidationContext : ValidationContext
+        }
+
     and VariableValidation =
         {
-            IsValid : obj -> bool
+            IsValid : ValidationRequest -> bool
             FormatMessage : FormatMessageRequest -> string
         }
 

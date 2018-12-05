@@ -5,6 +5,9 @@ module ValidationRules =
     open FEval.Inspections.ValidationsCommon
     open FEval.TypeChecks
     open System
+
+    let private getRequestValue (request : ValidationRequest) =
+        request.Value
        
     let private isZero (value : obj) =
         match value.GetType() with
@@ -29,7 +32,7 @@ module ValidationRules =
 
     let private isZeroValidation =
         {
-            IsValid = not << isZero
+            IsValid = getRequestValue >> isZero >> not
             FormatMessage = isZeroFormatter
         }
 
@@ -52,7 +55,7 @@ module ValidationRules =
 
     let private isNegativeValidation =
         {
-            IsValid = not << isNegative
+            IsValid = getRequestValue >> isNegative >> not
             FormatMessage = isNegativeFormatter
         }
 
@@ -76,7 +79,7 @@ module ValidationRules =
 
     let private isEmptyValidation =
         {
-            IsValid = not << isEmpty
+            IsValid = getRequestValue >> isEmpty >> not
             FormatMessage = isEmptyFormatter
         }
     
@@ -115,9 +118,9 @@ module ValidationRules =
         | IsDecimal value v -> v < (target :?> decimal)
         | _                 -> false
     
-    let private isLessThanTarget target (value : obj) =
+    let private isLessThanTarget target (request : ValidationRequest) =
         match target with
-        | Value targetValue   -> isLessThan value targetValue
+        | Value targetValue   -> isLessThan request.Value targetValue
         | _             -> false
 
     let private isLessThanValidation target =

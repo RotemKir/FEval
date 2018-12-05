@@ -6,7 +6,9 @@ module Validator =
          
     let private validateIfVariableExists validationRule validationContext =
         Option.bind
-            <| fun value -> Some (validationRule.Validation.IsValid value, value) 
+            <| fun value -> 
+                let request = { Value = value ; ValidationContext = validationContext }
+                Some (validationRule.Validation.IsValid request, value) 
             <| getVariableValue validationContext validationRule.VariableName
      
     let private formateMessage value validationRule validationContext =

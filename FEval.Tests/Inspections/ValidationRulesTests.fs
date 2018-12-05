@@ -31,10 +31,11 @@ type ValidationRulesTests() =
                 Assert.AreEqual(expectedErrorMessage, actualErrorMessage)
 
     let assertVariableRuleIsValid rule value isValid =
+        let validationRequest = { Value = value ; ValidationContext = emptyValidationContext }
         assertVariableRule 
             <| rule
             <| fun definition ->
-                Assert.AreEqual(isValid, definition.Validation.IsValid value)
+                Assert.AreEqual(isValid, definition.Validation.IsValid validationRequest)
 
     [<TestMethod>]
     member this.``ifVariable - set variable name - reutrns rule with variable name``() = 
