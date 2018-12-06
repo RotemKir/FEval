@@ -582,11 +582,11 @@ type EvaluationsTest() =
 
     (*
     Let (patternInput, NewTuple (Value (1), Value (2)),
-     Let (b, TupleGet (patternInput, 1), Let (a, TupleGet (patternInput, 0), a)))
+        Let (a, TupleGet (patternInput, 0), a))
     *)
     [<TestMethod>]
     member __.``Evaluate tuple get``() = 
-        assertEval <@ let (a, b) = (1, 2) in a @> 1
+        assertEval <@ let (a, _) = (1, 2) in a @> 1
 
     (*
     Let (matchValue, Value (true), IfThenElse (matchValue, Value (1), Value (2)))
@@ -777,11 +777,9 @@ type EvaluationsTest() =
 
     (*
     Let (x, NewTuple (Value (10), Value (8)),
-     IfThenElse (Let (b, TupleGet (x, 1),
-                      Let (a, TupleGet (x, 0),
-                           Call (None, op_Equality, [b, Value (8)]))),
-                 Let (b, TupleGet (x, 1), Let (a, TupleGet (x, 0), Value (true))),
-                 Value (false)))
+        IfThenElse (Let (b, TupleGet (x, 1),
+                            Call (None, op_Equality, [b, Value (8)])),
+                    Let (b, TupleGet (x, 1), Value (true)), Value (false)))
     *)
     [<TestMethod>]
     member __.``Evaluate pattern matching with condition``() = 
@@ -789,7 +787,7 @@ type EvaluationsTest() =
             <@ 
             let x = (10, 8)
             match x with
-            | (a, b) when b = 8 -> true
+            | (_, b) when b = 8 -> true
             | _ -> false
             @> true
 
@@ -990,37 +988,25 @@ type EvaluationsTest() =
                                                                      Value ("Error")),
                                                           Exception)])),
                                matchValue,
-                               IfThenElse (Let (ex, matchValue,
-                                                Call (None, op_Equality,
-                                                      [b, Value (false)])),
-                                           Let (ex, matchValue, Value (1)),
-                                           IfThenElse (Let (ex, matchValue,
-                                                            Call (None,
-                                                                  op_Equality,
-                                                                  [b,
-                                                                   Value (true)])),
-                                                       Let (ex, matchValue,
-                                                            Value (1)),
-                                                       Value (0))), matchValue,
-                               IfThenElse (Let (ex, matchValue,
-                                                Call (None, op_Equality,
-                                                      [b, Value (false)])),
-                                           Let (ex, matchValue,
-                                                VarSet (message,
-                                                        Call (None, op_Addition,
-                                                              [message,
-                                                               Value ("False")]))),
-                                           IfThenElse (Let (ex, matchValue,
-                                                            Call (None,
-                                                                  op_Equality,
-                                                                  [b,
-                                                                   Value (true)])),
-                                                       Let (ex, matchValue,
-                                                            VarSet (message,
-                                                                    Call (None,
-                                                                          op_Addition,
-                                                                          [message,
-                                                                           Value ("True")]))),
+                               IfThenElse (Call (None, op_Equality,
+                                                 [b, Value (false)]), Value (1),
+                                           IfThenElse (Call (None, op_Equality,
+                                                             [b, Value (true)]),
+                                                       Value (1), Value (0))),
+                               matchValue,
+                               IfThenElse (Call (None, op_Equality,
+                                                 [b, Value (false)]),
+                                           VarSet (message,
+                                                   Call (None, op_Addition,
+                                                         [message,
+                                                          Value ("False")])),
+                                           IfThenElse (Call (None, op_Equality,
+                                                             [b, Value (true)]),
+                                                       VarSet (message,
+                                                               Call (None,
+                                                                     op_Addition,
+                                                                     [message,
+                                                                      Value ("True")])),
                                                        Call (None, Reraise, [])))),
                       message)))
     *)
@@ -1035,8 +1021,8 @@ type EvaluationsTest() =
                 message <- message + "Tried,"
                 raise (TestException("Error"))
             with
-            | ex when b = false -> message <- message + "False"
-            | ex when b = true -> message <- message + "True"
+            | _ when b = false -> message <- message + "False"
+            | _ when b = true -> message <- message + "True"
                             
             message
             @> "Tried,True"
@@ -1250,20 +1236,20 @@ type EvaluationsTest() =
                        | _ -> ignore())
 
     (*
-    Let (s,
-     Let (x, NewObject (DisposableClass, Value ("Hello")),
-          TryFinally (PropertyGet (Some (x), name, []),
-                      IfThenElse (TypeTest (IDisposable, Coerce (x, Object)),
-                                  Call (Some (Call (None, UnboxGeneric,
-                                                    [Coerce (x, Object)])),
-                                        Dispose, []), Value (<null>)))),
-     PropertyGet (None, IsDisposed, []))
+    Sequential (Let (x, NewObject (DisposableClass, Value ("Hello")),
+        TryFinally (PropertyGet (Some (x), name, []),
+                    IfThenElse (TypeTest (IDisposable,
+                                          Coerce (x, Object)),
+                                Call (Some (Call (None, UnboxGeneric,
+                                                  [Coerce (x, Object)])),
+                                      Dispose, []), Value (<null>)))),
+                PropertyGet (None, IsDisposed, []))
      *)
     [<TestMethod>]
     member __.``Evaluate use statement``() = 
         assertEval 
             <@ 
-            let s = use x = new DisposableClass("Hello") in x.name
+            let _ = use x = new DisposableClass("Hello") in x.name
             DisposableClass.IsDisposed
             @> true
 

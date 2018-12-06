@@ -164,5 +164,5 @@ type TypeChecksTests() =
     member __.``IsIEnumerable - type is int - doesn't match``() = 
         let number = 3
         match number.GetType() with
-        | IsIEnumerable number t -> Assert.Fail("Shouldn't match this")
+        | IsIEnumerable number _ -> Assert.Fail("Shouldn't match this")
         | _                      -> ignore()
