@@ -26,14 +26,14 @@ module TestHelpers =
         }
 
     type BaseClass(name : string) =
-        member this.name = name
+        member __.name = name
         member val NameProperty = name with get, set
 
-        override this.Equals(other) =
+        override __.Equals(other) =
             let otherAsBase = other :?> BaseClass
             otherAsBase.name = name
 
-        override this.GetHashCode() =
+        override __.GetHashCode() =
             name.GetHashCode()
 
     type ChildClass(name : string) =
@@ -43,7 +43,7 @@ module TestHelpers =
         let mutable ordinals = [| "one"; "two"; "three"; "four"; |]
         let mutable cardinals = [| "first"; "second"; "third"; "fourth"; |]
         
-        member this.Item
+        member __.Item
             with get(index) = ordinals.[index]
             and set index value = ordinals.[index] <- value
 
@@ -57,18 +57,18 @@ module TestHelpers =
         new (num) = {number = num}
 
     type DisposableClass(name : string) =
-        member this.name = name
+        member __.name = name
         static member val IsDisposed = false with get, set
         interface IDisposable with
-            member this.Dispose() = DisposableClass.IsDisposed <- true
+            member __.Dispose() = DisposableClass.IsDisposed <- true
 
     type Union = UnionA | UnionB | UnionC
 
     exception TestException of string
     
     type ClassWithToString(name : string) =
-        member this.name = name
-        override this.ToString() = name
+        member __.name = name
+        override __.ToString() = name
 
     type InheritsClassWithTostring(name : string) =
         inherit ClassWithToString(name)
@@ -76,5 +76,5 @@ module TestHelpers =
     type StructWithToString =
         struct
             val StructName : string
-            override this.ToString() = this.StructName
+            override __.ToString() = __.StructName
         end

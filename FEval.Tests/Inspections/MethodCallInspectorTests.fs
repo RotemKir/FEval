@@ -13,7 +13,7 @@ type MethodCallInspectorTests() =
         list.Add(sprintf "%s - %s" logEvent.InspectionResult.Method logEvent.InspectionResult.Message)
 
     [<TestMethod>]
-    member this.``Evaluate method call inspector - instance method, no parameters``() = 
+    member __.``Evaluate method call inspector - instance method, no parameters``() = 
         assertInspectors
             <@ let number = 2 in number.ToString()  @>
             (fun list -> [| MethodCallInspector.createNew <| addMessageToList list |])
@@ -22,7 +22,7 @@ type MethodCallInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate method call inspector - instance method, one parameter``() = 
+    member __.``Evaluate method call inspector - instance method, one parameter``() = 
         assertInspectors
             <@ let number = 2 in number.ToString("F")  @>
             (fun list -> [| MethodCallInspector.createNew <| addMessageToList list |])
@@ -31,7 +31,7 @@ type MethodCallInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate method call inspector - instance method, several parameters``() = 
+    member __.``Evaluate method call inspector - instance method, several parameters``() = 
         assertInspectors
             <@ let text = "text" in text.PadLeft(7, 'A')  @>
             (fun list -> [| MethodCallInspector.createNew <| addMessageToList list |])
@@ -40,7 +40,7 @@ type MethodCallInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate method call inspector - static method, one parameter``() = 
+    member __.``Evaluate method call inspector - static method, one parameter``() = 
         assertInspectors
             <@ abs -3  @>
             (fun list -> [| MethodCallInspector.createNew <| addMessageToList list |])
@@ -49,7 +49,7 @@ type MethodCallInspectorTests() =
             |]
               
     [<TestMethod>]
-    member this.``Evaluate method call inspector - static method, several parameters``() = 
+    member __.``Evaluate method call inspector - static method, several parameters``() = 
         assertInspectors
             <@ max 5 18 @>
             (fun list -> [| MethodCallInspector.createNew <| addMessageToList list |])

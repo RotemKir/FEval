@@ -38,25 +38,25 @@ type ValidationRulesTests() =
                 Assert.AreEqual(isValid, definition.Validation.IsValid validationRequest)
 
     [<TestMethod>]
-    member this.``ifVariable - set variable name - reutrns rule with variable name``() = 
+    member __.``ifVariable - set variable name - reutrns rule with variable name``() = 
         assertVariableRule 
             <| ifVariable "Var" IsZero ReturnError
             <| fun definition -> Assert.AreEqual("Var", definition.VariableName)
     
     [<TestMethod>]
-    member this.``ifVariable - returns error when invalid - reutrns rule that returns error``() = 
+    member __.``ifVariable - returns error when invalid - reutrns rule that returns error``() = 
         assertVariableRule 
             <| ifVariable "Var" IsZero ReturnError 
             <| fun definition -> Assert.AreEqual(ReturnError, definition.ReturnWhenInvalid)
     
     [<TestMethod>]
-    member this.``ifVariable - returns warning when invalid - reutrns rule that returns warning``() = 
+    member __.``ifVariable - returns warning when invalid - reutrns rule that returns warning``() = 
         assertVariableRule 
             <| ifVariable "Var" IsZero ReturnWarning
             <| fun definition -> Assert.AreEqual(ReturnWarning, definition.ReturnWhenInvalid)
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - formats name and type as error``() = 
+    member __.``ifVariable - is zero - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsZero ReturnError
             <| 0
@@ -64,7 +64,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int16 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - int16 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0s
@@ -72,7 +72,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int16 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - int16 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3s
@@ -80,7 +80,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int32 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - int32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0
@@ -88,7 +88,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int32 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - int32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3
@@ -96,7 +96,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int64 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - int64 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0L
@@ -104,7 +104,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - int64 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - int64 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3L
@@ -112,7 +112,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                         
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint16 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - uint16 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0us
@@ -120,7 +120,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint16 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - uint16 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3us
@@ -128,7 +128,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                        
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint32 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - uint32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0u
@@ -136,7 +136,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint32 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - uint32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3u
@@ -144,7 +144,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint64 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - uint64 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0UL
@@ -152,7 +152,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                        
     [<TestMethod>]
-    member this.``ifVariable - is zero - uint64 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - uint64 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3UL
@@ -160,7 +160,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                 
     [<TestMethod>]
-    member this.``ifVariable - is zero - byte - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - byte - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0uy
@@ -168,7 +168,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - byte - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - byte - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3uy
@@ -176,7 +176,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is zero - sbyte - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - sbyte - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0y
@@ -184,7 +184,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - sbyte - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - sbyte - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3y
@@ -192,7 +192,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is zero - float - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - float - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0.0
@@ -200,7 +200,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - float - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - float - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3.0
@@ -208,7 +208,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - float32 - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - float32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0.0f
@@ -216,7 +216,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - float32 - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - float32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3.0f
@@ -224,7 +224,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                         
     [<TestMethod>]
-    member this.``ifVariable - is zero - decimal - is zero - returns is valid false``() = 
+    member __.``ifVariable - is zero - decimal - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 0.0m
@@ -232,7 +232,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is zero - decimal - is not zero - returns is valid true``() = 
+    member __.``ifVariable - is zero - decimal - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| 3.0m
@@ -240,7 +240,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is zero - string - returns is valid true``() = 
+    member __.``ifVariable - is zero - string - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsZero ReturnError
             <| "Hello"
@@ -248,7 +248,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - formats name and type as error``() = 
+    member __.``ifVariable - is negative - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8
@@ -256,7 +256,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int16 - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - int16 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8s
@@ -264,7 +264,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int16 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - int16 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3s
@@ -272,7 +272,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int32 - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - int32 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8
@@ -280,7 +280,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int32 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - int32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3
@@ -288,7 +288,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int64 - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - int64 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8L
@@ -296,7 +296,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - int64 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - int64 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3L
@@ -304,7 +304,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - uint16 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - uint16 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3us
@@ -312,7 +312,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - uint32 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - uint32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3u
@@ -320,7 +320,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - uint64 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - uint64 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3UL
@@ -328,7 +328,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is negative - byte - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - byte - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3uy
@@ -336,7 +336,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is negative - sbyte - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - sbyte - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8y
@@ -344,7 +344,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is negative - sbyte - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - sbyte - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3y
@@ -352,7 +352,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is negative - float - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - float - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8.0
@@ -360,7 +360,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - float - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - float - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3.0
@@ -368,7 +368,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is negative - float32 - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - float32 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8.0f
@@ -376,7 +376,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is negative - float32 - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - float32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3.0f
@@ -384,7 +384,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is negative - decimal - is negative - returns is valid false``() = 
+    member __.``ifVariable - is negative - decimal - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8.0m
@@ -392,7 +392,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is negative - decimal - is not negative - returns is valid true``() = 
+    member __.``ifVariable - is negative - decimal - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| 3.0m
@@ -400,7 +400,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is negative - string - returns is valid true``() = 
+    member __.``ifVariable - is negative - string - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsNegative ReturnError
             <| "Hello"
@@ -408,7 +408,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is empty - formats name and type as error``() = 
+    member __.``ifVariable - is empty - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsEmpty ReturnError
             <| [||]
@@ -416,7 +416,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                 
     [<TestMethod>]
-    member this.``ifVariable - is empty - string - is empty - returns is valid false``() = 
+    member __.``ifVariable - is empty - string - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| ""
@@ -424,7 +424,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                   
     [<TestMethod>]
-    member this.``ifVariable - is empty - string - is not empty - returns is valid true``() = 
+    member __.``ifVariable - is empty - string - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| "Hello"
@@ -432,7 +432,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                 
     [<TestMethod>]
-    member this.``ifVariable - is empty - int - returns is valid true``() = 
+    member __.``ifVariable - is empty - int - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| 8
@@ -440,7 +440,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is empty - seq - is empty - returns is valid false``() = 
+    member __.``ifVariable - is empty - seq - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| Seq.ofArray [||]
@@ -448,7 +448,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
         
     [<TestMethod>]
-    member this.``ifVariable - is empty - seq - is not empty - returns is valid true``() = 
+    member __.``ifVariable - is empty - seq - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| seq {1 .. 10}
@@ -456,7 +456,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is empty - array - is empty - returns is valid false``() = 
+    member __.``ifVariable - is empty - array - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| [||]
@@ -464,7 +464,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
         
     [<TestMethod>]
-    member this.``ifVariable - is empty - array - is not empty - returns is valid true``() = 
+    member __.``ifVariable - is empty - array - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| [| 1 ; 2 ; 3 |]
@@ -472,7 +472,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
      
     [<TestMethod>]
-    member this.``ifVariable - is empty - list - is empty - returns is valid false``() = 
+    member __.``ifVariable - is empty - list - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| []
@@ -480,7 +480,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
                 
     [<TestMethod>]
-    member this.``ifVariable - is empty - list - is not empty - returns is valid true``() = 
+    member __.``ifVariable - is empty - list - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" IsEmpty ReturnError
             <| [ 1 ; 2 ; 3 ]
@@ -488,7 +488,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is less than value - formats name, type and target value as error``() = 
+    member __.``ifVariable - is less than value - formats name, type and target value as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
             <| 3
@@ -496,7 +496,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than variable - formats name, type and target namd and value as error``() = 
+    member __.``ifVariable - is less than variable - formats name, type and target namd and value as error``() = 
         let validationContext = 
             { 
                 Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
@@ -508,7 +508,7 @@ type ValidationRulesTests() =
             <| validationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is less than variable that doesn't exist - formats name and type as error``() = 
+    member __.``ifVariable - is less than variable that doesn't exist - formats name and type as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
             <| 3
@@ -516,7 +516,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int16 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int16 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
             <| 6s
@@ -524,7 +524,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int16 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
             <| 4s
@@ -532,7 +532,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int16 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - int16 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4s) ReturnError
             <| 3s
@@ -540,7 +540,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int32 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
             <| 6
@@ -548,7 +548,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int32 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
             <| 4
@@ -556,7 +556,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int32 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - int32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
             <| 3
@@ -564,7 +564,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int64 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int64 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
             <| 6L
@@ -572,7 +572,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int64 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - int64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
             <| 4L
@@ -580,7 +580,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - int64 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - int64 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4L) ReturnError
             <| 3L
@@ -588,7 +588,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint16 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint16 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
             <| 6us
@@ -596,7 +596,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint16 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
             <| 4us
@@ -604,7 +604,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint16 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - uint16 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4us) ReturnError
             <| 3us
@@ -612,7 +612,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint32 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
             <| 6u
@@ -620,7 +620,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint32 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
             <| 4u
@@ -628,7 +628,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint32 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - uint32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4u) ReturnError
             <| 3u
@@ -636,7 +636,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint64 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint64 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
             <| 6UL
@@ -644,7 +644,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint64 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - uint64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
             <| 4UL
@@ -652,7 +652,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - uint64 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - uint64 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4UL) ReturnError
             <| 3UL
@@ -660,7 +660,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is less than value - byte - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - byte - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
             <| 6uy
@@ -668,7 +668,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - byte - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - byte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
             <| 4uy
@@ -676,7 +676,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - byte - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - byte - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4uy) ReturnError
             <| 3uy
@@ -684,7 +684,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is less than value - sbyte - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - sbyte - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
             <| 6y
@@ -692,7 +692,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - sbyte - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - sbyte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
             <| 4y
@@ -700,7 +700,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - sbyte - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - sbyte - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4y) ReturnError
             <| 3y
@@ -708,7 +708,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - float - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0) ReturnError
             <| 6.0
@@ -716,7 +716,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - float - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0) ReturnError
             <| 4.0
@@ -724,7 +724,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - float - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
             <| 3.0f
@@ -732,7 +732,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
             
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float32 - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - float32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
             <| 6.0f
@@ -740,7 +740,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float32 - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - float32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
             <| 4.0f
@@ -748,7 +748,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - float32 - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - float32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
             <| 3.0f
@@ -756,7 +756,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
 
     [<TestMethod>]
-    member this.``ifVariable - is less than value - decimal - is more than - returns is valid true``() = 
+    member __.``ifVariable - is less than value - decimal - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
             <| 6.0m
@@ -764,7 +764,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - decimal - is equal - returns is valid true``() = 
+    member __.``ifVariable - is less than value - decimal - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
             <| 4.0m
@@ -772,7 +772,7 @@ type ValidationRulesTests() =
             <| emptyValidationContext
     
     [<TestMethod>]
-    member this.``ifVariable - is less than value - decimal - is less than - returns is valid false``() = 
+    member __.``ifVariable - is less than value - decimal - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsLessThan <| Value 4.0m) ReturnError
             <| 3.0m

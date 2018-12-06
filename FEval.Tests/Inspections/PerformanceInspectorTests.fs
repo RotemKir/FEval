@@ -16,7 +16,7 @@ type PerformanceInspectorTests() =
         | PerformanceInspector.PostResult (message, _) -> list.Add(message)
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - value``() = 
+    member __.``Evaluate performance inspector - value``() = 
         assertInspectors
             <@ 4 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -26,7 +26,7 @@ type PerformanceInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - call static method``() = 
+    member __.``Evaluate performance inspector - call static method``() = 
         assertInspectors
             <@ abs -3 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -38,7 +38,7 @@ type PerformanceInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - none union case``() = 
+    member __.``Evaluate performance inspector - none union case``() = 
         assertInspectors
             <@ None @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -48,7 +48,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - some union case``() = 
+    member __.``Evaluate performance inspector - some union case``() = 
         assertInspectors
             <@ Some 16 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -60,7 +60,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - new record``() = 
+    member __.``Evaluate performance inspector - new record``() = 
         assertInspectors
             <@ { FirstName = "First" ; LastName = "Last" } @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -74,7 +74,7 @@ type PerformanceInspectorTests() =
             |]
     
     [<TestMethod>]
-    member this.``Evaluate performance inspector - new tuple``() = 
+    member __.``Evaluate performance inspector - new tuple``() = 
         assertInspectors
             <@ (16, "Text", true) @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -90,7 +90,7 @@ type PerformanceInspectorTests() =
             |]
     
     [<TestMethod>]
-    member this.``Evaluate performance inspector - new array``() = 
+    member __.``Evaluate performance inspector - new array``() = 
         assertInspectors
             <@ [|1 ; 2 ; 3|] @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -106,7 +106,7 @@ type PerformanceInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - let statement``() = 
+    member __.``Evaluate performance inspector - let statement``() = 
         assertInspectors
             <@ let x = 18 in x @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -120,7 +120,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - function application``() = 
+    member __.``Evaluate performance inspector - function application``() = 
         assertInspectors
             <@ let f x = x + 1 in f 3 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -144,7 +144,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - call instance method``() = 
+    member __.``Evaluate performance inspector - call instance method``() = 
         assertInspectors
             <@ let x = 3 in x.ToString() @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -160,7 +160,7 @@ type PerformanceInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - coerce to object``() = 
+    member __.``Evaluate performance inspector - coerce to object``() = 
         assertInspectors
             <@ let x = "Hello" in x :> obj @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -176,7 +176,7 @@ type PerformanceInspectorTests() =
             |]
         
     [<TestMethod>]
-    member this.``Evaluate performance inspector - create new object``() = 
+    member __.``Evaluate performance inspector - create new object``() = 
         assertInspectors
             <@ new ChildClass("Hello") @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -188,7 +188,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - get property``() = 
+    member __.``Evaluate performance inspector - get property``() = 
         assertInspectors
             <@ let x = new ChildClass("Hello") in x.NameProperty @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -206,7 +206,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - set property``() = 
+    member __.``Evaluate performance inspector - set property``() = 
         assertInspectors
             <@ 
             let child = new ChildClass("Hello")
@@ -236,7 +236,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - get indexer property``() = 
+    member __.``Evaluate performance inspector - get indexer property``() = 
         assertInspectors
             <@ 
             let indexerClass = new IndexerClass()
@@ -257,7 +257,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - set indexer property``() = 
+    member __.``Evaluate performance inspector - set indexer property``() = 
         assertInspectors
             <@ 
             let indexerClass = new IndexerClass()
@@ -280,7 +280,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - struct default value``() = 
+    member __.``Evaluate performance inspector - struct default value``() = 
         assertInspectors
             <@  let struct1 = new Struct() in struct1 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -294,7 +294,7 @@ type PerformanceInspectorTests() =
             |]       
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - get field``() = 
+    member __.``Evaluate performance inspector - get field``() = 
         assertInspectors
             <@  let field = new FieldClass(54) in field.number @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -312,7 +312,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - set field``() = 
+    member __.``Evaluate performance inspector - set field``() = 
         assertInspectors
             <@  let field = new FieldClass(54) in field.number <- 73 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -332,7 +332,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - var set``() = 
+    member __.``Evaluate performance inspector - var set``() = 
         assertInspectors
             <@  let mutable x = 3 in x <- 18 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -348,7 +348,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - for loop``() = 
+    member __.``Evaluate performance inspector - for loop``() = 
         assertInspectors
             <@  let mutable x = 0 in for i = 1 to 3 do x <- x + i @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -393,7 +393,7 @@ type PerformanceInspectorTests() =
             |]
 
     [<TestMethod>]
-    member this.``Evaluate performance inspector - if then else``() = 
+    member __.``Evaluate performance inspector - if then else``() = 
         assertInspectors
             <@ if true then 4 else 5 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -407,7 +407,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - tuple get``() = 
+    member __.``Evaluate performance inspector - tuple get``() = 
         assertInspectors
             <@ let (a, b) = (1, 2) in a @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -437,7 +437,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - union case test``() = 
+    member __.``Evaluate performance inspector - union case test``() = 
         assertInspectors
             <@ match UnionB with | UnionA -> true | _ -> false @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -457,7 +457,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - type test``() = 
+    member __.``Evaluate performance inspector - type test``() = 
         assertInspectors
             <@ 
             let x : obj = 6 :> obj           
@@ -482,7 +482,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - try with``() = 
+    member __.``Evaluate performance inspector - try with``() = 
         assertInspectors
             <@ try 4 with | _ -> 5 @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -494,7 +494,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - try finally``() = 
+    member __.``Evaluate performance inspector - try finally``() = 
         assertInspectors
             <@ try 4 finally ignore() @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -510,7 +510,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - while loop``() = 
+    member __.``Evaluate performance inspector - while loop``() = 
         assertInspectors
             <@ while false do ignore() @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -522,7 +522,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - recursive let``() = 
+    member __.``Evaluate performance inspector - recursive let``() = 
         assertInspectors
             <@ let rec x = 4 in x @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -536,7 +536,7 @@ type PerformanceInspectorTests() =
             |]
             
     [<TestMethod>]
-    member this.``Evaluate performance inspector - typed code quotation``() = 
+    member __.``Evaluate performance inspector - typed code quotation``() = 
         assertInspectors
             <@ <@ 4 @> @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
@@ -546,7 +546,7 @@ type PerformanceInspectorTests() =
             |]
               
     [<TestMethod>]
-    member this.``Evaluate performance inspector - raw code quotation``() = 
+    member __.``Evaluate performance inspector - raw code quotation``() = 
         assertInspectors
             <@ <@@ 7 @@> @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])

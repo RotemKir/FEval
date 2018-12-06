@@ -33,70 +33,70 @@ type ValidatorTests() =
         |> assertLists expctedResults
 
     [<TestMethod>]
-    member this.``runRules - no rules - returns empty result``() = 
+    member __.``runRules - no rules - returns empty result``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [||]
             <| [||]
     
     [<TestMethod>]
-    member this.``runRules - custom rule - result is ok - returns ok``() = 
+    member __.``runRules - custom rule - result is ok - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [| CustomRule (fun _ -> ValidationResult.Ok) |]
             <| [| ValidationResult.Ok |]
     
     [<TestMethod>]
-    member this.``runRules - custom rule - result is warning - returns warning``() = 
+    member __.``runRules - custom rule - result is warning - returns warning``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [| CustomRule (fun _ -> ValidationResult.Warning "Warning") |]
             <| [| ValidationResult.Warning "Warning" |]
 
     [<TestMethod>]
-    member this.``runRules - custom rule - result is error - returns error``() = 
+    member __.``runRules - custom rule - result is error - returns error``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [| CustomRule (fun _ -> ValidationResult.Error "Error") |]
             <| [| ValidationResult.Error "Error" |]
     
     [<TestMethod>]
-    member this.``runRules - variable error rule - variable doesn't exist - returns ok``() = 
+    member __.``runRules - variable error rule - variable doesn't exist - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [| VariableRule <| createVariableRule "Var" true ReturnError |]
             <| [| ValidationResult.Ok |]
             
     [<TestMethod>]
-    member this.``runRules - variable error rule - is valid - returns ok``() = 
+    member __.``runRules - variable error rule - is valid - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| [| VariableRule <| createVariableRule "Var" true ReturnError |]
             <| [| ValidationResult.Ok |]
             
     [<TestMethod>]
-    member this.``runRules - variable error rule - is invalid - returns error``() = 
+    member __.``runRules - variable error rule - is invalid - returns error``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| [| VariableRule <| createVariableRule "Var" false ReturnError |]
             <| [| ValidationResult.Error "Var" |]
                 
     [<TestMethod>]
-    member this.``runRules - variable warning rule - variable doesn't exist - returns ok``() = 
+    member __.``runRules - variable warning rule - variable doesn't exist - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [||]
             <| [| VariableRule <| createVariableRule "Var" true ReturnWarning |]
             <| [| ValidationResult.Ok |]
             
     [<TestMethod>]
-    member this.``runRules - variable warning rule - is valid - returns ok``() = 
+    member __.``runRules - variable warning rule - is valid - returns ok``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| [| VariableRule <| createVariableRule "Var" true ReturnWarning |]
             <| [| ValidationResult.Ok |]
             
     [<TestMethod>]
-    member this.``runRules - variable warning rule - is invalid - returns warning``() = 
+    member __.``runRules - variable warning rule - is invalid - returns warning``() = 
         testRunRules 
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| [| VariableRule <| createVariableRule "Var" false ReturnWarning |]
