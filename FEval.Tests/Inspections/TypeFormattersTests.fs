@@ -68,7 +68,7 @@ type TypeFormattersTests() =
         
     [<TestMethod>]
     member __.``formatFunctionType - int to string to bool - returns (Int32 -> String -> Boolean)``() = 
-        let func = (fun (i : int32) (s : string) -> true)
+        let func = (fun (_ : int32) (_ : string) -> true)
         let result = formatFunctionType <| func.GetType().BaseType <| mockTypeFormatter
         Assert.AreEqual("(Int32 -> String -> Boolean)", result)
         

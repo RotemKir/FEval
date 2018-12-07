@@ -1,7 +1,6 @@
 ﻿namespace FEval.Tests
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval
 open FEval.EvaluationTypes
 open FEval.Inspections
 open FEval.Tests.TestHelpers
@@ -409,7 +408,7 @@ type PerformanceInspectorTests() =
     [<TestMethod>]
     member __.``Evaluate performance inspector - tuple get``() = 
         assertInspectors
-            <@ let (a, b) = (1, 2) in a @>
+            <@ let (a, _) = (1, 2) in a @>
             (fun list -> [| PerformanceInspector.createNew <| addMessageToList list |])
             [| 
                 "Let patternInput : (Int32, Int32)"
@@ -419,11 +418,6 @@ type PerformanceInspectorTests() =
                 "Getting value 2 : Int32"
                 "Got value 2 : Int32"
                 "Created tuple (1, 2) : (Int32, Int32)"
-                "Let b : Int32"
-                "Getting value from tuple (Int32, Int32) at index 1"
-                "Getting variable patternInput : (Int32, Int32)"
-                "Got variable patternInput, Returned (1, 2) : (Int32, Int32)"
-                "Got value from tuple (Int32, Int32) at index 1, Retuned 2 : Int32"
                 "Let a : Int32"
                 "Getting value from tuple (Int32, Int32) at index 0"
                 "Getting variable patternInput : (Int32, Int32)"
@@ -432,7 +426,6 @@ type PerformanceInspectorTests() =
                 "Getting variable a : Int32"
                 "Got variable a, Returned 1"
                 "Let a returned 1 : Int32"
-                "Let b returned 1 : Int32"
                 "Let patternInput returned 1 : Int32"
             |]
             
