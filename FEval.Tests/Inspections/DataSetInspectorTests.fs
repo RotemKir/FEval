@@ -53,7 +53,7 @@ type DataSetInspectorTests() =
     [<TestMethod>]
     member __.``Evaluate data set inspector - for loop expression``() = 
         assertInspectors
-            <@ for i = 1 to 10 do ignore() @>
+            <@ for i = 1 to 10 do ignore i @>
             (fun list -> [| DataSetInspector.createNew <| addMessageToList list |])
             [| 
                 "i - 1 : Int32" 

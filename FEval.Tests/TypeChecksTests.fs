@@ -3,7 +3,6 @@
 open FEval.Tests.TestHelpers
 open FEval.TypeChecks
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open System.Collections
 
 [<TestClass>]
 type TypeChecksTests() =
@@ -75,7 +74,7 @@ type TypeChecksTests() =
     [<TestMethod>]
     member __.``HasToString - type is object - doesn't match``() = 
         match typeof<obj> with
-        | HasToString t -> Assert.Fail("Shouldn't match this")
+        | HasToString _ -> Assert.Fail("Shouldn't match this")
         | _             -> ignore()
     
     [<TestMethod>]
@@ -117,13 +116,13 @@ type TypeChecksTests() =
     [<TestMethod>]
     member __.``HasToString - type is class that doesn't override ToString - doesn't match``() = 
         match typeof<BaseClass> with
-        | HasToString t -> Assert.Fail("Shouldn't match this")
+        | HasToString _ -> Assert.Fail("Shouldn't match this")
         | _             -> ignore()
         
     [<TestMethod>]
     member __.``HasToString - type is struct - doesn't match``() = 
         match typeof<Struct> with
-        | HasToString t -> Assert.Fail("Shouldn't match this")
+        | HasToString _ -> Assert.Fail("Shouldn't match this")
         | _             -> ignore()
 
     [<TestMethod>]
