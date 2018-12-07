@@ -726,8 +726,8 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``ifVariable - is less than value - float - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| ifVariable "Var" (IsLessThan <| Value 4.0f) ReturnError
-            <| 3.0f
+            <| ifVariable "Var" (IsLessThan <| Value 4.0) ReturnError
+            <| 3.0
             <| false
             <| emptyValidationContext
             
@@ -778,3 +778,487 @@ type ValidationRulesTests() =
             <| 3.0m
             <| false
             <| emptyValidationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int16 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6s
+            <| true
+            <| emptyValidationContext
+    
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int16 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6s
+            <| true
+            <| validationContext 
+    
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int16 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4s
+            <| true
+            <| validationContext
+     
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int16 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3s
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int32 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6
+            <| true
+            <| emptyValidationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int32 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int32 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int32 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3
+            <| false
+            <| validationContext
+        
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int64 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6L
+            <| true
+            <| emptyValidationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int64 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6L
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int64 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4L
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - int64 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3L
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint16 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6us
+            <| true
+            <| emptyValidationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint16 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6us
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint16 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4us
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint16 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3us
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint32 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6u
+            <| true
+            <| emptyValidationContext
+        
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint32 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6u
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint32 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4u
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint32 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3u
+            <| false
+            <| validationContext
+        
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint64 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6UL
+            <| true
+            <| emptyValidationContext
+                
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint64 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6UL
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint64 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4UL
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - uint64 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3UL
+            <| false
+            <| validationContext
+        
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - byte - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6uy
+            <| true
+            <| emptyValidationContext
+                      
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - byte - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6uy
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - byte - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4uy
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - byte - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3uy
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - sbyte - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6y
+            <| true
+            <| emptyValidationContext
+              
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - sbyte - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6y
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - sbyte - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4y
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - sbyte - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3y
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0
+            <| true
+            <| emptyValidationContext
+            
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6.0
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3.0
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float32 - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0f
+            <| true
+            <| emptyValidationContext
+              
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float32 - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6.0f
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float32 - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0f
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - float32 - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3.0f
+            <| false
+            <| validationContext
+        
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - decimal - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0m
+            <| true
+            <| emptyValidationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - decimal - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 6.0m
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - decimal - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 4.0m
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - decimal - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| 3.0m
+            <| false
+            <| validationContext

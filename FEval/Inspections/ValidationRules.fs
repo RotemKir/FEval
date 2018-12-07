@@ -118,10 +118,15 @@ module ValidationRules =
         | IsDecimal value v -> v < (target :?> decimal)
         | _                 -> false
     
-    let private isLessThanTarget target (request : ValidationRequest) =
+    let private getRuleTargetValue target (request : ValidationRequest) =
         match target with
-        | Value targetValue   -> isLessThan request.Value targetValue
-        | _             -> false
+        | Value targetValue -> Some targetValue 
+        | Variable name     -> getVariableValue request.ValidationContext name
+
+    let private isLessThanTarget target request =
+        match getRuleTargetValue target request with
+        | Some targetValue -> isLessThan request.Value targetValue
+        | None             -> false
 
     let private isLessThanValidation target =
         {
