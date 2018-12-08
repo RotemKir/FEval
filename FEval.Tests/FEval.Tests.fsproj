@@ -53,6 +53,7 @@
     <Compile Include="Inspections\DataSetInspectorTests.fs" />
     <Compile Include="Inspections\ValidationRulesTests.fs" />
     <Compile Include="Inspections\ValidatorTests.fs" />
+    <Compile Include="Inspections\ValidationInspectorTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

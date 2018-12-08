@@ -37,7 +37,7 @@ module Validator =
     let private validateCustomRule customRule validationContext =
         customRule validationContext
 
-    let private runRule validationContext definition =
+    let runRule validationContext definition =
         match definition with
         | VariableRule variableRule -> validateVariable variableRule validationContext 
         | CustomRule customRule     -> validateCustomRule customRule validationContext

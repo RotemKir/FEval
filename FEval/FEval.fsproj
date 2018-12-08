@@ -55,13 +55,14 @@
     <Compile Include="Operators.fs" />
     <Compile Include="Evaluations.fs" />
     <Compile Include="Inspections\InspectionsCommon.fs" />
+    <Compile Include="Inspections\ValidationsCommon.fs" />
     <Compile Include="Inspections\TypeFormatters.fs" />
     <Compile Include="Inspections\PerformanceInspector.fs" />
     <Compile Include="Inspections\MethodCallInspector.fs" />
     <Compile Include="Inspections\DataSetInspector.fs" />
-    <Compile Include="Inspections\ValidationsCommon.fs" />
     <Compile Include="Inspections\ValidationRules.fs" />
     <Compile Include="Inspections\Validator.fs" />
+    <Compile Include="Inspections\ValidationInspector.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>

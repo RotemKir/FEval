@@ -1,5 +1,8 @@
 ﻿namespace FEval.Inspections
 
+open FEval.EvaluationTypes
+open System.Collections.Generic
+
 module ValidationsCommon =
 
     type ValidationContext =
@@ -61,3 +64,12 @@ module ValidationsCommon =
 
     let getVariableValue validationContext name =
         Map.tryFind name validationContext.Variables
+
+    let createValidationContext (inspectionContext : InspectionContext) =
+        {
+            Variables = 
+                Seq.fold 
+                    <| (fun vars (pair : KeyValuePair<string, obj>) -> Map.add pair.Key pair.Value vars)
+                    <| inspectionContext.EvaluationState.Variables
+                    <| inspectionContext.EvaluationState.RecVariables
+        }
