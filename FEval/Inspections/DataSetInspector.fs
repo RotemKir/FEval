@@ -66,13 +66,13 @@ module DataSetInspector =
 
     let private txtLogConfig =
         {
-            Formatter = createStringFormatter txtInspectionResultFormatter 
+            Formatter = SingleLine <| createStringFormatter txtInspectionResultFormatter 
             Header = None
         }
 
     let private csvLogConfig =
         {
-            Formatter = createCsvFormatter csvInspectionResultFormatter
+            Formatter = SingleLine <| createCsvFormatter csvInspectionResultFormatter
             Header = Some <| createCsvFileHeader csvFileHeader
         }
 

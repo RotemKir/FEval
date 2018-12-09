@@ -5,7 +5,12 @@ module Logging =
     open System
     open FEval.EvaluationTypes
 
-    type Formatter<'a> = LogEvent<'a> -> string
+    type SingleLineFormatter<'a> = LogEvent<'a> -> string
+    type MultiLineFormatter<'a> = LogEvent<'a> -> string seq
+
+    type Formatter<'a> =
+        | SingleLine of SingleLineFormatter<'a>
+        | MultiLine of MultiLineFormatter<'a>
 
     type FileConfig<'a> =
         {
@@ -33,9 +38,18 @@ module Logging =
     let private appendEndOfLine line =
         line + "\r\n"
 
+
+    let private postAddLineToFile fileName line =
+        fileAppender.Post <| AddLineToFile (fileName, appendEndOfLine line)
+
     let private appendLineToFile formatter fileName data =
-        fileAppender.Post <| AddLineToFile (fileName, appendEndOfLine <| formatter data)
+        postAddLineToFile fileName <| formatter data
     
+    let private appendLinesToFile formatter fileName data =
+        Seq.iter 
+            <| fun line -> postAddLineToFile fileName line
+            <| formatter data
+
     let private syncFileAppender() =
         fileAppender.PostAndReply (fun r -> FileAppenderMessage.Sync r)
 
@@ -50,9 +64,9 @@ module Logging =
     let formatDateTimeForLog (time : DateTime) =
         time.ToString("dd/MM/yyyy hh:mm:ss.fff")
 
-    let setFileHeader fileName header =
-        if not <| File.Exists(fileName)
-        then appendLineToFile id fileName header
+    let setFileHeader fileConfig fileName =
+        if fileConfig.Header.IsSome && not <| File.Exists(fileName)
+        then appendLineToFile id fileName fileConfig.Header.Value
 
     let createStringFormatter formatter logEvent =
         sprintf "%s - %A - %s (%i) - Thread %i - %s"
@@ -76,7 +90,9 @@ module Logging =
         sprintf "Time,Run Id,Process Name,Process Id,ThreadId,%s" inspectionHeader
 
     let createLogger fileConfig fileName =
-        if fileConfig.Header.IsSome 
-        then setFileHeader fileName fileConfig.Header.Value
+        setFileHeader fileConfig fileName    
         
-        appendLineToFile fileConfig.Formatter fileName
+        match fileConfig.Formatter with
+        | SingleLine formatter -> appendLineToFile formatter fileName
+        | MultiLine formatter  -> appendLinesToFile formatter fileName
+        
