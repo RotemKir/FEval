@@ -41,8 +41,3 @@ module Validator =
         match definition with
         | VariableRule variableRule -> validateVariable variableRule validationContext 
         | CustomRule customRule     -> validateCustomRule customRule validationContext
-
-    let runRules validationContext definitions =
-        Seq.map
-            <| runRule validationContext
-            <| definitions
