@@ -68,22 +68,30 @@ module Logging =
         if fileConfig.Header.IsSome && not <| File.Exists(fileName)
         then appendLineToFile id fileName fileConfig.Header.Value
 
-    let createStringFormatter formatter logEvent =
+    let createStringLogPrefix logEvent =
         sprintf "%s - %A - %s (%i) - Thread %i - %s"
             <| formatDateTimeForLog logEvent.Time
             <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
-            <| formatter logEvent.InspectionResult
 
-    let createCsvFormatter formatter logEvent =
+    let createCsvLogPrefix logEvent =
         sprintf "%s,%A,%s,%i,%i,%s"
             <| formatDateTimeForLog logEvent.Time
             <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
+
+    let createStringFormatter formatter logEvent =
+        createStringLogPrefix 
+            <| logEvent
+            <| formatter logEvent.InspectionResult
+
+    let createCsvFormatter formatter logEvent =
+        createCsvLogPrefix
+            <| logEvent
             <| formatter logEvent.InspectionResult
 
     let createCsvFileHeader inspectionHeader =

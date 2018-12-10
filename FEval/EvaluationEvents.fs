@@ -90,14 +90,16 @@ module EvaluationEvents =
         MailboxProcessor.Start(inspectionLoop messageHandler logger)
 
     let inspect state createPreEvent action createPostEvent =
-        let preInspectionContext = createPreInspectionContext <| createPreEvent() <| state
-        runPreInspections preInspectionContext state
-        let (result, postState) = action()
-        let postInspectionContext = createPostInspectionContext <| createPostEvent result <| postState
-        runPostInspections preInspectionContext postInspectionContext state
-        syncInspectors state
-        syncLoggers()
-        result
+        try
+            let preInspectionContext = createPreInspectionContext <| createPreEvent() <| state
+            runPreInspections preInspectionContext state
+            let (result, postState) = action()
+            let postInspectionContext = createPostInspectionContext <| createPostEvent result <| postState
+            runPostInspections preInspectionContext postInspectionContext state
+            result
+        finally
+            syncInspectors state
+            syncLoggers()
 
     let (|IsPreInspection|_|) inspectionMessage =
         match inspectionMessage with

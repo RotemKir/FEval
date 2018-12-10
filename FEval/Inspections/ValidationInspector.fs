@@ -3,6 +3,7 @@
 open FEval.EvaluationEvents
 open FEval.Inspections
 open FEval.Inspections.ValidationsCommon
+open FEval.Logging
 
 [<RequireQualifiedAccess>]
 module ValidationInspector =
@@ -48,7 +49,24 @@ module ValidationInspector =
         match message with
         | IsPostInspection (_, inspectionContext) -> handlePostInspection rules inspectionContext
         | _                                       -> None
-        
+    
+    let private formatLogLine prefix =
+        sprintf "***%s*** - %s" prefix
+
+    let private createValidationStringFormatter logEvent =
+        let logPrefix = createStringLogPrefix logEvent
+        Seq.append
+            <| Seq.map (formatLogLine "Warning") logEvent.InspectionResult.Warnings
+            <| Seq.map (formatLogLine "Error") logEvent.InspectionResult.Errors
+        |> Seq.map logPrefix
+
+    let private txtLogConfig =
+        {
+            Formatter = MultiLine <| createValidationStringFormatter
+            Header = None
+        }
+
     // Public functions
 
     let createNew rules = createInspector <| handleInspectionMessage rules 
+    let createTxtLogger = createLogger txtLogConfig
