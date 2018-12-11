@@ -8,6 +8,7 @@ module ValidationsCommon =
     type ValidationContext =
         {
             Variables : Map<string, obj>
+            EvaluationEvent : EvaluationEvent
         }
 
     type ValidationResult =
@@ -65,11 +66,12 @@ module ValidationsCommon =
     let getVariableValue validationContext name =
         Map.tryFind name validationContext.Variables
 
-    let createValidationContext (inspectionContext : InspectionContext) =
+    let createValidationContext inspectionContext =
         {
             Variables = 
                 Seq.fold 
                     <| (fun vars (pair : KeyValuePair<string, obj>) -> Map.add pair.Key pair.Value vars)
                     <| inspectionContext.EvaluationState.Variables
                     <| inspectionContext.EvaluationState.RecVariables
+            EvaluationEvent = inspectionContext.EvaluationEvent
         }
