@@ -3,14 +3,15 @@
 [<RequireQualifiedAccess>]
 module Validator =
     open FEval.Inspections.ValidationsCommon
-         
-    let private validateIfVariableExists validationRule validationContext =
-        Option.bind
-            <| fun value -> 
-                let request = { Value = value ; ValidationContext = validationContext }
-                Some (validationRule.Validation.IsValid request, value) 
-            <| getVariableValue validationContext validationRule.VariableName
-     
+    open FEval.EvaluationTypes
+
+    let private isCurrentEventRelevantForVariableRule 
+            (validationRule : VariableRuleDefinition) 
+            (validationContext : ValidationContext) =
+        match validationContext.EvaluationEvent with
+        | SetVariableEvent eventDetails -> eventDetails.Variable.Name = validationRule.VariableName
+        | _                             -> false
+
     let private formateMessage value validationRule validationContext =
         validationRule.Validation.FormatMessage
             {
@@ -28,11 +29,27 @@ module Validator =
         formateMessage value validationRule validationContext  
         |> convertReturnTypeToValidationResult validationRule
             
+    let private createValidationResult value validationRule validationContext isValid =
+        match isValid with
+        | true  -> Ok
+        | false -> createInvalidResult value validationRule validationContext
+            
+    let private createValidationRequest value validationContext =
+        { 
+            Value = value
+            ValidationContext = validationContext 
+        }
+
     let private validateVariable validationRule validationContext =
-        match validateIfVariableExists validationRule validationContext with
-        | Some (false, value) -> createInvalidResult value validationRule validationContext
-        | Some (true, _)      -> Ok 
-        | None                -> Ok
+        let isRelevantRule = isCurrentEventRelevantForVariableRule validationRule validationContext
+        let variableValue = getVariableValue validationContext validationRule.VariableName
+        
+        if isRelevantRule = false || Option.isNone variableValue
+        then Ok
+        else
+            createValidationRequest variableValue.Value validationContext 
+            |> validationRule.Validation.IsValid 
+            |> createValidationResult variableValue.Value validationRule validationContext
 
     let private validateCustomRule customRule validationContext =
         customRule validationContext

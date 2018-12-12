@@ -1,7 +1,6 @@
-﻿namespace FEVal.Inspections
+﻿namespace FEval.Inspections
 
 open FEval.EvaluationEvents
-open FEval.Inspections
 open FEval.Inspections.ValidationsCommon
 open FEval.Logging
 

@@ -75,7 +75,7 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" true ReturnError)
             <| ValidationResult.Ok
-            
+
     [<TestMethod>]
     member __.``runRule - variable error rule - is invalid - returns error``() = 
         testRunRules 
@@ -83,6 +83,15 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" false ReturnError)
             <| ValidationResult.Error "Var"
+
+            
+    [<TestMethod>]
+    member __.``runRule - variable error rule - is invalid - event is not for the variable - returns ok``() = 
+        testRunRules 
+            <| createVariableEvent "Other Var"
+            <| new Map<string, obj> [| ("Var", 0 :> obj) |]
+            <| (VariableRule <| createVariableRule "Var" false ReturnError)
+            <| ValidationResult.Ok
                 
     [<TestMethod>]
     member __.``runRule - variable warning rule - variable doesn't exist - returns ok``() = 
@@ -99,7 +108,7 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" true ReturnWarning)
             <| ValidationResult.Ok
-            
+           
     [<TestMethod>]
     member __.``runRule - variable warning rule - is invalid - returns warning``() = 
         testRunRules 
@@ -107,3 +116,11 @@ type ValidatorTests() =
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" false ReturnWarning)
             <| ValidationResult.Warning "Var"
+            
+    [<TestMethod>]
+    member __.``runRule - variable warning rule - is invalid - event is not for the variable - returns ok``() = 
+             testRunRules 
+                 <| createVariableEvent "Other Var"
+                 <| new Map<string, obj> [| ("Var", 0 :> obj) |]
+                 <| (VariableRule <| createVariableRule "Var" false ReturnWarning)
+                 <| ValidationResult.Ok
