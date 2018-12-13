@@ -7,20 +7,22 @@ module EvaluationEvents =
 
     // Private functions
 
-    let createPreInspectionContext evaluationEvent evaluationState =
+    let private createPreInspectionContext evaluationEvent evaluationState errorAgent =
             {
                 InspectionStage = InspectionStage.Pre
                 EvaluationEvent = evaluationEvent
                 Time = DateTime.Now
                 EvaluationState =  evaluationState
+                ErrorAgent = errorAgent
             }
             
-    let createPostInspectionContext evaluationEvent evaluationState =
+    let private createPostInspectionContext evaluationEvent evaluationState errorAgent =
             {
                 InspectionStage = InspectionStage.Post
                 EvaluationEvent = evaluationEvent
                 Time = DateTime.Now
                 EvaluationState =  evaluationState
+                ErrorAgent = errorAgent
             }
     
     let private getInpectionContext inspectionMessage =
@@ -81,6 +83,30 @@ module EvaluationEvents =
     let private runPostInspections preInspectionContext postInspectionContext =
         postMessage <| PostInspectionMessage (preInspectionContext, postInspectionContext)
 
+    let private createErrorAgent() = 
+        MailboxProcessor<ErrorAgentMessage>.Start(fun inbox ->
+            
+            let rec loop errorMessage =
+                async {
+                    let! message = inbox.Receive()
+                    
+                    match message with
+                    | SetError error -> 
+                        return! loop error
+                    | GetError reply -> 
+                        reply.Reply errorMessage
+                        return! loop errorMessage
+                }
+            loop "")
+    
+    let private getInspectionError (errorAgent : ErrorAgent) =
+        errorAgent.PostAndReply (fun reply -> GetError reply)
+
+    let private checkInspectionErrors errorAgent =
+        match getInspectionError errorAgent with
+        | ""    -> ignore()
+        | error -> invalidOp error
+
     // Public functions
     
     let disposeInspectors inspectors =
@@ -88,14 +114,16 @@ module EvaluationEvents =
 
     let createInspector messageHandler logger =
         MailboxProcessor.Start(inspectionLoop messageHandler logger)
-
+    
     let inspect state createPreEvent action createPostEvent =
         try
-            let preInspectionContext = createPreInspectionContext <| createPreEvent() <| state
-            runPreInspections preInspectionContext state
+            let errorAgent = createErrorAgent()
+            let preInspectionContext = createPreInspectionContext <| createPreEvent() <| state <| errorAgent
+            runPreInspections preInspectionContext state 
             let (result, postState) = action()
-            let postInspectionContext = createPostInspectionContext <| createPostEvent result <| postState
+            let postInspectionContext = createPostInspectionContext <| createPostEvent result <| postState <| errorAgent
             runPostInspections preInspectionContext postInspectionContext state
+            checkInspectionErrors errorAgent
             result
         finally
             syncInspectors state
@@ -136,3 +164,7 @@ module EvaluationEvents =
         match getEvaluationEvent inspectionMessage with 
         | Some (SetFieldEvent eventDetails) -> Some eventDetails
         | _                                 -> None
+
+    let setInspectionError (errorAgent : ErrorAgent) error =
+        errorAgent.Post <| SetError error
+        

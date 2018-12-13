@@ -71,6 +71,7 @@ module EvaluationTypes =
             EvaluationEvent : EvaluationEvent
             Time : DateTime
             EvaluationState : EvaluationState
+            ErrorAgent : ErrorAgent
         }
         
     and InspectionMessage = 
@@ -87,3 +88,9 @@ module EvaluationTypes =
             RunDetails : EvaluationRunDetails
             InspectionResult : 'a
         }
+
+    and ErrorAgent = MailboxProcessor<ErrorAgentMessage>
+
+    and ErrorAgentMessage =
+        | SetError of string
+        | GetError of AsyncReplyChannel<string>

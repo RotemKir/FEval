@@ -3,6 +3,7 @@
 open FEval.EvaluationEvents
 open FEval.Inspections.ValidationsCommon
 open FEval.Logging
+open FEval.EvaluationTypes
 
 [<RequireQualifiedAccess>]
 module ValidationInspector =
@@ -39,9 +40,19 @@ module ValidationInspector =
         then None
         else Some inspectionResult
 
+    let private checkedIfResultHasError inspectionResult inspectionContext =
+        if not <| Seq.isEmpty inspectionResult.Errors
+        then 
+            String.concat ", " inspectionResult.Errors
+            |> setInspectionError inspectionContext.ErrorAgent
+
     let private handlePostInspection rules inspectionContext =
-        createValidationContext inspectionContext 
-        |> runValidationRules rules
+        let inspectionResult = 
+            createValidationContext inspectionContext 
+            |> runValidationRules rules
+        checkedIfResultHasError inspectionResult inspectionContext
+
+        inspectionResult 
         |> convertResultToOption
 
     let private handleInspectionMessage rules message =
