@@ -28,90 +28,88 @@ type ValidationInspectorTests() =
     [<TestMethod>]
     member __.``Evaluate validation inspector - no rules - returns no message``() = 
         assertInspectors
-            <@ 4 @>
-            (fun list -> [| createInspector [||] list |])
-            [||]
+            <| <@ 4 @>
+            <| (fun list -> [| createInspector [||] list |])
+            <| [||]
 
     [<TestMethod>]
     member __.``Evaluate validation inspector - rule result is ok - returns no message``() = 
         assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector [| createRule ValidationResult.Ok |] list |])
-            [||]
+            <| <@ 4 @>
+            <| (fun list -> [| createInspector [| createRule ValidationResult.Ok |] list |])
+            <| [||]
 
     [<TestMethod>]
     member __.``Evaluate validation inspector - rule result is warning - returns warning message``() = 
         assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector [| createRule <| ValidationResult.Warning "message" |] list |])
-            [|
-                "Warning - message"
-            |]
+            <| <@ 4 @>
+            <| (fun list -> [| createInspector [| createRule <| ValidationResult.Warning "message" |] list |])
+            <| [| "Warning - message" |]
     
     [<TestMethod>]
     member __.``Evaluate validation inspector - all rule results are warnings - returns warning messages``() = 
         assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector 
-                    [| 
-                        createRule <| ValidationResult.Warning "message 1" 
-                        createRule <| ValidationResult.Warning "message 2" 
-                        createRule <| ValidationResult.Warning "message 3" 
-                    |] 
-                    list 
-                |])
-            [|
-                "Warning - message 1"
-                "Warning - message 2"
-                "Warning - message 3"
-            |]
+            <| <@ 4 @>
+            <| (fun list -> 
+                    [| createInspector 
+                        [| 
+                            createRule <| ValidationResult.Warning "message 1" 
+                            createRule <| ValidationResult.Warning "message 2" 
+                            createRule <| ValidationResult.Warning "message 3" 
+                        |] 
+                        list 
+                    |])
+            <| [|
+                    "Warning - message 1"
+                    "Warning - message 2"
+                    "Warning - message 3"
+               |]
     
     [<TestMethod>]
     member __.``Evaluate validation inspector - rule result is error - returns error message``() = 
-        assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector [| createRule <| ValidationResult.Error "message" |] list |])
-            [|
-                "Error - message"
-            |]
+        assertInspectorsWithException
+            <| <@ 4 @>
+            <| (fun list -> [| createInspector [| createRule <| ValidationResult.Error "message" |] list |])
+            <| [|
+                    "Error - message"
+               |]
+            <| "message"
     
     [<TestMethod>]
     member __.``Evaluate validation inspector - all rule results are errors - returns error messages``() = 
-        assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector 
-                    [| 
-                        createRule <| ValidationResult.Error "message 1" 
-                        createRule <| ValidationResult.Error "message 2" 
-                        createRule <| ValidationResult.Error "message 3" 
-                    |] 
-                    list 
-                |])
-            [|
-                "Error - message 1"
-                "Error - message 2"
-                "Error - message 3"
-            |]
+        assertInspectorsWithException
+            <| <@ 4 @>
+            <| (fun list -> 
+                    [| createInspector 
+                        [| 
+                            createRule <| ValidationResult.Error "message 1" 
+                            createRule <| ValidationResult.Error "message 2" 
+                            createRule <| ValidationResult.Error "message 3" 
+                        |] 
+                        list 
+                    |])
+            <| [|
+                    "Error - message 1"
+                    "Error - message 2"
+                    "Error - message 3"
+               |]
+            <| "message 1, message 2, message 3"
     
     [<TestMethod>]
     member __.``Evaluate validation inspector - result are ok, warning and error - returns warning and error messages``() = 
-        assertInspectors
-            <@ 4 @>
-            (fun list -> 
-                [| createInspector 
-                    [| 
-                        createRule <| ValidationResult.Error "message 1" 
-                        createRule <| ValidationResult.Ok 
-                        createRule <| ValidationResult.Warning "message 2" 
-                    |] 
-                    list 
-                |])
-            [|
-                "Warning - message 2"
-                "Error - message 1"
-            |]
+        assertInspectorsWithException
+            <| <@ 4 @>
+            <| (fun list -> 
+                    [| createInspector 
+                        [| 
+                            createRule <| ValidationResult.Error "message 1" 
+                            createRule <| ValidationResult.Ok 
+                            createRule <| ValidationResult.Warning "message 2" 
+                        |] 
+                        list 
+                    |])
+            <| [|
+                    "Warning - message 2"
+                    "Error - message 1"
+               |]
+            <| "message 1"

@@ -19,6 +19,16 @@ module TestHelpers =
         evalWith expr <| createInspectors messageList |> ignore
         assertMessages expectedMessages messageList
 
+    let assertInspectorsWithException expr createInspectors expectedMessages expectedException =
+        let messageList = new List<string>()
+        
+        try
+            evalWith expr <| createInspectors messageList |> ignore
+        with
+        | ex -> Assert.AreEqual(expectedException, ex.Message)
+        
+        assertMessages expectedMessages messageList
+
     type Person =
         {
             FirstName : string
