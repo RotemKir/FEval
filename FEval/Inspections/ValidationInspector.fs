@@ -63,16 +63,25 @@ module ValidationInspector =
     let private formatLogLine prefix =
         sprintf "***%s*** - %s" prefix
 
-    let private createValidationStringFormatter logEvent =
-        let logPrefix = createStringLogPrefix logEvent
+    let private formatCsvLine prefix =
+        sprintf "***%s***,\"%s\"" prefix
+
+    let private createValidationStringFormatter logPrefixFormatter lineFormatter logEvent =
+        let logPrefix = logPrefixFormatter logEvent
         Seq.append
-            <| Seq.map (formatLogLine "Warning") logEvent.InspectionResult.Warnings
-            <| Seq.map (formatLogLine "Error") logEvent.InspectionResult.Errors
+            <| Seq.map (lineFormatter "Warning") logEvent.InspectionResult.Warnings
+            <| Seq.map (lineFormatter "Error") logEvent.InspectionResult.Errors
         |> Seq.map logPrefix
 
     let private txtLogConfig =
         {
-            Formatter = MultiLine <| createValidationStringFormatter
+            Formatter = MultiLine <| createValidationStringFormatter createStringLogPrefix formatLogLine
+            Header = None
+        }
+        
+    let private csvLogConfig =
+        {
+            Formatter = MultiLine <| createValidationStringFormatter createCsvLogPrefix formatCsvLine
             Header = None
         }
 
@@ -80,3 +89,4 @@ module ValidationInspector =
 
     let createNew rules = createInspector <| handleInspectionMessage rules 
     let createTxtLogger = createLogger txtLogConfig
+    let createCsvLogger = createLogger csvLogConfig

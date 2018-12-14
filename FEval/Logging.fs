@@ -38,7 +38,6 @@ module Logging =
     let private appendEndOfLine line =
         line + "\r\n"
 
-
     let private postAddLineToFile fileName line =
         fileAppender.Post <| AddLineToFile (fileName, appendEndOfLine line)
 
