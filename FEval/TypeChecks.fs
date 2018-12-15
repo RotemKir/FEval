@@ -22,6 +22,7 @@ module TypeChecks =
     let (|IsFloat32|_|) = convertIfType<float32>
     let (|IsDecimal|_|) = convertIfType<decimal>
     let (|IsString|_|) = convertIfType<string>
+    let (|IsDateTime|_|) = convertIfType<DateTime>
 
     let (|IsIEnumerable|_|) (value : obj) (valueType : Type) =
         if typeof<IEnumerable>.IsAssignableFrom(valueType)

@@ -5,6 +5,7 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspections.ValidationsCommon
 open FEval.Inspections.ValidationRules
 open FEval.EvaluationTypes
+open System
 
 [<TestClass>]
 type ValidationRulesTests() =
@@ -786,6 +787,30 @@ type ValidationRulesTests() =
             <| 3.0m
             <| false
             <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is less than value - datetime - is more than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 2, 20)
+            <| true
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is less than value - datetime - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is less than value - datetime - is less than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 1, 20)
+            <| false
+            <| createVariableValidationContext "Var"
 
     [<TestMethod>]
     member __.``ifVariable - is less than variable - int16 - variable doesn't exist - returns is valid true``() = 
@@ -1303,7 +1328,54 @@ type ValidationRulesTests() =
             <| 3.0m
             <| false
             <| validationContext
+              
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - datetime - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| createVariableValidationContext "Var"
 
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - datetime - is more than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 2, 20)
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - datetime - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is less than variable - datetime - is less than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 20)
+            <| false
+            <| validationContext
+            
     [<TestMethod>]
     member __.``ifVariable - is more than value - formats name, type and target value as error``() = 
         assertVariableRuleErrorMessage 
@@ -1586,6 +1658,30 @@ type ValidationRulesTests() =
         assertVariableRuleIsValid 
             <| ifVariable "Var" (IsMoreThan <| Value 4.0m) ReturnError
             <| 3.0m
+            <| true
+            <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+    member __.``ifVariable - is more than value - datetime - is more than - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 2, 20)
+            <| false
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is more than value - datetime - is equal - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is more than value - datetime - is less than - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Value (new DateTime(2018, 1, 29))) ReturnError
+            <| new DateTime(2018, 1, 20)
             <| true
             <| createVariableValidationContext "Var"
 
@@ -2105,3 +2201,50 @@ type ValidationRulesTests() =
             <| 3.0m
             <| true
             <| validationContext
+                       
+    [<TestMethod>]
+    member __.``ifVariable - is more than variable - datetime - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+    member __.``ifVariable - is more than variable - datetime - is more than - returns is valid false``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 2, 20)
+            <| false
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is more than variable - datetime - is equal - returns is valid true``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 29)
+            <| true
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is more than variable - datetime - is less than - returns is valid true``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
+            <| new DateTime(2018, 1, 20)
+            <| true
+            <| validationContext            

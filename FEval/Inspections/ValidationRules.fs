@@ -34,32 +34,34 @@ module ValidationRules =
 
     let private isLessThan value (target : obj) =
         match value.GetType() with
-        | IsInt16   value v -> v < (target :?> int16)
-        | IsInt32   value v -> v < (target :?> int32)
-        | IsInt64   value v -> v < (target :?> int64)
-        | IsUInt16  value v -> v < (target :?> uint16)
-        | IsUInt32  value v -> v < (target :?> uint32)
-        | IsUInt64  value v -> v < (target :?> uint64)
-        | IsByte    value v -> v < (target :?> byte)
-        | IsSByte   value v -> v < (target :?> sbyte)
-        | IsFloat   value v -> v < (target :?> float)
-        | IsFloat32 value v -> v < (target :?> float32)
-        | IsDecimal value v -> v < (target :?> decimal)
+        | IsInt16    value v -> v < (target :?> int16)
+        | IsInt32    value v -> v < (target :?> int32)
+        | IsInt64    value v -> v < (target :?> int64)
+        | IsUInt16   value v -> v < (target :?> uint16)
+        | IsUInt32   value v -> v < (target :?> uint32)
+        | IsUInt64   value v -> v < (target :?> uint64)
+        | IsByte     value v -> v < (target :?> byte)
+        | IsSByte    value v -> v < (target :?> sbyte)
+        | IsFloat    value v -> v < (target :?> float)
+        | IsFloat32  value v -> v < (target :?> float32)
+        | IsDecimal  value v -> v < (target :?> decimal)
+        | IsDateTime value v -> v < (target :?> DateTime)
         | _                 -> false
 
     let private isMoreThan value (target : obj) =
         match value.GetType() with
-        | IsInt16   value v -> v > (target :?> int16)
-        | IsInt32   value v -> v > (target :?> int32)
-        | IsInt64   value v -> v > (target :?> int64)
-        | IsUInt16  value v -> v > (target :?> uint16)
-        | IsUInt32  value v -> v > (target :?> uint32)
-        | IsUInt64  value v -> v > (target :?> uint64)
-        | IsByte    value v -> v > (target :?> byte)
-        | IsSByte   value v -> v > (target :?> sbyte)
-        | IsFloat   value v -> v > (target :?> float)
-        | IsFloat32 value v -> v > (target :?> float32)
-        | IsDecimal value v -> v > (target :?> decimal)
+        | IsInt16    value v -> v > (target :?> int16)
+        | IsInt32    value v -> v > (target :?> int32)
+        | IsInt64    value v -> v > (target :?> int64)
+        | IsUInt16   value v -> v > (target :?> uint16)
+        | IsUInt32   value v -> v > (target :?> uint32)
+        | IsUInt64   value v -> v > (target :?> uint64)
+        | IsByte     value v -> v > (target :?> byte)
+        | IsSByte    value v -> v > (target :?> sbyte)
+        | IsFloat    value v -> v > (target :?> float)
+        | IsFloat32  value v -> v > (target :?> float32)
+        | IsDecimal  value v -> v > (target :?> decimal)
+        | IsDateTime value v -> v > (target :?> DateTime)
         | _                 -> false
         
     let private isEmptyString value =
