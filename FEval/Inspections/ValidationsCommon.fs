@@ -26,7 +26,11 @@ module ValidationsCommon =
         | IsEmpty
         | IsLessThan of RuleTarget
         | IsMoreThan of RuleTarget
-
+        | And of InvalidWhen * InvalidWhen
+        | Or of InvalidWhen * InvalidWhen
+        static member (&&&) (leftOperand, rightOperand) = And (leftOperand, rightOperand)
+        static member (|||) (leftOperand, rightOperand) = Or (leftOperand, rightOperand)
+        
     type ReturnWhenInvalid =
         | ReturnWarning
         | ReturnError
