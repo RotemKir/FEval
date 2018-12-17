@@ -15,7 +15,7 @@ type ValidatorTests() =
             Validation =  
                 { 
                     IsValid = fun _ -> isValid
-                    FormatMessage = fun request -> request.VariableName
+                    FormatMessage = fun _ -> "Error message"
                 } 
             ReturnWhenInvalid = errorLevel
         }
@@ -82,9 +82,8 @@ type ValidatorTests() =
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" false ReturnError)
-            <| ValidationResult.Error "Var"
+            <| ValidationResult.Error "Variable 'Var', 0 : Int32, Error message"
 
-            
     [<TestMethod>]
     member __.``runRule - variable error rule - is invalid - event is not for the variable - returns ok``() = 
         testRunRules 
@@ -115,7 +114,7 @@ type ValidatorTests() =
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
             <| (VariableRule <| createVariableRule "Var" false ReturnWarning)
-            <| ValidationResult.Warning "Var"
+            <| ValidationResult.Warning "Variable 'Var', 0 : Int32, Error message"
             
     [<TestMethod>]
     member __.``runRule - variable warning rule - is invalid - event is not for the variable - returns ok``() = 

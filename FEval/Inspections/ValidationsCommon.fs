@@ -55,14 +55,7 @@ module ValidationsCommon =
     and VariableValidation =
         {
             IsValid : ValidationRequest -> bool
-            FormatMessage : FormatMessageRequest -> string
-        }
-
-    and FormatMessageRequest =
-        {
-            VariableName : string
-            Value : obj
-            ValidationContext : ValidationContext
+            FormatMessage : ValidationRequest -> string
         }
 
     and CustomRule = ValidationContext -> ValidationResult

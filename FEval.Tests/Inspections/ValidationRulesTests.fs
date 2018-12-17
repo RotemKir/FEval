@@ -32,7 +32,6 @@ type ValidationRulesTests() =
                 let actualErrorMessage = 
                     definition.Validation.FormatMessage 
                         {
-                            VariableName = definition.VariableName
                             Value = value
                             ValidationContext = validationContext
                         }
@@ -64,11 +63,11 @@ type ValidationRulesTests() =
             <| fun definition -> Assert.AreEqual(ReturnWarning, definition.ReturnWhenInvalid)
 
     [<TestMethod>]
-    member __.``ifVariable - is zero - formats name and type as error``() = 
+    member __.``ifVariable - is zero - formats error message as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsZero ReturnError
             <| 0
-            <| "Variable 'Var', 0 : Int32, should not be zero"
+            <| "should not be zero"
             <| createVariableValidationContext "Var"
                 
     [<TestMethod>]
@@ -256,11 +255,11 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
-    member __.``ifVariable - is negative - formats name and type as error``() = 
+    member __.``ifVariable - is negative - formats error message as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsNegative ReturnError
             <| -8
-            <| "Variable 'Var', -8 : Int32, should not be negative"
+            <| "should not be negative"
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
@@ -416,11 +415,11 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
             
     [<TestMethod>]
-    member __.``ifVariable - is empty - formats name and type as error``() = 
+    member __.``ifVariable - is empty - formats error message``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" IsEmpty ReturnError
             <| [||]
-            <| "Variable 'Var', Object[], should not be empty"
+            <| "should not be empty"
             <| createVariableValidationContext "Var"
                 
     [<TestMethod>]
@@ -496,15 +495,15 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
             
     [<TestMethod>]
-    member __.``ifVariable - is less than value - formats name, type and target value as error``() = 
+    member __.``ifVariable - is less than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
             <| 3
-            <| "Variable 'Var', 3 : Int32, should not be less than 4 : Int32"
+            <| "should not be less than 4 : Int32"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is less than variable - formats name, type and target namd and value as error``() = 
+    member __.``ifVariable - is less than variable - formats error message and target namd and value as error``() = 
         let validationContext = 
             { 
                 createVariableValidationContext "Var" 
@@ -513,15 +512,15 @@ type ValidationRulesTests() =
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
             <| 3
-            <| "Variable 'Var', 3 : Int32, should not be less than variable 'Other Var', 4 : Int32"
+            <| "should not be less than variable 'Other Var', 4 : Int32"
             <| validationContext
 
     [<TestMethod>]
-    member __.``ifVariable - is less than variable that doesn't exist - formats name and type as error``() = 
+    member __.``ifVariable - is less than variable that doesn't exist - formats error message as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
             <| 3
-            <| "Variable 'Var', 3 : Int32, should not be less than (null)"
+            <| "should not be less than (null)"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
@@ -1377,15 +1376,15 @@ type ValidationRulesTests() =
             <| validationContext
             
     [<TestMethod>]
-    member __.``ifVariable - is more than value - formats name, type and target value as error``() = 
+    member __.``ifVariable - is more than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsMoreThan <| Value 4) ReturnError
             <| 5
-            <| "Variable 'Var', 5 : Int32, should not be more than 4 : Int32"
+            <| "should not be more than 4 : Int32"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is more than variable - formats name, type and target namd and value as error``() = 
+    member __.``ifVariable - is more than variable - formats error message and target namd and value as error``() = 
         let validationContext = 
             { 
                 createVariableValidationContext "Var" 
@@ -1394,7 +1393,7 @@ type ValidationRulesTests() =
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
             <| 5
-            <| "Variable 'Var', 5 : Int32, should not be more than variable 'Other Var', 4 : Int32"
+            <| "should not be more than variable 'Other Var', 4 : Int32"
             <| validationContext
 
     [<TestMethod>]
@@ -2254,7 +2253,7 @@ type ValidationRulesTests() =
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" ((IsLessThan <| Value 10) &&& IsNegative) ReturnError
             <| -10
-            <| "(Variable 'Var', -10 : Int32, should not be less than 10 : Int32 AND Variable 'Var', -10 : Int32, should not be negative)"
+            <| "(should not be less than 10 : Int32 AND should not be negative)"
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]

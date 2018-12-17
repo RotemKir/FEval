@@ -93,37 +93,22 @@ module ValidationRules =
         | Value value   -> formatValueRuleTarget value
         | Variable name -> formatVariableRuleTarget name validationContext
 
-    let private isZeroFormatter formatMessageRequest =
-        let valueType = formatMessageRequest.Value.GetType()
-        sprintf "Variable '%s', %s, should not be zero"
-            <| formatMessageRequest.VariableName
-            <| formatValue formatMessageRequest.Value valueType
+    let private isZeroFormatter _ =
+        "should not be zero"
 
-    let private isNegativeFormatter formatMessageRequest =
-        let valueType = formatMessageRequest.Value.GetType()
-        sprintf "Variable '%s', %s, should not be negative"
-            <| formatMessageRequest.VariableName
-            <| formatValue formatMessageRequest.Value valueType
+    let private isNegativeFormatter _ =
+        "should not be negative"
 
-    let private isEmptyFormatter formatMessageRequest =
-        let valueType = formatMessageRequest.Value.GetType()
-        sprintf "Variable '%s', %s, should not be empty"
-            <| formatMessageRequest.VariableName
-            <| formatValue formatMessageRequest.Value valueType
+    let private isEmptyFormatter _ =
+        "should not be empty"
 
-    let private isLessThanFormatter target formatMessageRequest =
-        let valueType = formatMessageRequest.Value.GetType()
-        sprintf "Variable '%s', %s, should not be less than %s"
-            <| formatMessageRequest.VariableName
-            <| formatValue formatMessageRequest.Value valueType
-            <| formatRuleTarget target formatMessageRequest.ValidationContext
+    let private isLessThanFormatter target validationRequest =
+        sprintf "should not be less than %s"
+            <| formatRuleTarget target validationRequest.ValidationContext
 
-    let private isMoreThanFormatter target formatMessageRequest =
-        let valueType = formatMessageRequest.Value.GetType()
-        sprintf "Variable '%s', %s, should not be more than %s"
-            <| formatMessageRequest.VariableName
-            <| formatValue formatMessageRequest.Value valueType
-            <| formatRuleTarget target formatMessageRequest.ValidationContext
+    let private isMoreThanFormatter target validationRequest =
+        sprintf "should not be more than %s"
+            <| formatRuleTarget target validationRequest.ValidationContext
                 
     let private andFormatter leftValidation rightValidation formatMessageRequest =
         sprintf "(%s AND %s)"

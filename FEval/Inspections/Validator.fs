@@ -4,6 +4,7 @@
 module Validator =
     open FEval.Inspections.ValidationsCommon
     open FEval.EvaluationTypes
+    open FEval.Inspections.TypeFormatters
 
     let private isCurrentEventRelevantForVariableRule 
             (validationRule : VariableRuleDefinition) 
@@ -12,27 +13,26 @@ module Validator =
         | SetVariableEvent eventDetails -> eventDetails.Variable.Name = validationRule.VariableName
         | _                             -> false
 
-    let private formateMessage value validationRule validationContext =
-        validationRule.Validation.FormatMessage
-            {
-                VariableName = validationRule.VariableName 
-                Value = value
-                ValidationContext = validationContext
-            }
+    let private formateMessage (validationRequest : ValidationRequest) validationRule =
+        let valueType = validationRequest.Value.GetType()
+        sprintf "Variable '%s', %s, %s"
+            <| validationRule.VariableName
+            <| formatValue validationRequest.Value valueType
+            <| validationRule.Validation.FormatMessage validationRequest 
 
     let private convertReturnTypeToValidationResult validationRule message = 
         match validationRule.ReturnWhenInvalid with
         | ReturnWarning -> Warning message
         | ReturnError   -> Error message
 
-    let private createInvalidResult value validationRule validationContext =
-        formateMessage value validationRule validationContext  
+    let private createInvalidResult validationRequest validationRule =
+        formateMessage validationRequest validationRule  
         |> convertReturnTypeToValidationResult validationRule
             
-    let private createValidationResult value validationRule validationContext isValid =
+    let private createValidationResult validationRequest validationRule isValid =
         match isValid with
         | true  -> Ok
-        | false -> createInvalidResult value validationRule validationContext
+        | false -> createInvalidResult validationRequest validationRule
             
     let private createValidationRequest value validationContext =
         { 
@@ -47,9 +47,11 @@ module Validator =
         if isRelevantRule = false || Option.isNone variableValue
         then Ok
         else
-            createValidationRequest variableValue.Value validationContext 
+            let validationRequest = createValidationRequest variableValue.Value validationContext 
+            
+            validationRequest 
             |> validationRule.Validation.IsValid 
-            |> createValidationResult variableValue.Value validationRule validationContext
+            |> createValidationResult validationRequest validationRule
 
     let private validateCustomRule customRule validationContext =
         customRule validationContext
