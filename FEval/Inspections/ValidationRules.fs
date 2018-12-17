@@ -63,7 +63,7 @@ module ValidationRules =
         | IsDecimal  value v -> v > (target :?> decimal)
         | IsDateTime value v -> v > (target :?> DateTime)
         | _                 -> false
-        
+    
     let private isEmptyString value =
         String.IsNullOrEmpty value
 
@@ -76,6 +76,10 @@ module ValidationRules =
         | IsIEnumerable value v -> isEmptyEnumerable v
         | _                     -> false
     
+    let private isAndInvalid leftValidation rightValidation request =
+        leftValidation.IsValid request = false && 
+        rightValidation.IsValid request = false
+
     let private formatValueRuleTarget value =
         formatValue value <| value.GetType()
 
@@ -120,6 +124,11 @@ module ValidationRules =
             <| formatMessageRequest.VariableName
             <| formatValue formatMessageRequest.Value valueType
             <| formatRuleTarget target formatMessageRequest.ValidationContext
+                
+    let private andFormatter leftValidation rightValidation formatMessageRequest =
+        sprintf "(%s AND %s)"
+            <| leftValidation.FormatMessage formatMessageRequest
+            <| rightValidation.FormatMessage formatMessageRequest
 
     let private getRequestValue (request : ValidationRequest) =
         request.Value
@@ -163,14 +172,23 @@ module ValidationRules =
             IsValid = isValidTarget target isMoreThan >> not
             FormatMessage = isMoreThanFormatter target
         }
+    
+    let private andValidation leftValidation rightValidation =
+        {
+            IsValid = isAndInvalid leftValidation rightValidation >> not
+            FormatMessage = andFormatter leftValidation rightValidation
+        }
 
-    let private getVariableValidation invalidWhen =
+    let rec private getVariableValidation invalidWhen =
         match invalidWhen with
         | IsZero            -> isZeroValidation
         | IsNegative        -> isNegativeValidation
         | IsEmpty           -> isEmptyValidation
         | IsLessThan target -> isLessThanValidation target
-        | IsMoreThan target -> isMoreThanValidation target 
+        | IsMoreThan target -> isMoreThanValidation target
+        | And (left, right) -> andValidation 
+                                <| getVariableValidation left 
+                                <| getVariableValidation right
            
     let ifVariable name invalidWhen thenReturn =
         VariableRule

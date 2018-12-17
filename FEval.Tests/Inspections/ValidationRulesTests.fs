@@ -2247,4 +2247,44 @@ type ValidationRulesTests() =
             <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
             <| new DateTime(2018, 1, 20)
             <| true
-            <| validationContext            
+            <| validationContext  
+    
+    [<TestMethod>]
+    member __.``ifVariable - and rule - formats left validation message and right validation message as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" ((IsLessThan <| Value 10) &&& IsNegative) ReturnError
+            <| -10
+            <| "(Variable 'Var', -10 : Int32, should not be less than 10 : Int32 AND Variable 'Var', -10 : Int32, should not be negative)"
+            <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+       member __.``ifVariable - and rule - left operand is valid, right operand is valid - returns is valid true``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero &&& IsNegative) ReturnError
+               <| 6
+               <| true
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - and rule - left operand is invalid, right operand is valid - returns is valid true``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero &&& IsNegative) ReturnError
+               <| 0
+               <| true
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - and rule - left operand is valid, right operand is invalid - returns is valid true``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero &&& IsNegative) ReturnError
+               <| -10
+               <| true
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - and rule - left operand is invalid, right operand is invalid - returns is valid false``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" ((IsLessThan <| Value 10) &&& IsNegative) ReturnError
+               <| -10
+               <| false
+               <| createVariableValidationContext "Var"
