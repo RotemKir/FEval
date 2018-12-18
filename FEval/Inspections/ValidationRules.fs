@@ -115,7 +115,7 @@ module ValidationRules =
             <| formatRuleTarget target validationRequest.ValidationContext
                 
     let private andFormatter leftValidation rightValidation validationRequest =
-        sprintf "(%s AND %s)"
+        sprintf "%s AND %s"
             <| leftValidation.FormatMessage validationRequest
             <| rightValidation.FormatMessage validationRequest
             
@@ -126,7 +126,7 @@ module ValidationRules =
         let rightValidationMessage = rightValidation.FormatMessage validationRequest
 
         match (isLeftValid, isRightValid) with
-        | (false, false) -> sprintf "(%s AND %s)" leftValidationMessage rightValidationMessage
+        | (false, false) -> sprintf "%s AND %s" leftValidationMessage rightValidationMessage
         | (false, true)  -> leftValidationMessage
         | (true, false)  -> rightValidationMessage
         | (true, true)   -> String.Empty        

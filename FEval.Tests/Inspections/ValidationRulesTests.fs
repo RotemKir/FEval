@@ -2253,7 +2253,7 @@ type ValidationRulesTests() =
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" ((IsLessThan <| Value 10) &&& IsNegative) ReturnError
             <| -10
-            <| "(should not be less than 10 : Int32 AND should not be negative)"
+            <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
@@ -2293,7 +2293,7 @@ type ValidationRulesTests() =
         assertVariableRuleErrorMessage 
             <| ifVariable "Var" ((IsLessThan <| Value 10) ||| IsNegative) ReturnError
             <| -10
-            <| "(should not be less than 10 : Int32 AND should not be negative)"
+            <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
