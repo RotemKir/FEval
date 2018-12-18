@@ -80,6 +80,10 @@ module ValidationRules =
         leftValidation.IsValid request = false && 
         rightValidation.IsValid request = false
 
+    let private isOrInvalid leftValidation rightValidation request =
+        leftValidation.IsValid request = false || 
+        rightValidation.IsValid request = false
+
     let private formatValueRuleTarget value =
         formatValue value <| value.GetType()
 
@@ -110,10 +114,22 @@ module ValidationRules =
         sprintf "should not be more than %s"
             <| formatRuleTarget target validationRequest.ValidationContext
                 
-    let private andFormatter leftValidation rightValidation formatMessageRequest =
+    let private andFormatter leftValidation rightValidation validationRequest =
         sprintf "(%s AND %s)"
-            <| leftValidation.FormatMessage formatMessageRequest
-            <| rightValidation.FormatMessage formatMessageRequest
+            <| leftValidation.FormatMessage validationRequest
+            <| rightValidation.FormatMessage validationRequest
+            
+    let private orFormatter leftValidation rightValidation validationRequest =
+        let isLeftValid = leftValidation.IsValid validationRequest
+        let isRightValid = rightValidation.IsValid validationRequest
+        let leftValidationMessage = leftValidation.FormatMessage validationRequest
+        let rightValidationMessage = rightValidation.FormatMessage validationRequest
+
+        match (isLeftValid, isRightValid) with
+        | (false, false) -> sprintf "(%s AND %s)" leftValidationMessage rightValidationMessage
+        | (false, true)  -> leftValidationMessage
+        | (true, false)  -> rightValidationMessage
+        | (true, true)   -> String.Empty        
 
     let private getRequestValue (request : ValidationRequest) =
         request.Value
@@ -163,6 +179,12 @@ module ValidationRules =
             IsValid = isAndInvalid leftValidation rightValidation >> not
             FormatMessage = andFormatter leftValidation rightValidation
         }
+        
+    let private orValidation leftValidation rightValidation =
+        {
+            IsValid = isOrInvalid leftValidation rightValidation >> not
+            FormatMessage = orFormatter leftValidation rightValidation
+        }
 
     let rec private getVariableValidation invalidWhen =
         match invalidWhen with
@@ -172,6 +194,9 @@ module ValidationRules =
         | IsLessThan target -> isLessThanValidation target
         | IsMoreThan target -> isMoreThanValidation target
         | And (left, right) -> andValidation 
+                                <| getVariableValidation left 
+                                <| getVariableValidation right
+        | Or (left, right)  -> orValidation 
                                 <| getVariableValidation left 
                                 <| getVariableValidation right
            

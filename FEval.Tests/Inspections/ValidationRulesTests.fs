@@ -2287,3 +2287,59 @@ type ValidationRulesTests() =
                <| -10
                <| false
                <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+    member __.``ifVariable - or rule - left and right operands are invalid - formats left validation message and right validation message as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" ((IsLessThan <| Value 10) ||| IsNegative) ReturnError
+            <| -10
+            <| "(should not be less than 10 : Int32 AND should not be negative)"
+            <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+    member __.``ifVariable - or rule - only left operand is invalid - formats left validation message as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+            <| 0
+            <| "should not be zero"
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - or rule - only right operand is invalid - formats right validation message as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+            <| -10
+            <| "should not be negative"
+            <| createVariableValidationContext "Var"
+
+    [<TestMethod>]
+       member __.``ifVariable - or rule - left operand is valid, right operand is valid - returns is valid true``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+               <| 6
+               <| true
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - or rule - left operand is invalid, right operand is valid - returns is valid false``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+               <| 0
+               <| false
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - or rule - left operand is valid, right operand is invalid - returns is valid false``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+               <| -10
+               <| false
+               <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+       member __.``ifVariable - or rule - left operand is invalid, right operand is invalid - returns is valid false``() = 
+           assertVariableRuleIsValid 
+               <| ifVariable "Var" ((IsLessThan <| Value 10) ||| IsNegative) ReturnError
+               <| -10
+               <| false
+               <| createVariableValidationContext "Var"
