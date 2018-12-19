@@ -83,21 +83,26 @@ module EvaluationEvents =
     let private runPostInspections preInspectionContext postInspectionContext =
         postMessage <| PostInspectionMessage (preInspectionContext, postInspectionContext)
 
+    let private errorAgentLoop (inbox : MailboxProcessor<ErrorAgentMessage>) =
+        let rec loop errorMessage =
+            async {
+                let! message = inbox.Receive()
+                
+                match message with
+                | SetError error -> 
+                    // Loop again with the error message that was set
+                    return! loop error
+                | GetError reply -> 
+                    // Return the current error message
+                    reply.Reply errorMessage
+                    // Keep the loop with the current error message
+                    return! loop errorMessage
+            }
+        // Start the loop with no error messge
+        loop ""
+
     let private createErrorAgent() = 
-        MailboxProcessor<ErrorAgentMessage>.Start(fun inbox ->
-            
-            let rec loop errorMessage =
-                async {
-                    let! message = inbox.Receive()
-                    
-                    match message with
-                    | SetError error -> 
-                        return! loop error
-                    | GetError reply -> 
-                        reply.Reply errorMessage
-                        return! loop errorMessage
-                }
-            loop "")
+        MailboxProcessor<ErrorAgentMessage>.Start(errorAgentLoop)
     
     let private getInspectionError (errorAgent : ErrorAgent) =
         errorAgent.PostAndReply (fun reply -> GetError reply)
