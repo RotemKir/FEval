@@ -64,6 +64,9 @@ module ValidationRules =
         | IsDateTime value v -> v > (target :?> DateTime)
         | _                 -> false
     
+    let private isEqualTo value (target : obj) =
+        value = target
+
     let private isEmptyString value =
         String.IsNullOrEmpty value
 
@@ -106,6 +109,10 @@ module ValidationRules =
     let private isEmptyFormatter _ =
         "should not be empty"
 
+    let private isEqualtoFormatter target validationRequest =
+        sprintf "should not equal %s"
+            <| formatRuleTarget target validationRequest.ValidationContext
+
     let private isLessThanFormatter target validationRequest =
         sprintf "should not be less than %s"
             <| formatRuleTarget target validationRequest.ValidationContext
@@ -139,9 +146,9 @@ module ValidationRules =
         | Value targetValue -> Some targetValue 
         | Variable name     -> getVariableValue request.ValidationContext name
 
-    let private isValidTarget target isValid request  =
+    let private isInvalidTarget target isInValid request  =
         match getRuleTargetValue target request with
-        | Some targetValue -> isValid request.Value targetValue
+        | Some targetValue -> isInValid request.Value targetValue
         | None             -> false
 
     let private isZeroValidation =
@@ -162,15 +169,21 @@ module ValidationRules =
             FormatMessage = isEmptyFormatter
         }
     
+    let private isValidation target =
+        {
+            IsValid = isInvalidTarget target isEqualTo >> not
+            FormatMessage = isEqualtoFormatter target
+        }
+    
     let private isLessThanValidation target =
         {
-            IsValid = isValidTarget target isLessThan >> not
+            IsValid = isInvalidTarget target isLessThan >> not
             FormatMessage = isLessThanFormatter target
         }
     
     let private isMoreThanValidation target =
         {
-            IsValid = isValidTarget target isMoreThan >> not
+            IsValid = isInvalidTarget target isMoreThan >> not
             FormatMessage = isMoreThanFormatter target
         }
     
@@ -191,6 +204,7 @@ module ValidationRules =
         | IsZero            -> isZeroValidation
         | IsNegative        -> isNegativeValidation
         | IsEmpty           -> isEmptyValidation
+        | Is target         -> isValidation target
         | IsLessThan target -> isLessThanValidation target
         | IsMoreThan target -> isMoreThanValidation target
         | And (left, right) -> andValidation 

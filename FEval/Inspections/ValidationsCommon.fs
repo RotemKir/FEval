@@ -24,6 +24,7 @@ module ValidationsCommon =
         | IsZero
         | IsNegative
         | IsEmpty
+        | Is of RuleTarget
         | IsLessThan of RuleTarget
         | IsMoreThan of RuleTarget
         | And of InvalidWhen * InvalidWhen

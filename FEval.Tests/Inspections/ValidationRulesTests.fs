@@ -2246,7 +2246,7 @@ type ValidationRulesTests() =
             <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
             <| new DateTime(2018, 1, 20)
             <| true
-            <| validationContext  
+            <| validationContext
     
     [<TestMethod>]
     member __.``ifVariable - and rule - formats left validation message and right validation message as error``() = 
@@ -2343,3 +2343,74 @@ type ValidationRulesTests() =
                <| -10
                <| false
                <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is value - formats error message and target value as error``() = 
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (Is <| Value 5) ReturnError
+            <| 5
+            <| "should not equal 5 : Int32"
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is variable - formats error message and target namd and value as error``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", 5 :> obj) |]
+            }
+        assertVariableRuleErrorMessage 
+            <| ifVariable "Var" (Is <| Variable "Other Var") ReturnError
+            <| 5
+            <| "should not equal variable 'Other Var', 5 : Int32"
+            <| validationContext
+
+    [<TestMethod>]
+    member __.``ifVariable - is value - equals to value - returns is valid false``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (Is <| Value 4) ReturnError
+            <| 4
+            <| false
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is value - not equals to value - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (Is <| Value 4) ReturnError
+            <| 3
+            <| true
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is variable - variable doesn't exist - returns is valid true``() = 
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (Is <| Variable "Other Var") ReturnError
+            <| 6
+            <| true
+            <| createVariableValidationContext "Var"
+    
+    [<TestMethod>]
+    member __.``ifVariable - is variable - equals to variable - returns is valid false``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", 10 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (Is <| Variable "Other Var") ReturnError
+            <| 10
+            <| false
+            <| validationContext
+            
+    [<TestMethod>]
+    member __.``ifVariable - is variable - not equals to variable - returns is valid true``() = 
+        let validationContext = 
+            { 
+                createVariableValidationContext "Var" 
+                with Variables = new Map<string, obj> [| ("Other Var", 10 :> obj) |]
+            }
+        assertVariableRuleIsValid 
+            <| ifVariable "Var" (Is <| Variable "Other Var") ReturnError
+            <| 5
+            <| true
+            <| validationContext
