@@ -25,8 +25,7 @@ module Factorial =
                 <| [| inspector |]
         Console.WriteLine("Result is: {0}", result)
         Console.WriteLine("Press any key to continue")
-        Console.Read() |> ignore
-        Console.ReadLine() |> ignore
+        Console.ReadKey() |> ignore
 
     let runFactorialWithPerformance() =
         PerformanceInspector.createNew <| PerformanceInspector.createTxtLogger @"Logs\Perfromance.txt"
