@@ -50,7 +50,7 @@
     <Compile Include="Inspections\TypeFormattersTests.fs" />
     <Compile Include="Inspections\PerformanceInspectorTests.fs" />
     <Compile Include="Inspections\MethodCallInspectorTests.fs" />
-    <Compile Include="Inspections\DataSetInspectorTests.fs" />
+    <Compile Include="Inspections\SetValueInspectorTests.fs" />
     <Compile Include="Inspections\ValidationRulesTests.fs" />
     <Compile Include="Inspections\ValidatorTests.fs" />
     <Compile Include="Inspections\ValidationInspectorTests.fs" />

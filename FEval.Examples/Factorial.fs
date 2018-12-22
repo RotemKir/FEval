@@ -31,6 +31,6 @@ module Factorial =
         PerformanceInspector.createNew <| PerformanceInspector.createTxtLogger @"Logs\Perfromance.txt"
         |> runFactorialWithInspection
 
-    let runFactorialWithDataSet() =
-        DataSetInspector.createNew <| DataSetInspector.createTxtLogger @"Logs\DataSet.txt"
+    let runFactorialWithSetValue() =
+        SetValueInspector.createNew <| SetValueInspector.createTxtLogger @"Logs\SetValue.txt"
         |> runFactorialWithInspection

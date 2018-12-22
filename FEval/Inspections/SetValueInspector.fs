@@ -1,7 +1,7 @@
 ﻿namespace FEval.Inspections
 
 [<RequireQualifiedAccess>]
-module DataSetInspector =
+module SetValueInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
     open FEval.Inspections.InspectionsCommon

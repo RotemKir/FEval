@@ -10,13 +10,13 @@ module Main =
         Console.Clear()
         Console.WriteLine("Enter the number of the option to run, any other key will exit:")
         Console.WriteLine("1. Factorial with performance inspection")
-        Console.WriteLine("2. Factorial with data set inspection")
+        Console.WriteLine("2. Factorial with set value inspection")
         Console.WriteLine()
 
     let private getOptionToRun optionValue =
         match optionValue with
         | "1" -> Some <| runFactorialWithPerformance
-        | "2" -> Some <| runFactorialWithDataSet
+        | "2" -> Some <| runFactorialWithSetValue
         | _   -> None
 
     let private createLogFolder() =
