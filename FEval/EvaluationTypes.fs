@@ -94,3 +94,5 @@ module EvaluationTypes =
     and ErrorAgentMessage =
         | SetError of string
         | GetError of AsyncReplyChannel<string>
+    
+    exception EvaluationException of Exception * EvaluationState

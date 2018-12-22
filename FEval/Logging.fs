@@ -1,6 +1,6 @@
 ﻿namespace FEval
 
-module Logging =
+module internal Logging =
     open System.IO
     open System
     open FEval.EvaluationTypes
@@ -102,4 +102,3 @@ module Logging =
         match fileConfig.Formatter with
         | SingleLine formatter -> appendLineToFile formatter fileName
         | MultiLine formatter  -> appendLinesToFile formatter fileName
-        

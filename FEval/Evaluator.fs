@@ -1,7 +1,7 @@
 ﻿namespace FEval
 
 [<RequireQualifiedAccess>]
-module Evaluator =
+module  internal Evaluator =
     open System    
     open System.Collections.Generic
     open System.Diagnostics

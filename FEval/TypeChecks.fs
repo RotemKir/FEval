@@ -1,6 +1,6 @@
 ﻿namespace FEval
 
-module TypeChecks =
+module internal TypeChecks =
     open System
     open Microsoft.FSharp.Reflection
     open System.Collections

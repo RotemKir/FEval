@@ -1,6 +1,6 @@
 ﻿namespace FEval
 
-module Loops =
+module internal Loops =
     open FEval.EvaluationTypes
     open Microsoft.FSharp.Quotations
 

@@ -1,7 +1,7 @@
 ﻿namespace FEval
 
 [<RequireQualifiedAccess>]
-module Reflection =
+module internal Reflection =
     open System
     open System.Reflection
     open Microsoft.FSharp.Reflection

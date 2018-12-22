@@ -1,7 +1,7 @@
 ﻿namespace FEval
 
 [<RequireQualifiedAccess>]
-module Methods =
+module internal Methods =
 
     let byte = "Microsoft.FSharp.Core.Operators.ToByte"
 

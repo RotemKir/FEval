@@ -2,9 +2,9 @@
 
 open FEval.TypeChecks
 
-type Operators =
+type internal Operators =
 
-    static member subtract (x : obj) (y : obj) =
+    static member public subtract (x : obj) (y : obj) =
         match x.GetType() with
         | IsInt16   x xTyped -> xTyped - (y :?> int16)   :> obj
         | IsInt32   x xTyped -> xTyped - (y :?> int32)   :> obj

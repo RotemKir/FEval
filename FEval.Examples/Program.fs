@@ -1,8 +1,8 @@
 ﻿namespace FEval.Examples
 
 open System
-open Factorial
 open System.IO
+open Factorial
 
 module Main =
     

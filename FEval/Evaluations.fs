@@ -5,6 +5,7 @@ module Evaluations =
     open Microsoft.FSharp.Quotations.Patterns
     open FEval.ExceptionHandling
     open FEval.EvaluationEvents
+    open FEval.EvaluationTypes
     open FEval.Loops
     open System
     open System.Reflection
@@ -12,6 +13,7 @@ module Evaluations =
     let private objType = typeof<obj>
     let private convertType = typeof<Convert>
     let private operatorsType = typeof<Operators>
+    let private nonPublicStaticBindingFlags = BindingFlags.Static ||| BindingFlags.NonPublic
 
     // Private functions
 
@@ -31,17 +33,17 @@ module Evaluations =
                 (Methods.uInt16,      convertType.GetMethod("ToUInt16",  [|objType|]))
                 (Methods.uInt32,      convertType.GetMethod("ToUInt32",  [|objType|]))
                 (Methods.uInt64,      convertType.GetMethod("ToUInt64",  [|objType|]))
-                (Methods.subtraction, operatorsType.GetMethod("subtract"))
-                (Methods.unaryNegate, operatorsType.GetMethod("unaryNegate"))
-                (Methods.unaryPlus,   operatorsType.GetMethod("unaryPlus"))
-                (Methods.division,    operatorsType.GetMethod("division"))
-                (Methods.modulus,     operatorsType.GetMethod("modulus"))
-                (Methods.bitwiseAnd,  operatorsType.GetMethod("bitwiseAnd"))
-                (Methods.bitwiseOr,   operatorsType.GetMethod("bitwiseOr"))
-                (Methods.exclusiveOr, operatorsType.GetMethod("exclusiveOr"))
-                (Methods.logicalNot,  operatorsType.GetMethod("logicalNot"))
-                (Methods.leftShift,   operatorsType.GetMethod("leftShift"))
-                (Methods.rightShift,  operatorsType.GetMethod("rightShift"))
+                (Methods.subtraction, operatorsType.GetMethod("subtract",    nonPublicStaticBindingFlags))
+                (Methods.unaryNegate, operatorsType.GetMethod("unaryNegate", nonPublicStaticBindingFlags))
+                (Methods.division,    operatorsType.GetMethod("division",    nonPublicStaticBindingFlags))
+                (Methods.modulus,     operatorsType.GetMethod("modulus",     nonPublicStaticBindingFlags))
+                (Methods.bitwiseOr,   operatorsType.GetMethod("bitwiseOr",   nonPublicStaticBindingFlags))
+                (Methods.unaryPlus,   operatorsType.GetMethod("unaryPlus",   nonPublicStaticBindingFlags))
+                (Methods.bitwiseAnd,  operatorsType.GetMethod("bitwiseAnd",  nonPublicStaticBindingFlags))
+                (Methods.exclusiveOr, operatorsType.GetMethod("exclusiveOr", nonPublicStaticBindingFlags))
+                (Methods.logicalNot,  operatorsType.GetMethod("logicalNot",  nonPublicStaticBindingFlags))
+                (Methods.leftShift,   operatorsType.GetMethod("leftShift",   nonPublicStaticBindingFlags))
+                (Methods.rightShift,  operatorsType.GetMethod("rightShift",  nonPublicStaticBindingFlags))
             |]
 
     let private evalValue state (value, _) =
