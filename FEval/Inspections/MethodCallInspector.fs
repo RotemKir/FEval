@@ -1,11 +1,11 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
 module MethodCallInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
-    open FEval.Inspections.InspectionsCommon
-    open FEval.Inspections.TypeFormatters
+    open FEval.Inspectors.InspectionsCommon
+    open FEval.Inspectors.TypeFormatters
     open FEval.Logging
     open System.Reflection
 

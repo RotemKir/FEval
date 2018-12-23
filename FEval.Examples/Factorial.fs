@@ -2,6 +2,7 @@
 
 open FEval.Evaluations
 open FEval.Inspections
+open FEval.Inspectors
 open System
 
 module Factorial =
@@ -32,25 +33,20 @@ module Factorial =
         runFactorialWithInspections [| inspector |]
 
     let runFactorialWithPerformance() =
-        PerformanceInspector.createNew 
-            <| PerformanceInspector.createTxtLogger @"Logs\Perfromance.txt"
+        inspectionOf Performance <| LogToTextFile @"Logs\Perfromance.txt"
         |> runFactorialWithInspection
 
     let runFactorialWithSetValue() =
-        SetValueInspector.createNew 
-            <| SetValueInspector.createTxtLogger @"Logs\SetValue.txt"
+        inspectionOf SettingValues <| LogToTextFile @"Logs\SetValue.txt"
         |> runFactorialWithInspection
 
     let runFactorialWithMethodCall() =
-        MethodCallInspector.createNew 
-            <| MethodCallInspector.createTxtLogger @"Logs\MethodCall.txt"
+        inspectionOf MethodCalls <| LogToTextFile @"Logs\MethodCall.txt"
         |> runFactorialWithInspection
 
     let runFactorialWithMethodCallAndSetValue() =
         [| 
-            MethodCallInspector.createNew 
-                <| MethodCallInspector.createTxtLogger @"Logs\MethodCallAndSetValue.txt"
-            SetValueInspector.createNew 
-                <| SetValueInspector.createTxtLogger @"Logs\MethodCallAndSetValue.txt"
+            inspectionOf SettingValues <| LogToTextFile @"Logs\MethodCallAndSetValue.txt"
+            inspectionOf MethodCalls <| LogToTextFile @"Logs\MethodCallAndSetValue.txt"
         |]
         |> runFactorialWithInspections

@@ -2,7 +2,7 @@
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Tests.TestHelpers
-open FEval.Inspections
+open FEval.Inspectors
 open System.Collections.Generic
 open FEval.EvaluationTypes
 

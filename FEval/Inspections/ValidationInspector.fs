@@ -1,9 +1,9 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 open FEval.EvaluationEvents
-open FEval.Inspections.ValidationsCommon
-open FEval.Logging
 open FEval.EvaluationTypes
+open FEval.Inspectors.ValidationsCommon
+open FEval.Logging
 
 [<RequireQualifiedAccess>]
 module ValidationInspector =

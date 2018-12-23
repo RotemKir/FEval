@@ -63,6 +63,7 @@
     <Compile Include="Inspections\ValidationRules.fs" />
     <Compile Include="Inspections\Validator.fs" />
     <Compile Include="Inspections\ValidationInspector.fs" />
+    <Compile Include="Inspections.fs" />
     <Content Include="packages.config" />
     <Content Include="Todo.txt" />
   </ItemGroup>

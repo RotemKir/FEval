@@ -1,7 +1,7 @@
 ﻿namespace FEval.Tests
 
 open FEval.Tests.TestHelpers
-open FEval.Inspections.TypeFormatters
+open FEval.Inspectors.TypeFormatters
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System
 open Microsoft.FSharp.Reflection

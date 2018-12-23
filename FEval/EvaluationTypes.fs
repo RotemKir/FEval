@@ -89,6 +89,8 @@ module EvaluationTypes =
             InspectionResult : 'a
         }
 
+    and InspectionLogger<'a> = LogEvent<'a> -> unit 
+
     and ErrorAgent = MailboxProcessor<ErrorAgentMessage>
 
     and ErrorAgentMessage =

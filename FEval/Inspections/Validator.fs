@@ -1,10 +1,10 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
 module Validator =
-    open FEval.Inspections.ValidationsCommon
     open FEval.EvaluationTypes
-    open FEval.Inspections.TypeFormatters
+    open FEval.Inspectors.TypeFormatters
+    open FEval.Inspectors.ValidationsCommon
 
     let private isCurrentEventRelevantForVariableRule 
             (validationRule : VariableRuleDefinition) 

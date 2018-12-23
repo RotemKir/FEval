@@ -1,8 +1,8 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 module ValidationRules =
-    open FEval.Inspections.TypeFormatters
-    open FEval.Inspections.ValidationsCommon
+    open FEval.Inspectors.TypeFormatters
+    open FEval.Inspectors.ValidationsCommon
     open FEval.TypeChecks
     open System
            

@@ -2,8 +2,8 @@
 
 open Microsoft.FSharp.Quotations
 open Microsoft.VisualStudio.TestTools.UnitTesting
-open FEval.Inspections
-open FEval.Inspections.ValidationsCommon
+open FEval.Inspectors
+open FEval.Inspectors.ValidationsCommon
 open FEval.EvaluationTypes
 
 [<TestClass>]

@@ -1,4 +1,4 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 open FEval.EvaluationTypes
 open System.Collections.Generic

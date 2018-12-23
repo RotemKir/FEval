@@ -1,12 +1,12 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
 module SetValueInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
-    open FEval.Inspections.InspectionsCommon
+    open FEval.Inspectors.InspectionsCommon
+    open FEval.Inspectors.TypeFormatters
     open FEval.Logging
-    open FEval.Inspections.TypeFormatters
 
     type InspectionResult =
         {

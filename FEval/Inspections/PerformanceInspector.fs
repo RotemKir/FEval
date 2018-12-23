@@ -1,12 +1,12 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
 module PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
-    open FEval.Inspections.InspectionsCommon
-    open FEval.Inspections.TypeFormatters
+    open FEval.Inspectors.InspectionsCommon
+    open FEval.Inspectors.TypeFormatters
     open FEval.Logging
     open Microsoft.FSharp.Quotations
     open Microsoft.FSharp.Quotations.Patterns

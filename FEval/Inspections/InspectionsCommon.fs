@@ -1,4 +1,4 @@
-﻿namespace FEval.Inspections
+﻿namespace FEval.Inspectors
 
 module InspectionsCommon =
     open Microsoft.FSharp.Quotations.Patterns
