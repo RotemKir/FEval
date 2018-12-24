@@ -2,7 +2,6 @@
 
 open FEval.Evaluations
 open FEval.Inspections
-open FEval.Inspectors
 open System
 
 module Factorial =
@@ -27,7 +26,6 @@ module Factorial =
         Console.WriteLine("Result is: {0}", result)
         Console.WriteLine("Press any key to continue")
         Console.ReadKey() |> ignore
-
     
     let private runFactorialWithInspection inspector =
         runFactorialWithInspections [| inspector |]
