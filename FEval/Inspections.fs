@@ -1,14 +1,16 @@
 ﻿namespace FEval
 
+open FEval.Inspectors.ValidationsCommon
+
 module Inspections =
     
-    open FEval.EvaluationTypes
     open FEval.Inspectors
 
     type InspectionType =
     | Performance
     | MethodCalls
     | SettingValues
+    | Validation of RuleDefinition seq
 
     type InspectionLogging<'a> =
     | LogToTextFile of string
@@ -28,3 +30,7 @@ module Inspections =
             -> SetValueInspector.createNew <| SetValueInspector.createTxtLogger fileName
         | (SettingValues, LogToCsvFile fileName) 
             -> SetValueInspector.createNew <| SetValueInspector.createCsvLogger fileName
+        | (Validation rules, LogToTextFile fileName) 
+            -> ValidationInspector.createNew rules <| ValidationInspector.createTxtLogger fileName
+        | (Validation rules, LogToCsvFile fileName) 
+            -> ValidationInspector.createNew rules <| ValidationInspector.createCsvLogger fileName
