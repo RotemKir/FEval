@@ -1,7 +1,7 @@
 ﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
-module Validator =
+module internal Validator =
     open FEval.EvaluationTypes
     open FEval.Inspectors.TypeFormatters
     open FEval.Inspectors.ValidationsCommon

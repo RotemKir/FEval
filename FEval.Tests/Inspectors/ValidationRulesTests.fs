@@ -3,7 +3,7 @@
 open Microsoft.FSharp.Quotations
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspectors.ValidationsCommon
-open FEval.Inspectors.ValidationRules
+open FEval.Inspections
 open FEval.EvaluationTypes
 open System
 

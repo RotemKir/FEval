@@ -1,7 +1,7 @@
 ﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
-module SetValueInspector =
+module internal SetValueInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
     open FEval.Inspectors.InspectionsCommon

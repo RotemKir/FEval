@@ -6,7 +6,7 @@ open FEval.Inspectors.ValidationsCommon
 open FEval.Logging
 
 [<RequireQualifiedAccess>]
-module ValidationInspector =
+module internal ValidationInspector =
 
     type InspectionResult =
         {

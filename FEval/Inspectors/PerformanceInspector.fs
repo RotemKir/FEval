@@ -1,7 +1,7 @@
 ﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
-module PerformanceInspector =
+module internal PerformanceInspector =
     open FEval
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents

@@ -1,6 +1,7 @@
 ﻿namespace FEval
 
 open FEval.Inspectors.ValidationsCommon
+open FEval.Inspectors.ValidationRules
 
 module Inspections =
     
@@ -34,3 +35,11 @@ module Inspections =
             -> ValidationInspector.createNew rules <| ValidationInspector.createTxtLogger fileName
         | (Validation rules, LogToCsvFile fileName) 
             -> ValidationInspector.createNew rules <| ValidationInspector.createCsvLogger fileName
+    
+    let ifVariable name invalidWhen thenReturn =
+        VariableRule
+            {
+                VariableName = name
+                Validation = getVariableValidation invalidWhen
+                ReturnWhenInvalid = thenReturn
+            }

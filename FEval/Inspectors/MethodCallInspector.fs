@@ -1,7 +1,7 @@
 ﻿namespace FEval.Inspectors
 
 [<RequireQualifiedAccess>]
-module MethodCallInspector =
+module internal MethodCallInspector =
     open FEval.EvaluationTypes
     open FEval.EvaluationEvents
     open FEval.Inspectors.InspectionsCommon

@@ -1,6 +1,6 @@
 ﻿namespace FEval.Inspectors
 
-module ValidationRules =
+module internal ValidationRules =
     open FEval.Inspectors.TypeFormatters
     open FEval.Inspectors.ValidationsCommon
     open FEval.TypeChecks
@@ -199,7 +199,7 @@ module ValidationRules =
             FormatMessage = orFormatter leftValidation rightValidation
         }
 
-    let rec private getVariableValidation invalidWhen =
+    let rec internal getVariableValidation invalidWhen =
         match invalidWhen with
         | IsZero            -> isZeroValidation
         | IsNegative        -> isNegativeValidation
@@ -213,11 +213,3 @@ module ValidationRules =
         | Or (left, right)  -> orValidation 
                                 <| getVariableValidation left 
                                 <| getVariableValidation right
-           
-    let ifVariable name invalidWhen thenReturn =
-        VariableRule
-            {
-                VariableName = name
-                Validation = getVariableValidation invalidWhen
-                ReturnWhenInvalid = thenReturn
-            }
