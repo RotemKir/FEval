@@ -3,6 +3,7 @@
 open Microsoft.FSharp.Quotations
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FEval.Inspectors.ValidationsCommon
+open FEval.Inspectors.ValidationRules
 open FEval.Inspections
 open FEval.EvaluationTypes
 open System
@@ -25,17 +26,14 @@ type ValidationRulesTests() =
         | VariableRule definition -> assertion definition
         | _                       -> Assert.Fail("Not a variable rule")
 
-    let assertVariableRuleErrorMessage rule value expectedErrorMessage validationContext =
-        assertVariableRule 
-            <| rule
-            <| fun definition ->
-                let actualErrorMessage = 
-                    definition.Validation.FormatMessage 
-                        {
-                            Value = value
-                            ValidationContext = validationContext
-                        }
-                Assert.AreEqual(expectedErrorMessage, actualErrorMessage)
+    let assertVariableRuleErrorMessage validation value expectedErrorMessage validationContext =
+        let validationRequest = 
+            {
+                Value = value
+                ValidationContext = validationContext
+            }
+        let actualErrorMessage = validation.FormatMessage validationRequest
+        Assert.AreEqual(expectedErrorMessage, actualErrorMessage)
 
     let assertVariableRuleIsValid rule value isValid validationContext =
         let validationRequest = { Value = value ; ValidationContext = validationContext }
@@ -45,27 +43,9 @@ type ValidationRulesTests() =
                 Assert.AreEqual(isValid, definition.Validation.IsValid validationRequest)
 
     [<TestMethod>]
-    member __.``ifVariable - set variable name - reutrns rule with variable name``() = 
-        assertVariableRule 
-            <| ifVariable "Var" IsZero ReturnError
-            <| fun definition -> Assert.AreEqual("Var", definition.VariableName)
-    
-    [<TestMethod>]
-    member __.``ifVariable - returns error when invalid - reutrns rule that returns error``() = 
-        assertVariableRule 
-            <| ifVariable "Var" IsZero ReturnError 
-            <| fun definition -> Assert.AreEqual(ReturnError, definition.ReturnWhenInvalid)
-    
-    [<TestMethod>]
-    member __.``ifVariable - returns warning when invalid - reutrns rule that returns warning``() = 
-        assertVariableRule 
-            <| ifVariable "Var" IsZero ReturnWarning
-            <| fun definition -> Assert.AreEqual(ReturnWarning, definition.ReturnWhenInvalid)
-
-    [<TestMethod>]
-    member __.``ifVariable - is zero - formats error message as error``() = 
+    member __.``getVariableValidation - is zero - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" IsZero ReturnError
+            <| getVariableValidation IsZero
             <| 0
             <| "should not be zero"
             <| createVariableValidationContext "Var"
@@ -255,9 +235,9 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
-    member __.``ifVariable - is negative - formats error message as error``() = 
+    member __.``getVariableValidation - is negative - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" IsNegative ReturnError
+            <| getVariableValidation IsNegative
             <| -8
             <| "should not be negative"
             <| createVariableValidationContext "Var"
@@ -415,9 +395,9 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
             
     [<TestMethod>]
-    member __.``ifVariable - is empty - formats error message``() = 
+    member __.``getVariableValidation - is empty - formats error message``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" IsEmpty ReturnError
+            <| getVariableValidation IsEmpty
             <| [||]
             <| "should not be empty"
             <| createVariableValidationContext "Var"
@@ -495,30 +475,30 @@ type ValidationRulesTests() =
             <| createVariableValidationContext "Var"
             
     [<TestMethod>]
-    member __.``ifVariable - is less than value - formats error message and target value as error``() = 
+    member __.``getVariableValidation  - is less than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsLessThan <| Value 4) ReturnError
+            <| getVariableValidation (IsLessThan <| Value 4)
             <| 3
             <| "should not be less than 4 : Int32"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is less than variable - formats error message and target namd and value as error``() = 
+    member __.``getVariableValidation - is less than variable - formats error message and target namd and value as error``() = 
         let validationContext = 
             { 
                 createVariableValidationContext "Var" 
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| getVariableValidation (IsLessThan <| Variable "Other Var")
             <| 3
             <| "should not be less than variable 'Other Var', 4 : Int32"
             <| validationContext
 
     [<TestMethod>]
-    member __.``ifVariable - is less than variable that doesn't exist - formats error message as error``() = 
+    member __.``getVariableValidation - is less than variable that doesn't exist - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsLessThan <| Variable "Other Var") ReturnError
+            <| getVariableValidation (IsLessThan <| Variable "Other Var")
             <| 3
             <| "should not be less than (null)"
             <| createVariableValidationContext "Var"
@@ -1376,22 +1356,22 @@ type ValidationRulesTests() =
             <| validationContext
             
     [<TestMethod>]
-    member __.``ifVariable - is more than value - formats error message and target value as error``() = 
+    member __.``getVariableValidation - is more than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsMoreThan <| Value 4) ReturnError
+            <| getVariableValidation (IsMoreThan <| Value 4)
             <| 5
             <| "should not be more than 4 : Int32"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is more than variable - formats error message and target namd and value as error``() = 
+    member __.``getVariableValidation - is more than variable - formats error message and target namd and value as error``() = 
         let validationContext = 
             { 
                 createVariableValidationContext "Var" 
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsMoreThan <| Variable "Other Var") ReturnError
+            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
             <| 5
             <| "should not be more than variable 'Other Var', 4 : Int32"
             <| validationContext
@@ -2249,9 +2229,9 @@ type ValidationRulesTests() =
             <| validationContext
     
     [<TestMethod>]
-    member __.``ifVariable - and rule - formats left validation message and right validation message as error``() = 
+    member __.``getVariableValidation - and rule - formats left validation message and right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" ((IsLessThan <| Value 10) &&& IsNegative) ReturnError
+            <| getVariableValidation ((IsLessThan <| Value 10) &&& IsNegative)
             <| -10
             <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
@@ -2289,25 +2269,25 @@ type ValidationRulesTests() =
                <| createVariableValidationContext "Var"
 
     [<TestMethod>]
-    member __.``ifVariable - or rule - left and right operands are invalid - formats left validation message and right validation message as error``() = 
+    member __.``getVariableValidation - or rule - left and right operands are invalid - formats left validation message and right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" ((IsLessThan <| Value 10) ||| IsNegative) ReturnError
+            <| getVariableValidation ((IsLessThan <| Value 10) ||| IsNegative)
             <| -10
             <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
 
     [<TestMethod>]
-    member __.``ifVariable - or rule - only left operand is invalid - formats left validation message as error``() = 
+    member __.``getVariableValidation - or rule - only left operand is invalid - formats left validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+            <| getVariableValidation (IsZero ||| IsNegative)
             <| 0
             <| "should not be zero"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - or rule - only right operand is invalid - formats right validation message as error``() = 
+    member __.``getVariableValidation - or rule - only right operand is invalid - formats right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (IsZero ||| IsNegative) ReturnError
+            <| getVariableValidation (IsZero ||| IsNegative)
             <| -10
             <| "should not be negative"
             <| createVariableValidationContext "Var"
@@ -2345,22 +2325,22 @@ type ValidationRulesTests() =
                <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is value - formats error message and target value as error``() = 
+    member __.``getVariableValidation - is value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (Is <| Value 5) ReturnError
+            <| getVariableValidation (Is <| Value 5)
             <| 5
             <| "should not equal 5 : Int32"
             <| createVariableValidationContext "Var"
     
     [<TestMethod>]
-    member __.``ifVariable - is variable - formats error message and target namd and value as error``() = 
+    member __.``getVariableValidation - is variable - formats error message and target namd and value as error``() = 
         let validationContext = 
             { 
                 createVariableValidationContext "Var" 
                 with Variables = new Map<string, obj> [| ("Other Var", 5 :> obj) |]
             }
         assertVariableRuleErrorMessage 
-            <| ifVariable "Var" (Is <| Variable "Other Var") ReturnError
+            <| getVariableValidation (Is <| Variable "Other Var")
             <| 5
             <| "should not equal variable 'Other Var', 5 : Int32"
             <| validationContext
