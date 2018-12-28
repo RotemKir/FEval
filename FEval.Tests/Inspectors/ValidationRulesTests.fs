@@ -32,7 +32,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0
             <| "should not be zero"
             <| createVariableValidationContext "Var"
@@ -40,7 +40,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int16 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0s
             <| false
             <| createVariableValidationContext "Var"
@@ -48,7 +48,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int16 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3s
             <| true
             <| createVariableValidationContext "Var"
@@ -56,7 +56,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0
             <| false
             <| createVariableValidationContext "Var"
@@ -64,7 +64,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3
             <| true
             <| createVariableValidationContext "Var"
@@ -72,7 +72,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int64 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0L
             <| false
             <| createVariableValidationContext "Var"
@@ -80,7 +80,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - int64 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3L
             <| true
             <| createVariableValidationContext "Var"
@@ -88,7 +88,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint16 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0us
             <| false
             <| createVariableValidationContext "Var"
@@ -96,7 +96,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint16 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3us
             <| true
             <| createVariableValidationContext "Var"
@@ -104,7 +104,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0u
             <| false
             <| createVariableValidationContext "Var"
@@ -112,7 +112,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3u
             <| true
             <| createVariableValidationContext "Var"
@@ -120,7 +120,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint64 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0UL
             <| false
             <| createVariableValidationContext "Var"
@@ -128,7 +128,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - uint64 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3UL
             <| true
             <| createVariableValidationContext "Var"
@@ -136,7 +136,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - byte - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0uy
             <| false
             <| createVariableValidationContext "Var"
@@ -144,7 +144,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - byte - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3uy
             <| true
             <| createVariableValidationContext "Var"
@@ -152,7 +152,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - sbyte - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0y
             <| false
             <| createVariableValidationContext "Var"
@@ -160,7 +160,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - sbyte - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3y
             <| true
             <| createVariableValidationContext "Var"
@@ -168,7 +168,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - float - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0.0
             <| false
             <| createVariableValidationContext "Var"
@@ -176,7 +176,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - float - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3.0
             <| true
             <| createVariableValidationContext "Var"
@@ -184,7 +184,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - float32 - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0.0f
             <| false
             <| createVariableValidationContext "Var"
@@ -192,7 +192,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - float32 - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -200,7 +200,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - decimal - is zero - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 0.0m
             <| false
             <| createVariableValidationContext "Var"
@@ -208,7 +208,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - decimal - is not zero - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| 3.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -216,7 +216,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is zero - string - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsZero
+            <| getVariableValidation ``Is Zero``
             <| "Hello"
             <| true
             <| createVariableValidationContext "Var"
@@ -224,7 +224,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8
             <| "should not be negative"
             <| createVariableValidationContext "Var"
@@ -232,7 +232,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int16 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8s
             <| false
             <| createVariableValidationContext "Var"
@@ -240,7 +240,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int16 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3s
             <| true
             <| createVariableValidationContext "Var"
@@ -248,7 +248,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int32 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8
             <| false
             <| createVariableValidationContext "Var"
@@ -256,7 +256,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3
             <| true
             <| createVariableValidationContext "Var"
@@ -264,7 +264,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int64 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8L
             <| false
             <| createVariableValidationContext "Var"
@@ -272,7 +272,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - int64 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3L
             <| true
             <| createVariableValidationContext "Var"
@@ -280,7 +280,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - uint16 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3us
             <| true
             <| createVariableValidationContext "Var"
@@ -288,7 +288,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - uint32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3u
             <| true
             <| createVariableValidationContext "Var"
@@ -296,7 +296,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - uint64 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3UL
             <| true
             <| createVariableValidationContext "Var"
@@ -304,7 +304,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - byte - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3uy
             <| true
             <| createVariableValidationContext "Var"
@@ -312,7 +312,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - sbyte - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8y
             <| false
             <| createVariableValidationContext "Var"
@@ -320,7 +320,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - sbyte - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3y
             <| true
             <| createVariableValidationContext "Var"
@@ -328,7 +328,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - float - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8.0
             <| false
             <| createVariableValidationContext "Var"
@@ -336,7 +336,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - float - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3.0
             <| true
             <| createVariableValidationContext "Var"
@@ -344,7 +344,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - float32 - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8.0f
             <| false
             <| createVariableValidationContext "Var"
@@ -352,7 +352,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - float32 - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -360,7 +360,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - decimal - is negative - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| -8.0m
             <| false
             <| createVariableValidationContext "Var"
@@ -368,7 +368,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - decimal - is not negative - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| 3.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -376,7 +376,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is negative - string - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsNegative
+            <| getVariableValidation ``Is Negative``
             <| "Hello"
             <| true
             <| createVariableValidationContext "Var"
@@ -384,7 +384,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - formats error message``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| [||]
             <| "should not be empty"
             <| createVariableValidationContext "Var"
@@ -392,7 +392,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - string - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| ""
             <| false
             <| createVariableValidationContext "Var"
@@ -400,7 +400,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - string - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| "Hello"
             <| true
             <| createVariableValidationContext "Var"
@@ -408,7 +408,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - int - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| 8
             <| true
             <| createVariableValidationContext "Var"
@@ -416,7 +416,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - seq - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| Seq.ofArray [||]
             <| false
             <| createVariableValidationContext "Var"
@@ -424,7 +424,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - seq - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| seq {1 .. 10}
             <| true
             <| createVariableValidationContext "Var"
@@ -432,7 +432,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - array - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| [||]
             <| false
             <| createVariableValidationContext "Var"
@@ -440,7 +440,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - array - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| [| 1 ; 2 ; 3 |]
             <| true
             <| createVariableValidationContext "Var"
@@ -448,7 +448,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - list - is empty - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| []
             <| false
             <| createVariableValidationContext "Var"
@@ -456,7 +456,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is empty - list - is not empty - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation IsEmpty
+            <| getVariableValidation ``Is Empty``
             <| [ 1 ; 2 ; 3 ]
             <| true
             <| createVariableValidationContext "Var"
@@ -464,7 +464,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation  - is less than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsLessThan <| Value 4)
+            <| getVariableValidation (``Is Less Than`` <| Value 4)
             <| 3
             <| "should not be less than 4 : Int32"
             <| createVariableValidationContext "Var"
@@ -477,7 +477,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3
             <| "should not be less than variable 'Other Var', 4 : Int32"
             <| validationContext
@@ -485,7 +485,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable that doesn't exist - formats error message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3
             <| "should not be less than (null)"
             <| createVariableValidationContext "Var"
@@ -493,7 +493,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int16 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4s)
+            <| getVariableValidation (``Is Less Than`` <| Value 4s)
             <| 6s
             <| true
             <| createVariableValidationContext "Var"
@@ -501,7 +501,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4s)
+            <| getVariableValidation (``Is Less Than`` <| Value 4s)
             <| 4s
             <| true
             <| createVariableValidationContext "Var"
@@ -509,7 +509,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int16 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4s)
+            <| getVariableValidation (``Is Less Than`` <| Value 4s)
             <| 3s
             <| false
             <| createVariableValidationContext "Var"
@@ -517,7 +517,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4)
+            <| getVariableValidation (``Is Less Than`` <| Value 4)
             <| 6
             <| true
             <| createVariableValidationContext "Var"
@@ -525,7 +525,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4)
+            <| getVariableValidation (``Is Less Than`` <| Value 4)
             <| 4
             <| true
             <| createVariableValidationContext "Var"
@@ -533,7 +533,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4)
+            <| getVariableValidation (``Is Less Than`` <| Value 4)
             <| 3
             <| false
             <| createVariableValidationContext "Var"
@@ -541,7 +541,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int64 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4L)
+            <| getVariableValidation (``Is Less Than`` <| Value 4L)
             <| 6L
             <| true
             <| createVariableValidationContext "Var"
@@ -549,7 +549,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4L)
+            <| getVariableValidation (``Is Less Than`` <| Value 4L)
             <| 4L
             <| true
             <| createVariableValidationContext "Var"
@@ -557,7 +557,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - int64 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4L)
+            <| getVariableValidation (``Is Less Than`` <| Value 4L)
             <| 3L
             <| false
             <| createVariableValidationContext "Var"
@@ -565,7 +565,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint16 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4us)
+            <| getVariableValidation (``Is Less Than`` <| Value 4us)
             <| 6us
             <| true
             <| createVariableValidationContext "Var"
@@ -573,7 +573,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4us)
+            <| getVariableValidation (``Is Less Than`` <| Value 4us)
             <| 4us
             <| true
             <| createVariableValidationContext "Var"
@@ -581,7 +581,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint16 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4us)
+            <| getVariableValidation (``Is Less Than`` <| Value 4us)
             <| 3us
             <| false
             <| createVariableValidationContext "Var"
@@ -589,7 +589,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4u)
+            <| getVariableValidation (``Is Less Than`` <| Value 4u)
             <| 6u
             <| true
             <| createVariableValidationContext "Var"
@@ -597,7 +597,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4u)
+            <| getVariableValidation (``Is Less Than`` <| Value 4u)
             <| 4u
             <| true
             <| createVariableValidationContext "Var"
@@ -605,7 +605,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4u)
+            <| getVariableValidation (``Is Less Than`` <| Value 4u)
             <| 3u
             <| false
             <| createVariableValidationContext "Var"
@@ -613,7 +613,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint64 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4UL)
+            <| getVariableValidation (``Is Less Than`` <| Value 4UL)
             <| 6UL
             <| true
             <| createVariableValidationContext "Var"
@@ -621,7 +621,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4UL)
+            <| getVariableValidation (``Is Less Than`` <| Value 4UL)
             <| 4UL
             <| true
             <| createVariableValidationContext "Var"
@@ -629,7 +629,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - uint64 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4UL)
+            <| getVariableValidation (``Is Less Than`` <| Value 4UL)
             <| 3UL
             <| false
             <| createVariableValidationContext "Var"
@@ -637,7 +637,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - byte - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4uy)
+            <| getVariableValidation (``Is Less Than`` <| Value 4uy)
             <| 6uy
             <| true
             <| createVariableValidationContext "Var"
@@ -645,7 +645,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - byte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4uy)
+            <| getVariableValidation (``Is Less Than`` <| Value 4uy)
             <| 4uy
             <| true
             <| createVariableValidationContext "Var"
@@ -653,7 +653,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - byte - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4uy)
+            <| getVariableValidation (``Is Less Than`` <| Value 4uy)
             <| 3uy
             <| false
             <| createVariableValidationContext "Var"
@@ -661,7 +661,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - sbyte - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4y)
+            <| getVariableValidation (``Is Less Than`` <| Value 4y)
             <| 6y
             <| true
             <| createVariableValidationContext "Var"
@@ -669,7 +669,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - sbyte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4y)
+            <| getVariableValidation (``Is Less Than`` <| Value 4y)
             <| 4y
             <| true
             <| createVariableValidationContext "Var"
@@ -677,7 +677,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - sbyte - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4y)
+            <| getVariableValidation (``Is Less Than`` <| Value 4y)
             <| 3y
             <| false
             <| createVariableValidationContext "Var"
@@ -685,7 +685,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0)
             <| 6.0
             <| true
             <| createVariableValidationContext "Var"
@@ -693,7 +693,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0)
             <| 4.0
             <| true
             <| createVariableValidationContext "Var"
@@ -701,7 +701,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0)
             <| 3.0
             <| false
             <| createVariableValidationContext "Var"
@@ -709,7 +709,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float32 - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0f)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0f)
             <| 6.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -717,7 +717,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0f)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0f)
             <| 4.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -725,7 +725,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - float32 - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0f)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0f)
             <| 3.0f
             <| false
             <| createVariableValidationContext "Var"
@@ -733,7 +733,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - decimal - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0m)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0m)
             <| 6.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -741,7 +741,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - decimal - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0m)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0m)
             <| 4.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -749,7 +749,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - decimal - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value 4.0m)
+            <| getVariableValidation (``Is Less Than`` <| Value 4.0m)
             <| 3.0m
             <| false
             <| createVariableValidationContext "Var"
@@ -757,7 +757,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - datetime - is more than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is Less Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 2, 20)
             <| true
             <| createVariableValidationContext "Var"
@@ -765,7 +765,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - datetime - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is Less Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 1, 29)
             <| true
             <| createVariableValidationContext "Var"
@@ -773,7 +773,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than value - datetime - is less than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is Less Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 1, 20)
             <| false
             <| createVariableValidationContext "Var"
@@ -781,7 +781,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - int16 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6s
             <| true
             <| createVariableValidationContext "Var"
@@ -794,7 +794,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6s
             <| true
             <| validationContext 
@@ -807,7 +807,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4s
             <| true
             <| validationContext
@@ -820,7 +820,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3s
             <| false
             <| validationContext
@@ -828,7 +828,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - int32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6
             <| true
             <| createVariableValidationContext "Var"
@@ -841,7 +841,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6
             <| true
             <| validationContext
@@ -854,7 +854,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4
             <| true
             <| validationContext
@@ -867,7 +867,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3
             <| false
             <| validationContext
@@ -875,7 +875,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - int64 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6L
             <| true
             <| createVariableValidationContext "Var"
@@ -888,7 +888,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6L
             <| true
             <| validationContext
@@ -901,7 +901,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4L
             <| true
             <| validationContext
@@ -914,7 +914,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3L
             <| false
             <| validationContext
@@ -922,7 +922,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - uint16 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6us
             <| true
             <| createVariableValidationContext "Var"
@@ -935,7 +935,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6us
             <| true
             <| validationContext
@@ -948,7 +948,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4us
             <| true
             <| validationContext
@@ -961,7 +961,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3us
             <| false
             <| validationContext
@@ -969,7 +969,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - uint32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6u
             <| true
             <| createVariableValidationContext "Var"
@@ -982,7 +982,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6u
             <| true
             <| validationContext
@@ -995,7 +995,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4u
             <| true
             <| validationContext
@@ -1008,7 +1008,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3u
             <| false
             <| validationContext
@@ -1016,7 +1016,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - uint64 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6UL
             <| true
             <| createVariableValidationContext "Var"
@@ -1029,7 +1029,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6UL
             <| true
             <| validationContext
@@ -1042,7 +1042,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4UL
             <| true
             <| validationContext
@@ -1055,7 +1055,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3UL
             <| false
             <| validationContext
@@ -1063,7 +1063,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - byte - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6uy
             <| true
             <| createVariableValidationContext "Var"
@@ -1076,7 +1076,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6uy
             <| true
             <| validationContext
@@ -1089,7 +1089,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4uy
             <| true
             <| validationContext
@@ -1102,7 +1102,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3uy
             <| false
             <| validationContext
@@ -1110,7 +1110,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - sbyte - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6y
             <| true
             <| createVariableValidationContext "Var"
@@ -1123,7 +1123,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6y
             <| true
             <| validationContext
@@ -1136,7 +1136,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4y
             <| true
             <| validationContext
@@ -1149,7 +1149,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3y
             <| false
             <| validationContext
@@ -1157,7 +1157,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - float - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0
             <| true
             <| createVariableValidationContext "Var"
@@ -1170,7 +1170,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6.0
             <| true
             <| validationContext
@@ -1183,7 +1183,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0
             <| true
             <| validationContext
@@ -1196,7 +1196,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3.0
             <| false
             <| validationContext
@@ -1204,7 +1204,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - float32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -1217,7 +1217,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6.0f
             <| true
             <| validationContext
@@ -1230,7 +1230,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0f
             <| true
             <| validationContext
@@ -1243,7 +1243,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3.0f
             <| false
             <| validationContext
@@ -1251,7 +1251,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - decimal - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -1264,7 +1264,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 6.0m
             <| true
             <| validationContext
@@ -1277,7 +1277,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 4.0m
             <| true
             <| validationContext
@@ -1290,7 +1290,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| 3.0m
             <| false
             <| validationContext
@@ -1298,7 +1298,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is less than variable - datetime - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 29)
             <| true
             <| createVariableValidationContext "Var"
@@ -1311,7 +1311,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| new DateTime(2018, 2, 20)
             <| true
             <| validationContext
@@ -1324,7 +1324,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 29)
             <| true
             <| validationContext
@@ -1337,7 +1337,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsLessThan <| Variable "Other Var")
+            <| getVariableValidation (``Is Less Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 20)
             <| false
             <| validationContext
@@ -1345,7 +1345,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - formats error message and target value as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsMoreThan <| Value 4)
+            <| getVariableValidation (``Is More Than`` <| Value 4)
             <| 5
             <| "should not be more than 4 : Int32"
             <| createVariableValidationContext "Var"
@@ -1358,7 +1358,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 5
             <| "should not be more than variable 'Other Var', 4 : Int32"
             <| validationContext
@@ -1366,7 +1366,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int16 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4s)
+            <| getVariableValidation (``Is More Than`` <| Value 4s)
             <| 6s
             <| false
             <| createVariableValidationContext "Var"
@@ -1374,7 +1374,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4s)
+            <| getVariableValidation (``Is More Than`` <| Value 4s)
             <| 4s
             <| true
             <| createVariableValidationContext "Var"
@@ -1382,7 +1382,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int16 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4s)
+            <| getVariableValidation (``Is More Than`` <| Value 4s)
             <| 3s
             <| true
             <| createVariableValidationContext "Var"
@@ -1390,7 +1390,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int32 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4)
+            <| getVariableValidation (``Is More Than`` <| Value 4)
             <| 6
             <| false
             <| createVariableValidationContext "Var"
@@ -1398,7 +1398,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4)
+            <| getVariableValidation (``Is More Than`` <| Value 4)
             <| 4
             <| true
             <| createVariableValidationContext "Var"
@@ -1406,7 +1406,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int32 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4)
+            <| getVariableValidation (``Is More Than`` <| Value 4)
             <| 3
             <| true
             <| createVariableValidationContext "Var"
@@ -1414,7 +1414,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int64 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4L)
+            <| getVariableValidation (``Is More Than`` <| Value 4L)
             <| 6L
             <| false
             <| createVariableValidationContext "Var"
@@ -1422,7 +1422,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4L)
+            <| getVariableValidation (``Is More Than`` <| Value 4L)
             <| 4L
             <| true
             <| createVariableValidationContext "Var"
@@ -1430,7 +1430,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - int64 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4L)
+            <| getVariableValidation (``Is More Than`` <| Value 4L)
             <| 3L
             <| true
             <| createVariableValidationContext "Var"
@@ -1438,7 +1438,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint16 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4us)
+            <| getVariableValidation (``Is More Than`` <| Value 4us)
             <| 6us
             <| false
             <| createVariableValidationContext "Var"
@@ -1446,7 +1446,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint16 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4us)
+            <| getVariableValidation (``Is More Than`` <| Value 4us)
             <| 4us
             <| true
             <| createVariableValidationContext "Var"
@@ -1454,7 +1454,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint16 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4us)
+            <| getVariableValidation (``Is More Than`` <| Value 4us)
             <| 3us
             <| true
             <| createVariableValidationContext "Var"
@@ -1462,7 +1462,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint32 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4u)
+            <| getVariableValidation (``Is More Than`` <| Value 4u)
             <| 6u
             <| false
             <| createVariableValidationContext "Var"
@@ -1470,7 +1470,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4u)
+            <| getVariableValidation (``Is More Than`` <| Value 4u)
             <| 4u
             <| true
             <| createVariableValidationContext "Var"
@@ -1478,7 +1478,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint32 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4u)
+            <| getVariableValidation (``Is More Than`` <| Value 4u)
             <| 3u
             <| true
             <| createVariableValidationContext "Var"
@@ -1486,7 +1486,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint64 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4UL)
+            <| getVariableValidation (``Is More Than`` <| Value 4UL)
             <| 6UL
             <| false
             <| createVariableValidationContext "Var"
@@ -1494,7 +1494,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint64 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4UL)
+            <| getVariableValidation (``Is More Than`` <| Value 4UL)
             <| 4UL
             <| true
             <| createVariableValidationContext "Var"
@@ -1502,7 +1502,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - uint64 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4UL)
+            <| getVariableValidation (``Is More Than`` <| Value 4UL)
             <| 3UL
             <| true
             <| createVariableValidationContext "Var"
@@ -1510,7 +1510,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - byte - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4uy)
+            <| getVariableValidation (``Is More Than`` <| Value 4uy)
             <| 6uy
             <| false
             <| createVariableValidationContext "Var"
@@ -1518,7 +1518,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - byte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4uy)
+            <| getVariableValidation (``Is More Than`` <| Value 4uy)
             <| 4uy
             <| true
             <| createVariableValidationContext "Var"
@@ -1526,7 +1526,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - byte - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4uy)
+            <| getVariableValidation (``Is More Than`` <| Value 4uy)
             <| 3uy
             <| true
             <| createVariableValidationContext "Var"
@@ -1534,7 +1534,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - sbyte - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4y)
+            <| getVariableValidation (``Is More Than`` <| Value 4y)
             <| 6y
             <| false
             <| createVariableValidationContext "Var"
@@ -1542,7 +1542,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - sbyte - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4y)
+            <| getVariableValidation (``Is More Than`` <| Value 4y)
             <| 4y
             <| true
             <| createVariableValidationContext "Var"
@@ -1550,7 +1550,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - sbyte - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4y)
+            <| getVariableValidation (``Is More Than`` <| Value 4y)
             <| 3y
             <| true
             <| createVariableValidationContext "Var"
@@ -1558,7 +1558,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0)
             <| 6.0
             <| false
             <| createVariableValidationContext "Var"
@@ -1566,7 +1566,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0)
             <| 4.0
             <| true
             <| createVariableValidationContext "Var"
@@ -1574,7 +1574,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0)
             <| 3.0
             <| true
             <| createVariableValidationContext "Var"
@@ -1582,7 +1582,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float32 - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0f)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0f)
             <| 6.0f
             <| false
             <| createVariableValidationContext "Var"
@@ -1590,7 +1590,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float32 - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0f)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0f)
             <| 4.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -1598,7 +1598,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - float32 - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0f)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0f)
             <| 3.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -1606,7 +1606,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - decimal - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0m)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0m)
             <| 6.0m
             <| false
             <| createVariableValidationContext "Var"
@@ -1614,7 +1614,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - decimal - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0m)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0m)
             <| 4.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -1622,7 +1622,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - decimal - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value 4.0m)
+            <| getVariableValidation (``Is More Than`` <| Value 4.0m)
             <| 3.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -1630,7 +1630,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - datetime - is more than - returns is valid false``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is More Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 2, 20)
             <| false
             <| createVariableValidationContext "Var"
@@ -1638,7 +1638,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - datetime - is equal - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is More Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 1, 29)
             <| true
             <| createVariableValidationContext "Var"
@@ -1646,7 +1646,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than value - datetime - is less than - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Value (new DateTime(2018, 1, 29)))
+            <| getVariableValidation (``Is More Than`` <| Value (new DateTime(2018, 1, 29)))
             <| new DateTime(2018, 1, 20)
             <| true
             <| createVariableValidationContext "Var"
@@ -1654,7 +1654,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - int16 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6s
             <| true
             <| createVariableValidationContext "Var"
@@ -1667,7 +1667,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6s
             <| false
             <| validationContext 
@@ -1680,7 +1680,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4s
             <| true
             <| validationContext
@@ -1693,7 +1693,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4s :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3s
             <| true
             <| validationContext
@@ -1701,7 +1701,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - int32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6
             <| true
             <| createVariableValidationContext "Var"
@@ -1714,7 +1714,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6
             <| false
             <| validationContext
@@ -1727,7 +1727,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4
             <| true
             <| validationContext
@@ -1740,7 +1740,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3
             <| true
             <| validationContext
@@ -1748,7 +1748,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - int64 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6L
             <| true
             <| createVariableValidationContext "Var"
@@ -1761,7 +1761,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6L
             <| false
             <| validationContext
@@ -1774,7 +1774,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4L
             <| true
             <| validationContext
@@ -1787,7 +1787,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4L :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3L
             <| true
             <| validationContext
@@ -1795,7 +1795,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - uint16 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6us
             <| true
             <| createVariableValidationContext "Var"
@@ -1808,7 +1808,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6us
             <| false
             <| validationContext
@@ -1821,7 +1821,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4us
             <| true
             <| validationContext
@@ -1834,7 +1834,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4us :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3us
             <| true
             <| validationContext
@@ -1842,7 +1842,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - uint32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6u
             <| true
             <| createVariableValidationContext "Var"
@@ -1855,7 +1855,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6u
             <| false
             <| validationContext
@@ -1868,7 +1868,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4u
             <| true
             <| validationContext
@@ -1881,7 +1881,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4u :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3u
             <| true
             <| validationContext
@@ -1889,7 +1889,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - uint64 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6UL
             <| true
             <| createVariableValidationContext "Var"
@@ -1902,7 +1902,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6UL
             <| false
             <| validationContext
@@ -1915,7 +1915,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4UL
             <| true
             <| validationContext
@@ -1928,7 +1928,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4UL :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3UL
             <| true
             <| validationContext
@@ -1936,7 +1936,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - byte - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6uy
             <| true
             <| createVariableValidationContext "Var"
@@ -1949,7 +1949,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6uy
             <| false
             <| validationContext
@@ -1962,7 +1962,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4uy
             <| true
             <| validationContext
@@ -1975,7 +1975,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4uy :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3uy
             <| true
             <| validationContext
@@ -1983,7 +1983,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - sbyte - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6y
             <| true
             <| createVariableValidationContext "Var"
@@ -1996,7 +1996,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6y
             <| false
             <| validationContext
@@ -2009,7 +2009,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4y
             <| true
             <| validationContext
@@ -2022,7 +2022,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4y :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3y
             <| true
             <| validationContext
@@ -2030,7 +2030,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - float - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0
             <| true
             <| createVariableValidationContext "Var"
@@ -2043,7 +2043,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6.0
             <| false
             <| validationContext
@@ -2056,7 +2056,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0
             <| true
             <| validationContext
@@ -2069,7 +2069,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0 :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3.0
             <| true
             <| validationContext
@@ -2077,7 +2077,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - float32 - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0f
             <| true
             <| createVariableValidationContext "Var"
@@ -2090,7 +2090,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6.0f
             <| false
             <| validationContext
@@ -2103,7 +2103,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0f
             <| true
             <| validationContext
@@ -2116,7 +2116,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0f :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3.0f
             <| true
             <| validationContext
@@ -2124,7 +2124,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - decimal - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0m
             <| true
             <| createVariableValidationContext "Var"
@@ -2137,7 +2137,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 6.0m
             <| false
             <| validationContext
@@ -2150,7 +2150,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 4.0m
             <| true
             <| validationContext
@@ -2163,7 +2163,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", 4.0m :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| 3.0m
             <| true
             <| validationContext
@@ -2171,7 +2171,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - is more than variable - datetime - variable doesn't exist - returns is valid true``() = 
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 29)
             <| true
             <| createVariableValidationContext "Var"
@@ -2184,7 +2184,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| new DateTime(2018, 2, 20)
             <| false
             <| validationContext
@@ -2197,7 +2197,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 29)
             <| true
             <| validationContext
@@ -2210,7 +2210,7 @@ type ValidationRulesTests() =
                 with Variables = new Map<string, obj> [| ("Other Var", new DateTime(2018, 1, 29) :> obj) |]
             }
         assertVariableRuleIsValid 
-            <| getVariableValidation (IsMoreThan <| Variable "Other Var")
+            <| getVariableValidation (``Is More Than`` <| Variable "Other Var")
             <| new DateTime(2018, 1, 20)
             <| true
             <| validationContext
@@ -2218,7 +2218,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - and rule - formats left validation message and right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation ((IsLessThan <| Value 10) &&& IsNegative)
+            <| getVariableValidation ((``Is Less Than`` <| Value 10) &&& ``Is Negative``)
             <| -10
             <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
@@ -2226,7 +2226,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - and rule - left operand is valid, right operand is valid - returns is valid true``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero &&& IsNegative)
+               <| getVariableValidation (``Is Zero`` &&& ``Is Negative``)
                <| 6
                <| true
                <| createVariableValidationContext "Var"
@@ -2234,7 +2234,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - and rule - left operand is invalid, right operand is valid - returns is valid true``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero &&& IsNegative)
+               <| getVariableValidation (``Is Zero`` &&& ``Is Negative``)
                <| 0
                <| true
                <| createVariableValidationContext "Var"
@@ -2242,7 +2242,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - and rule - left operand is valid, right operand is invalid - returns is valid true``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero &&& IsNegative)
+               <| getVariableValidation (``Is Zero`` &&& ``Is Negative``)
                <| -10
                <| true
                <| createVariableValidationContext "Var"
@@ -2250,7 +2250,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - and rule - left operand is invalid, right operand is invalid - returns is valid false``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation ((IsLessThan <| Value 10) &&& IsNegative)
+               <| getVariableValidation ((``Is Less Than`` <| Value 10) &&& ``Is Negative``)
                <| -10
                <| false
                <| createVariableValidationContext "Var"
@@ -2258,7 +2258,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - or rule - left and right operands are invalid - formats left validation message and right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation ((IsLessThan <| Value 10) ||| IsNegative)
+            <| getVariableValidation ((``Is Less Than`` <| Value 10) ||| ``Is Negative``)
             <| -10
             <| "should not be less than 10 : Int32 AND should not be negative"
             <| createVariableValidationContext "Var"
@@ -2266,7 +2266,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - or rule - only left operand is invalid - formats left validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsZero ||| IsNegative)
+            <| getVariableValidation (``Is Zero`` ||| ``Is Negative``)
             <| 0
             <| "should not be zero"
             <| createVariableValidationContext "Var"
@@ -2274,7 +2274,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
     member __.``getVariableValidation - or rule - only right operand is invalid - formats right validation message as error``() = 
         assertVariableRuleErrorMessage 
-            <| getVariableValidation (IsZero ||| IsNegative)
+            <| getVariableValidation (``Is Zero`` ||| ``Is Negative``)
             <| -10
             <| "should not be negative"
             <| createVariableValidationContext "Var"
@@ -2282,7 +2282,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - or rule - left operand is valid, right operand is valid - returns is valid true``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero ||| IsNegative)
+               <| getVariableValidation (``Is Zero`` ||| ``Is Negative``)
                <| 6
                <| true
                <| createVariableValidationContext "Var"
@@ -2290,7 +2290,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - or rule - left operand is invalid, right operand is valid - returns is valid false``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero ||| IsNegative)
+               <| getVariableValidation (``Is Zero`` ||| ``Is Negative``)
                <| 0
                <| false
                <| createVariableValidationContext "Var"
@@ -2298,7 +2298,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - or rule - left operand is valid, right operand is invalid - returns is valid false``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation (IsZero ||| IsNegative)
+               <| getVariableValidation (``Is Zero`` ||| ``Is Negative``)
                <| -10
                <| false
                <| createVariableValidationContext "Var"
@@ -2306,7 +2306,7 @@ type ValidationRulesTests() =
     [<TestMethod>]
        member __.``getVariableValidation - or rule - left operand is invalid, right operand is invalid - returns is valid false``() = 
            assertVariableRuleIsValid 
-               <| getVariableValidation ((IsLessThan <| Value 10) ||| IsNegative)
+               <| getVariableValidation ((``Is Less Than`` <| Value 10) ||| ``Is Negative``)
                <| -10
                <| false
                <| createVariableValidationContext "Var"

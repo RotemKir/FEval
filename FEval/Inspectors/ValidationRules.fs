@@ -201,15 +201,17 @@ module internal ValidationRules =
 
     let rec internal getVariableValidation invalidWhen =
         match invalidWhen with
-        | IsZero            -> isZeroValidation
-        | IsNegative        -> isNegativeValidation
-        | IsEmpty           -> isEmptyValidation
-        | Is target         -> isValidation target
-        | IsLessThan target -> isLessThanValidation target
-        | IsMoreThan target -> isMoreThanValidation target
-        | And (left, right) -> andValidation 
-                                <| getVariableValidation left 
-                                <| getVariableValidation right
-        | Or (left, right)  -> orValidation 
-                                <| getVariableValidation left 
-                                <| getVariableValidation right
+        | ``Is Zero``             -> isZeroValidation
+        | ``Is Negative``         -> isNegativeValidation
+        | ``Is Empty``            -> isEmptyValidation
+        | Is target               -> isValidation target
+        | ``Is Less Than`` target -> isLessThanValidation target
+        | ``Is More Than`` target -> isMoreThanValidation target
+        | And (left, right) 
+            -> andValidation 
+                <| getVariableValidation left 
+                <| getVariableValidation right
+        | Or (left, right)  
+            -> orValidation 
+                <| getVariableValidation left 
+                <| getVariableValidation right

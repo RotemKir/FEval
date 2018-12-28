@@ -50,8 +50,8 @@ module Factorial =
             inspectionOf 
                 <| Validation 
                     [|
-                        ifVariable "number" (Is <| Value 1) ReturnWarning
-                        ifVariable "number" (IsLessThan <| Value 1) ReturnError
+                        ifVariable "number" (Is <| Value 1) ``Return Warning``
+                        ifVariable "number" (``Is Less Than`` <| Value 1) ``Return Error``
                     |]
                 <| LogToTextFile @"Logs\Validations.txt"
         |]

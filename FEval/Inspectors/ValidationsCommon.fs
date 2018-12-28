@@ -21,20 +21,20 @@ module ValidationsCommon =
         | Variable of name : string
 
     type InvalidWhen =
-        | IsZero
-        | IsNegative
-        | IsEmpty
+        | ``Is Zero``
+        | ``Is Negative``
+        | ``Is Empty``
         | Is of RuleTarget
-        | IsLessThan of RuleTarget
-        | IsMoreThan of RuleTarget
+        | ``Is Less Than`` of RuleTarget
+        | ``Is More Than`` of RuleTarget
         | And of InvalidWhen * InvalidWhen
         | Or of InvalidWhen * InvalidWhen
         static member (&&&) (leftOperand, rightOperand) = And (leftOperand, rightOperand)
         static member (|||) (leftOperand, rightOperand) = Or (leftOperand, rightOperand)
         
     type ReturnWhenInvalid =
-        | ReturnWarning
-        | ReturnError
+        | ``Return Warning``
+        | ``Return Error``
 
     type RuleDefinition =
         | VariableRule of VariableRuleDefinition

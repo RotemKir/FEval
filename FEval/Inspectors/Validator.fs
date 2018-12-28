@@ -22,8 +22,8 @@ module internal Validator =
 
     let private convertReturnTypeToValidationResult validationRule message = 
         match validationRule.ReturnWhenInvalid with
-        | ReturnWarning -> Warning message
-        | ReturnError   -> Error message
+        | ``Return Warning`` -> Warning message
+        | ``Return Error``   -> Error message
 
     let private createInvalidResult validationRequest validationRule =
         formateMessage validationRequest validationRule  

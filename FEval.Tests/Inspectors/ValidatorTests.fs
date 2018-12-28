@@ -65,7 +65,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [||]
-            <| (VariableRule <| createVariableRule "Var" true ReturnError)
+            <| (VariableRule <| createVariableRule "Var" true ``Return Error``)
             <| ValidationResult.Ok
             
     [<TestMethod>]
@@ -73,7 +73,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-            <| (VariableRule <| createVariableRule "Var" true ReturnError)
+            <| (VariableRule <| createVariableRule "Var" true ``Return Error``)
             <| ValidationResult.Ok
 
     [<TestMethod>]
@@ -81,7 +81,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-            <| (VariableRule <| createVariableRule "Var" false ReturnError)
+            <| (VariableRule <| createVariableRule "Var" false ``Return Error``)
             <| ValidationResult.Error "Variable 'Var', 0 : Int32, Error message"
 
     [<TestMethod>]
@@ -89,7 +89,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Other Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-            <| (VariableRule <| createVariableRule "Var" false ReturnError)
+            <| (VariableRule <| createVariableRule "Var" false ``Return Error``)
             <| ValidationResult.Ok
                 
     [<TestMethod>]
@@ -97,7 +97,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [||]
-            <| (VariableRule <| createVariableRule "Var" true ReturnWarning)
+            <| (VariableRule <| createVariableRule "Var" true ``Return Warning``)
             <| ValidationResult.Ok
             
     [<TestMethod>]
@@ -105,7 +105,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-            <| (VariableRule <| createVariableRule "Var" true ReturnWarning)
+            <| (VariableRule <| createVariableRule "Var" true ``Return Warning``)
             <| ValidationResult.Ok
            
     [<TestMethod>]
@@ -113,7 +113,7 @@ type ValidatorTests() =
         testRunRules 
             <| createVariableEvent "Var"
             <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-            <| (VariableRule <| createVariableRule "Var" false ReturnWarning)
+            <| (VariableRule <| createVariableRule "Var" false ``Return Warning``)
             <| ValidationResult.Warning "Variable 'Var', 0 : Int32, Error message"
             
     [<TestMethod>]
@@ -121,5 +121,5 @@ type ValidatorTests() =
              testRunRules 
                  <| createVariableEvent "Other Var"
                  <| new Map<string, obj> [| ("Var", 0 :> obj) |]
-                 <| (VariableRule <| createVariableRule "Var" false ReturnWarning)
+                 <| (VariableRule <| createVariableRule "Var" false ``Return Warning``)
                  <| ValidationResult.Ok
