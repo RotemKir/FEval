@@ -88,3 +88,8 @@ module TestHelpers =
             val StructName : string
             override __.ToString() = __.StructName
         end
+
+    type ClassWithReflectedDefinition() =
+        [<ReflectedDefinition>]
+        member __.GetFullName person =
+            sprintf "%s %s" person.FirstName person.LastName

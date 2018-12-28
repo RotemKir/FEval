@@ -86,3 +86,6 @@ module internal Reflection =
         let ctors = getPrivateCtors genericExprType
         
         ctors.[0].Invoke [| tree ; expr.CustomAttributes |]
+
+    let getReflectedMethodDefinition methodInfo =
+        Expr.TryGetReflectedDefinition methodInfo

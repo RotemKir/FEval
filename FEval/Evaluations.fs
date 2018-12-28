@@ -62,7 +62,7 @@ module Evaluations =
         | Some methodOverride -> methodOverride
         | _                   -> methodInfo
 
-    let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
+    let private evalNethodCallWithInvoke state instanceExpr methodInfo parameterExprs =
         let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.invokeMethod 
             <| instance 
@@ -70,6 +70,13 @@ module Evaluations =
             <| Evaluator.evalExprs parameterExprs newState 
             <| newState
         |> Evaluator.setLastValue newState
+
+    let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
+        match Reflection.getReflectedMethodDefinition methodInfo with
+        | Some methodExpr -> 
+            invalidOp "Not implemented"
+        | None            -> 
+            evalNethodCallWithInvoke state instanceExpr methodInfo parameterExprs
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 
