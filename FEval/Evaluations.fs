@@ -62,7 +62,7 @@ module Evaluations =
         | Some methodOverride -> methodOverride
         | _                   -> methodInfo
 
-    let private evalNethodCallWithInvoke state instanceExpr methodInfo parameterExprs =
+    let private evalMethodCallWithInvoke state instanceExpr methodInfo parameterExprs =
         let (instance, newState) = evalInstanceExpr state instanceExpr
         Evaluator.invokeMethod 
             <| instance 
@@ -71,12 +71,19 @@ module Evaluations =
             <| newState
         |> Evaluator.setLastValue newState
 
+    let private evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs =
+        // The method expr contains a lambda expression on the instance and parameters of the method call.
+        // We create an application expression to activate the lambda expression and evaluate it.
+        let applicationExpr = Expr.Applications (methodExpr, [ [Option.get instanceExpr] ; parameterExprs ])
+        Evaluator.evalExprAndGetLastValue applicationExpr state
+        |> Evaluator.setLastValue state
+
     let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
         match Reflection.getReflectedMethodDefinition methodInfo with
         | Some methodExpr -> 
-            invalidOp "Not implemented"
-        | None            -> 
-            evalNethodCallWithInvoke state instanceExpr methodInfo parameterExprs
+            evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs
+        | None -> 
+            evalMethodCallWithInvoke state instanceExpr methodInfo parameterExprs
 
     let private evalNewUnionCase state (unionCaseInfo, exprs) =
         Evaluator.evalExprs exprs state 
@@ -125,7 +132,7 @@ module Evaluations =
     let private evalApplication state (funcExpr, valueExpr) =
         let func = Evaluator.evalExprAndGetLastValue funcExpr state
         let value = Evaluator.evalExprAndGetLastValue valueExpr state
-        let method = Reflection.getMethodInfo func "Invoke"
+        let method = Reflection.getInvokeMethodInfo func
         Reflection.invokeMethod func method [|value|]
         |> Evaluator.setLastValue state 
 

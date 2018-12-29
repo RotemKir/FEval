@@ -43,9 +43,12 @@ module internal Reflection =
     let invokeSetField instance (fieldinfo : FieldInfo) value =
         fieldinfo.SetValue(instance, value)
 
-    let getMethodInfo instance methodName =
+    let getInvokeMethodInfo instance =
         let instanceType = instance.GetType()
-        instanceType.GetMethod(methodName)
+        instanceType.GetMethods()
+        |> Seq.filter (fun m -> m.Name = "Invoke")
+        |> Seq.filter (fun m -> m.GetParameters().Length = 1)
+        |> Seq.item 0
 
     let makeUnion unionCaseInfo args =
         FSharpValue.MakeUnion (unionCaseInfo, args)

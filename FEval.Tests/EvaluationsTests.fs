@@ -1535,3 +1535,18 @@ type EvaluationsTest() =
     [<TestMethod>]
     member __.``Evaluate raw code quotation``() = 
         assertEval <@ <@@ 7 @@> @> <@@ 7 @@>
+    
+    (*
+    Let (person, NewRecord (Person, Value ("First"), Value ("Last")),
+    Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
+         Call (Some (classWithReflectedDefinition), GetFullName, [person])))
+    *)
+    [<TestMethod>]
+    member __.``Evaluate reflected definition method``() = 
+        assertEval 
+            <@ 
+            let person = { FirstName = "First"; LastName = "Last"}
+            let classWithReflectedDefinition = new ClassWithReflectedDefinition()
+            classWithReflectedDefinition.GetFullName(person)
+            @> 
+            "First Last"
