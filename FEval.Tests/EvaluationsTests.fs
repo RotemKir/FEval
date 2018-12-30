@@ -1541,8 +1541,27 @@ type EvaluationsTest() =
     Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
          Call (Some (classWithReflectedDefinition), GetFullName, [person])))
     *)
+    (*
+    Lambda (__,
+        Lambda (person,
+                Application (Application (Let (clo1,
+                                               Call (None, PrintFormatToString,
+                                                     [Coerce (NewObject (PrintfFormat`5,
+                                                                         Value ("%s %s")),
+                                                              PrintfFormat`4)]),
+                                               Lambda (arg10,
+                                                       Let (clo2,
+                                                            Application (clo1,
+                                                                         arg10),
+                                                            Lambda (arg20,
+                                                                    Application (clo2,
+                                                                                 arg20))))),
+                                          PropertyGet (Some (person), FirstName,
+                                                       [])),
+                             PropertyGet (Some (person), LastName, []))))
+    *)
     [<TestMethod>]
-    member __.``Evaluate reflected definition method``() = 
+    member __.``Evaluate reflected definition method with one parameter``() = 
         assertEval 
             <@ 
             let person = { FirstName = "First"; LastName = "Last"}
@@ -1550,3 +1569,16 @@ type EvaluationsTest() =
             classWithReflectedDefinition.GetFullName(person)
             @> 
             "First Last"
+
+    (*
+    Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
+     Call (Some (classWithReflectedDefinition), GetOne, []))
+    *)   
+    [<TestMethod>]
+    member __.``Evaluate reflected definition method with no parameters``() = 
+        assertEval 
+            <@ 
+            let classWithReflectedDefinition = new ClassWithReflectedDefinition()
+            classWithReflectedDefinition.GetOne()
+            @> 
+            1

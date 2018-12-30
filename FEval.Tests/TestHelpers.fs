@@ -93,3 +93,6 @@ module TestHelpers =
         [<ReflectedDefinition>]
         member __.GetFullName person =
             sprintf "%s %s" person.FirstName person.LastName
+        
+        [<ReflectedDefinition>]
+        member __.GetOne() = 1
