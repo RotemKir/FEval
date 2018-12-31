@@ -78,7 +78,7 @@ module Evaluations =
             [instance ; []]
         | _ -> 
             let parametersList = List.map List.singleton parameterExprs
-            List.Cons ([ Option.get instanceExpr ], parametersList )
+            List.Cons (instance, parametersList )
 
     let private evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs =
         // The method expr contains a lambda expression on the instance and parameters of the method call.
