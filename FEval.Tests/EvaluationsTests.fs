@@ -1573,7 +1573,10 @@ type EvaluationsTest() =
     (*
     Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
      Call (Some (classWithReflectedDefinition), GetOne, []))
-    *)   
+    *)
+    (*
+    Lambda (__, Lambda (unitVar1, Value (1)))
+    *)
     [<TestMethod>]
     member __.``Evaluate reflected definition method with no parameters``() = 
         assertEval 
@@ -1582,3 +1585,39 @@ type EvaluationsTest() =
             classWithReflectedDefinition.GetOne()
             @> 
             1
+    
+    (*
+    Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
+     Application (Application (Lambda (arg00,
+                                       Lambda (arg10,
+                                               Call (Some (classWithReflectedDefinition),
+                                                     Concat, [arg00, arg10]))),
+                               Value ("First")), Value ("Last")))
+    *)
+    (*
+    Lambda (__,
+        Lambda (first,
+                Lambda (last,
+                        Application (Application (Let (clo1,
+                                                       Call (None,
+                                                             PrintFormatToString,
+                                                             [Coerce (NewObject (PrintfFormat`5,
+                                                                                 Value ("%s %s")),
+                                                                      PrintfFormat`4)]),
+                                                       Lambda (arg10,
+                                                               Let (clo2,
+                                                                    Application (clo1,
+                                                                                 arg10),
+                                                                    Lambda (arg20,
+                                                                            Application (clo2,
+                                                                                         arg20))))),
+                                                  first), last))))
+    *)
+    [<TestMethod>]
+    member __.``Evaluate reflected definition method with two parameters``() = 
+        assertEval 
+            <@ 
+            let classWithReflectedDefinition = new ClassWithReflectedDefinition()
+            classWithReflectedDefinition.Concat "First" "Last"
+            @> 
+            "First Last"

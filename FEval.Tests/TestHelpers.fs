@@ -96,3 +96,8 @@ module TestHelpers =
         
         [<ReflectedDefinition>]
         member __.GetOne() = 1
+
+        [<ReflectedDefinition>]
+        member __.Concat first last =
+            sprintf "%s %s" first last
+        

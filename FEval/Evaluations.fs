@@ -71,10 +71,20 @@ module Evaluations =
             <| newState
         |> Evaluator.setLastValue newState
 
+    let private createArgumentsForReflectedMethod instanceExpr parameterExprs =
+        let instance = [ Option.get instanceExpr ]
+        match parameterExprs with
+        | [] -> 
+            [instance ; []]
+        | _ -> 
+            let parametersList = List.map List.singleton parameterExprs
+            List.Cons ([ Option.get instanceExpr ], parametersList )
+
     let private evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs =
         // The method expr contains a lambda expression on the instance and parameters of the method call.
         // We create an application expression to activate the lambda expression and evaluate it.
-        let applicationExpr = Expr.Applications (methodExpr, [ [Option.get instanceExpr] ; parameterExprs ])
+        let applicationArguments = createArgumentsForReflectedMethod instanceExpr parameterExprs
+        let applicationExpr = Expr.Applications(methodExpr, applicationArguments)
         Evaluator.evalExprAndGetLastValue applicationExpr state
         |> Evaluator.setLastValue state
 
