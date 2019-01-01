@@ -90,6 +90,8 @@ module TestHelpers =
         end
 
     type ClassWithReflectedDefinition() =
+        let title = "Mr."
+
         [<ReflectedDefinition>]
         member __.GetFullName person =
             sprintf "%s %s" person.FirstName person.LastName
@@ -100,4 +102,8 @@ module TestHelpers =
         [<ReflectedDefinition>]
         member __.Concat first last =
             sprintf "%s %s" first last
+
+        [<ReflectedDefinition>]
+        member __.AddTitle name =
+            sprintf "%s %s" title name
         

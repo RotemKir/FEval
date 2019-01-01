@@ -1561,7 +1561,7 @@ type EvaluationsTest() =
                              PropertyGet (Some (person), LastName, []))))
     *)
     [<TestMethod>]
-    member __.``Evaluate reflected definition method with one parameter``() = 
+    member __.``Evaluate reflected definition instance method with one parameter``() = 
         assertEval 
             <@ 
             let person = { FirstName = "First"; LastName = "Last"}
@@ -1578,7 +1578,7 @@ type EvaluationsTest() =
     Lambda (__, Lambda (unitVar1, Value (1)))
     *)
     [<TestMethod>]
-    member __.``Evaluate reflected definition method with no parameters``() = 
+    member __.``Evaluate reflected definition instance method with no parameters``() = 
         assertEval 
             <@ 
             let classWithReflectedDefinition = new ClassWithReflectedDefinition()
@@ -1614,10 +1614,40 @@ type EvaluationsTest() =
                                                   first), last))))
     *)
     [<TestMethod>]
-    member __.``Evaluate reflected definition method with two parameters``() = 
+    member __.``Evaluate reflected definition instance method with two parameters``() = 
         assertEval 
             <@ 
             let classWithReflectedDefinition = new ClassWithReflectedDefinition()
             classWithReflectedDefinition.Concat "First" "Last"
             @> 
             "First Last"
+
+    (*
+    Let (classWithReflectedDefinition, NewObject (ClassWithReflectedDefinition),
+    Call (Some (classWithReflectedDefinition), AddTitle, [Value ("Name")]))
+    *)
+    (*
+    Lambda (__,
+    Lambda (name,
+            Application (Application (Let (clo1,
+                                           Call (None, PrintFormatToString,
+                                                 [Coerce (NewObject (PrintfFormat`5,
+                                                                     Value ("%s %s")),
+                                                          PrintfFormat`4)]),
+                                           Lambda (arg10,
+                                                   Let (clo2,
+                                                        Application (clo1,
+                                                                     arg10),
+                                                        Lambda (arg20,
+                                                                Application (clo2,
+                                                                             arg20))))),
+                                      FieldGet (Some (__), title)), name)))
+    *)
+    [<TestMethod>]
+    member __.``Evaluate reflected definition instance method that uses internal fields``() = 
+        assertEval 
+            <@ 
+            let classWithReflectedDefinition = new ClassWithReflectedDefinition()
+            classWithReflectedDefinition.AddTitle "Name"
+            @> 
+            "Mr. Name"
