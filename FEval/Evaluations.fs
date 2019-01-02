@@ -72,13 +72,13 @@ module Evaluations =
         |> Evaluator.setLastValue newState
 
     let private createArgumentsForReflectedMethod instanceExpr parameterExprs =
-        let instance = [ Option.get instanceExpr ]
-        match parameterExprs with
-        | [] -> 
-            [instance ; []]
-        | _ -> 
-            let parametersList = List.map List.singleton parameterExprs
-            List.Cons (instance, parametersList )
+        let parametersList = List.map List.singleton parameterExprs
+        
+        match (instanceExpr, parameterExprs) with
+        | (None, [])          -> [[]]
+        | (Some instance, []) -> [ [instance] ; []]
+        | (None, _)           -> parametersList
+        | (Some instance, _)  -> List.Cons ([instance], parametersList)
 
     let private evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs =
         // The method expr contains a lambda expression on the instance and parameters of the method call.

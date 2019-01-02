@@ -107,3 +107,9 @@ module TestHelpers =
         member __.AddTitle name =
             sprintf "%s %s" title name
         
+    [<ReflectedDefinition>]
+    let addTitle title name =
+        sprintf "%s %s" title name
+
+    [<ReflectedDefinition>]
+    let getOne() = 1

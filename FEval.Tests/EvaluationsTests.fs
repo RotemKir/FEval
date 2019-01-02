@@ -1651,3 +1651,37 @@ type EvaluationsTest() =
             classWithReflectedDefinition.AddTitle "Name"
             @> 
             "Mr. Name"
+
+    (*
+    Call (None, addTitle, [Value ("Mr."), Value ("Name")])
+    *)
+    (*
+    Lambda (title,
+    Lambda (name,
+            Application (Application (Let (clo1,
+                                           Call (None, PrintFormatToString,
+                                                 [Coerce (NewObject (PrintfFormat`5,
+                                                                     Value ("%s %s")),
+                                                          PrintfFormat`4)]),
+                                           Lambda (arg10,
+                                                   Let (clo2,
+                                                        Application (clo1,
+                                                                     arg10),
+                                                        Lambda (arg20,
+                                                                Application (clo2,
+                                                                             arg20))))),
+                                      title), name)))
+    *)
+    [<TestMethod>]
+    member __.``Evaluate reflected definition static method with 2 parameters``() = 
+        assertEval <@ addTitle "Mr." "Name" @> "Mr. Name"
+    
+    (*
+    Call (None, getOne, [])
+    *)
+    (*
+    Lambda (unitVar0, Value (1))
+    *)
+    [<TestMethod>]
+    member __.``Evaluate reflected definition static method with no parameters``() = 
+        assertEval <@ getOne() @> 1
