@@ -3,6 +3,7 @@
 open System
 open System.IO
 open Factorial
+open FEval.EvaluationTypes
 
 module Main =
     
@@ -35,6 +36,8 @@ module Main =
             try
                 option()
             with
+            | EvaluationException (ex, _) 
+                 -> Console.WriteLine(ex.Message)
             | ex -> Console.WriteLine(ex.Message)
         finally 
             Console.WriteLine("Press any key to continue")

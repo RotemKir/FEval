@@ -7,20 +7,19 @@ open System
 
 module Factorial =
 
-    let private factorialExpr = 
-        <@ 
-            Console.WriteLine("Enter a number to calculate factorial for:")
-            let number = Int32.Parse <| Console.ReadLine()
-            let mutable x = 1
+    [<ReflectedDefinition>]
+    let private factorial number =
+        let mutable x = 1
 
-            for i = 1 to number do
-                x <- x * i
+        for i = 1 to number do
+            x <- x * i
 
-            x
-        @>
+        x
 
     let private runFactorialWithInspections inspections =
-        let result = evalWith factorialExpr inspections
+        Console.WriteLine("Enter a number to calculate factorial for:")
+        let number = Int32.Parse <| Console.ReadLine()
+        let result = evalWith <@ factorial number @> inspections
         Console.WriteLine("Result is: {0}", result)
             
     let private runFactorialWithInspection inspector =
