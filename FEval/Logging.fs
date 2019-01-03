@@ -68,20 +68,22 @@ module internal Logging =
         then appendLineToFile id fileName fileConfig.Header.Value
 
     let createStringLogPrefix logEvent =
-        sprintf "%s - %A - %s (%i) - Thread %i - %s"
+        sprintf "%s - %A - %s (%i) - Thread %i - %s - %s"
             <| formatDateTimeForLog logEvent.Time
             <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
+            <| logEvent.RunDetails.RunName
 
     let createCsvLogPrefix logEvent =
-        sprintf "%s,%A,%s,%i,%i,%s"
+        sprintf "%s,%A,%s,%i,%i,%s,%s"
             <| formatDateTimeForLog logEvent.Time
             <| logEvent.RunDetails.RunId
             <| logEvent.RunDetails.ProcessName
             <| logEvent.RunDetails.ProcessId
             <| logEvent.RunDetails.ThreadId
+            <| logEvent.RunDetails.RunName
 
     let createStringFormatter formatter logEvent =
         createStringLogPrefix 
@@ -94,7 +96,7 @@ module internal Logging =
             <| formatter logEvent.InspectionResult
 
     let createCsvFileHeader inspectionHeader =
-        sprintf "Time,Run Id,Process Name,Process Id,ThreadId,%s" inspectionHeader
+        sprintf "Time,Run Id,Process Name,Process Id,ThreadId,Run Name,%s" inspectionHeader
 
     let createLogger fileConfig fileName =
         setFileHeader fileConfig fileName    

@@ -316,14 +316,14 @@ module Evaluations =
 
     // Public functions
 
-    let evalWith<'a> (expr : Expr<'a>) inspectors : 'a =
+    let evalWith<'a> name (expr : Expr<'a>) inspectors : 'a =
         try 
-            Evaluator.createNewState evalExpr inspectors
+            Evaluator.createNewState name evalExpr inspectors
             |> Evaluator.evalExpr expr 
             |> Evaluator.getLastValue 
             :?> 'a
         finally
             disposeInspectors inspectors
 
-    let eval<'a> (expr : Expr<'a>) : 'a = 
-        evalWith expr Seq.empty
+    let eval<'a> name (expr : Expr<'a>) : 'a = 
+        evalWith name expr Seq.empty

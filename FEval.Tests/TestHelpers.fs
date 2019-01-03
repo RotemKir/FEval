@@ -16,14 +16,14 @@ module TestHelpers =
 
     let assertInspectors expr createInspectors expectedMessages =
         let messageList = new List<string>()
-        evalWith expr <| createInspectors messageList |> ignore
+        evalWith "test" expr <| createInspectors messageList |> ignore
         assertMessages expectedMessages messageList
 
     let assertInspectorsWithException expr createInspectors expectedMessages expectedException =
         let messageList = new List<string>()
         
         try
-            evalWith expr <| createInspectors messageList |> ignore
+            evalWith "test" expr <| createInspectors messageList |> ignore
         with
         | ex -> Assert.AreEqual(expectedException, ex.Message)
         

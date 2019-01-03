@@ -36,12 +36,13 @@ module  internal Evaluator =
             (fun() -> { state with Variables = Map.add variable.Name value state.Variables })
             state
 
-    let private createRunDetails() =
+    let private createRunDetails name =
         let currentProcess = Process.GetCurrentProcess()
         let currentThread = Thread.CurrentThread
         
         {
             RunId = Guid.NewGuid()
+            RunName = name
             ProcessId = currentProcess.Id
             ProcessName = currentProcess.ProcessName
             ThreadId = currentThread.ManagedThreadId
@@ -120,9 +121,9 @@ module  internal Evaluator =
     let evalSingleExpr exprs state =
         evalExprAndGetLastValue <| Seq.head exprs <| state 
 
-    let createNewState evalFunc inspectors =
+    let createNewState name evalFunc inspectors =
         {
-            RunDetails = createRunDetails()
+            RunDetails = createRunDetails name
             LastValue = ()
             Variables = Map.empty<string, obj>
             RecVariables = new Dictionary<string, obj>()

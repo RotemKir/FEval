@@ -19,7 +19,7 @@ module Factorial =
     let private runFactorialWithInspections inspections =
         Console.WriteLine("Enter a number to calculate factorial for:")
         let number = Int32.Parse <| Console.ReadLine()
-        let result = evalWith <@ factorial number @> inspections
+        let result = evalWith "factorial" <@ factorial number @> inspections
         Console.WriteLine("Result is: {0}", result)
             
     let private runFactorialWithInspection inspector =

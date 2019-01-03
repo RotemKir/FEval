@@ -20,6 +20,7 @@ module EvaluationTypes =
     and EvaluationRunDetails =
         {
             RunId : Guid
+            RunName : string
             ProcessId : int
             ProcessName : string
             ThreadId : int
