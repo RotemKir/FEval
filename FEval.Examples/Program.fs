@@ -15,6 +15,7 @@ module Main =
         Console.WriteLine("3. Factorial with method call inspection")
         Console.WriteLine("4. Factorial with method call and set value inspection")
         Console.WriteLine("5. Factorial with input validations")
+        Console.WriteLine("6. Factorial with all inspections")
         Console.WriteLine()
 
     let private getOptionToRun optionValue =
@@ -24,6 +25,7 @@ module Main =
         | "3" -> Some <| runFactorialWithMethodCall
         | "4" -> Some <| runFactorialWithMethodCallAndSetValue
         | "5" -> Some <| runFactorialWithInputValidations
+        | "6" -> Some <| runFactorialWithAllInspections
         | _   -> None
 
     let private createLogFolder() =

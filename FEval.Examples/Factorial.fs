@@ -21,21 +21,21 @@ module Factorial =
         let number = Int32.Parse <| Console.ReadLine()
         let result = evalWith "factorial" <@ factorial number @> inspections
         Console.WriteLine("Result is: {0}", result)
-            
-    let private runFactorialWithInspection inspector =
-        runFactorialWithInspections [| inspector |]
-
+        
     let runFactorialWithPerformance() =
         inspectionOf Performance <| LogToTextFile @"Logs\Perfromance.txt"
-        |> runFactorialWithInspection
+        |> Array.singleton
+        |> runFactorialWithInspections
 
     let runFactorialWithSetValue() =
         inspectionOf SettingValues <| LogToTextFile @"Logs\SetValue.txt"
-        |> runFactorialWithInspection
+        |> Array.singleton
+        |> runFactorialWithInspections
 
     let runFactorialWithMethodCall() =
         inspectionOf MethodCalls <| LogToTextFile @"Logs\MethodCall.txt"
-        |> runFactorialWithInspection
+        |> Array.singleton
+        |> runFactorialWithInspections
 
     let runFactorialWithMethodCallAndSetValue() =
         [| 
@@ -53,5 +53,21 @@ module Factorial =
                         ifVariable "number" (``Is Less Than`` <| Value 1) ``Return Error``
                     |]
                 <| LogToTextFile @"Logs\Validations.txt"
+        |]
+        |> runFactorialWithInspections
+
+    let runFactorialWithAllInspections() =
+        let logger = LogToTextFile @"Logs\FullLog.txt"
+        [| 
+            inspectionOf Performance logger 
+            inspectionOf SettingValues logger 
+            inspectionOf MethodCalls logger
+            inspectionOf 
+                <| Validation 
+                    [|
+                        ifVariable "number" (Is <| Value 1) ``Return Warning``
+                        ifVariable "number" (``Is Less Than`` <| Value 1) ``Return Error``
+                    |]
+                <| logger
         |]
         |> runFactorialWithInspections
