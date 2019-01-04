@@ -80,18 +80,19 @@ module Evaluations =
         | (None, _)           -> parametersList
         | (Some instance, _)  -> List.Cons ([instance], parametersList)
 
-    let private evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs =
+    let private evalMethodCallWithExpr state instanceExpr (methodInfo : MethodInfo) methodExpr parameterExprs =
         // The method expr contains a lambda expression on the instance and parameters of the method call.
         // We create an application expression to activate the lambda expression and evaluate it.
         let applicationArguments = createArgumentsForReflectedMethod instanceExpr parameterExprs
         let applicationExpr = Expr.Applications(methodExpr, applicationArguments)
-        Evaluator.evalExprAndGetLastValue applicationExpr state
+        Evaluator.addLevelToRunName methodInfo.Name state
+        |> Evaluator.evalExprAndGetLastValue applicationExpr
         |> Evaluator.setLastValue state
 
     let private evalMethodCall state (instanceExpr, methodInfo, parameterExprs) =
         match Reflection.getReflectedMethodDefinition methodInfo with
         | Some methodExpr -> 
-            evalMethodCallWithExpr state instanceExpr methodExpr parameterExprs
+            evalMethodCallWithExpr state instanceExpr methodInfo methodExpr parameterExprs
         | None -> 
             evalMethodCallWithInvoke state instanceExpr methodInfo parameterExprs
 

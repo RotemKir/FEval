@@ -48,6 +48,11 @@ module  internal Evaluator =
             ThreadId = currentThread.ManagedThreadId
         }
 
+    let private formatRunName runDetails nextLevel =
+        match runDetails.RunName with
+        | ""      -> nextLevel
+        | runName -> sprintf "%s -> %s" runName nextLevel 
+
     // Public Functions
 
     let getLastValue state =
@@ -177,3 +182,10 @@ module  internal Evaluator =
                 let result = Reflection.invokeSetField instance fieldInfo value
                 in (result, state))
             <| (fun _ -> SetFieldEvent setFieldEventDetails)
+
+    let addLevelToRunName levelName (state : EvaluationState) =
+        let newRunDetails = 
+            { 
+                state.RunDetails with RunName = formatRunName state.RunDetails levelName
+            }
+        { state with RunDetails = newRunDetails }
