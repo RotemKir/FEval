@@ -7,26 +7,69 @@ open FEval.EvaluationTypes
 
 module Main =
     
+    type private MenuOption =
+        {
+            Value : string
+            Name : string
+            Action : unit -> unit
+        }
+
+    let private menuOptions =
+        [|
+            {
+                Value = "1" 
+                Name = "Factorial with performance inspection" 
+                Action = runFactorialWithPerformance
+            }
+            {
+                Value = "2" 
+                Name = "Factorial with set value inspection" 
+                Action = runFactorialWithPerformance
+            }
+            {
+                Value = "3" 
+                Name = "Factorial with method call inspection" 
+                Action = runFactorialWithPerformance
+            }
+            {
+                Value = "4" 
+                Name = "Factorial with method call and set value inspection" 
+                Action = runFactorialWithPerformance
+            }
+            {
+                Value = "5" 
+                Name = "Factorial with input validations" 
+                Action = runFactorialWithPerformance
+            }
+            {
+                Value = "6" 
+                Name = "Factorial with all inspections" 
+                Action = runFactorialWithPerformance
+            }
+        |]
+                
+    let private getMenuOptionAction menuOption =
+        menuOption.Action
+
+    let private printMenuOption menuOption =
+        sprintf "%s. %s" menuOption.Value menuOption.Name
+        |> Console.WriteLine
+
     let private showMenu() =
         Console.Clear()
         Console.WriteLine("Enter the number of the option to run, any other key will exit:")
-        Console.WriteLine("1. Factorial with performance inspection")
-        Console.WriteLine("2. Factorial with set value inspection")
-        Console.WriteLine("3. Factorial with method call inspection")
-        Console.WriteLine("4. Factorial with method call and set value inspection")
-        Console.WriteLine("5. Factorial with input validations")
-        Console.WriteLine("6. Factorial with all inspections")
+        Seq.iter printMenuOption menuOptions
         Console.WriteLine()
 
+    let private getSelctedMenuOption selectedValue =
+        Array.tryFind 
+            <| fun opt -> opt.Value = selectedValue
+            <| menuOptions
+
     let private getOptionToRun optionValue =
-        match optionValue with
-        | "1" -> Some <| runFactorialWithPerformance
-        | "2" -> Some <| runFactorialWithSetValue
-        | "3" -> Some <| runFactorialWithMethodCall
-        | "4" -> Some <| runFactorialWithMethodCallAndSetValue
-        | "5" -> Some <| runFactorialWithInputValidations
-        | "6" -> Some <| runFactorialWithAllInspections
-        | _   -> None
+        Option.map
+            <| getMenuOptionAction 
+            <| getSelctedMenuOption optionValue
 
     let private createLogFolder() =
         match Directory.Exists("Logs") with
