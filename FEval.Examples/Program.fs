@@ -2,18 +2,12 @@
 
 open System
 open System.IO
-open Factorial
 open FEval.EvaluationTypes
+open FEval.Examples.Factorial
+open FEval.Examples.Menu
 
 module Main =
     
-    type private MenuOption =
-        {
-            Value : string
-            Name : string
-            Action : unit -> unit
-        }
-
     let private menuOptions =
         [|
             {
@@ -48,29 +42,12 @@ module Main =
             }
         |]
                 
-    let private getMenuOptionAction menuOption =
-        menuOption.Action
-
-    let private printMenuOption menuOption =
-        sprintf "%s. %s" menuOption.Value menuOption.Name
-        |> Console.WriteLine
-
     let private showMenu() =
         Console.Clear()
         Console.WriteLine("Enter the number of the option to run, any other key will exit:")
-        Seq.iter printMenuOption menuOptions
+        printMenuOptions menuOptions
         Console.WriteLine()
-
-    let private getSelctedMenuOption selectedValue =
-        Array.tryFind 
-            <| fun opt -> opt.Value = selectedValue
-            <| menuOptions
-
-    let private getOptionToRun optionValue =
-        Option.map
-            <| getMenuOptionAction 
-            <| getSelctedMenuOption optionValue
-
+        
     let private createLogFolder() =
         match Directory.Exists("Logs") with
         | false -> Directory.CreateDirectory("Logs") |> ignore
@@ -92,7 +69,7 @@ module Main =
         createLogFolder()
         showMenu()
 
-        match Console.ReadLine() |> getOptionToRun with
+        match Console.ReadLine() |> getOptionToRun menuOptions with
         | Some option -> 
             runOption option
             run()
