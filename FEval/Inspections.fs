@@ -13,7 +13,7 @@ module Inspections =
     | SettingValues
     | Validation of RuleDefinition seq
 
-    type InspectionLogging<'a> =
+    type InspectionLogging =
     | LogToTextFile of string
     | LogToCsvFile of string
        
