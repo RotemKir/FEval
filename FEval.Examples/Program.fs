@@ -5,47 +5,75 @@ open System.IO
 open FEval.EvaluationTypes
 open FEval.Examples.Factorial
 open FEval.Examples.Menu
+open FEval.Inspections
 
 module Main =
     
-    let private menuOptions =
+    let private addFileType fileType fileName =
+        sprintf "%s.%s" fileName fileType 
+
+    let private loggerMenuOptions =
+        [|
+            {
+                Value = "1" 
+                Name = "Text Logger" 
+                Action = fun() -> (addFileType "txt") >> LogToTextFile
+            }
+            {
+                Value = "2" 
+                Name = "Csv Logger" 
+                Action = fun() -> (addFileType "csv") >> LogToCsvFile
+            }
+        |]
+
+    let private selectLogger() =
+        Console.WriteLine()
+        Console.WriteLine("Choose the logger, any other key will choose text logger:")
+        printMenuOptions loggerMenuOptions
+        Console.WriteLine()
+        
+        match Console.ReadLine() |> getOptionToRun loggerMenuOptions with
+        | Some option -> option()
+        | None        -> LogToTextFile
+
+    let private mainMenuOptions =
         [|
             {
                 Value = "1" 
                 Name = "Factorial with performance inspection" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithPerformance
             }
             {
                 Value = "2" 
                 Name = "Factorial with set value inspection" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithSetValue
             }
             {
                 Value = "3" 
                 Name = "Factorial with method call inspection" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithMethodCall
             }
             {
                 Value = "4" 
                 Name = "Factorial with method call and set value inspection" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithMethodCallAndSetValue
             }
             {
                 Value = "5" 
                 Name = "Factorial with input validations" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithInputValidations
             }
             {
                 Value = "6" 
                 Name = "Factorial with all inspections" 
-                Action = runFactorialWithPerformance
+                Action = selectLogger >> runFactorialWithAllInspections
             }
         |]
                 
-    let private showMenu() =
+    let private showMainMenu() =
         Console.Clear()
         Console.WriteLine("Enter the number of the option to run, any other key will exit:")
-        printMenuOptions menuOptions
+        printMenuOptions mainMenuOptions
         Console.WriteLine()
         
     let private createLogFolder() =
@@ -67,9 +95,9 @@ module Main =
         
     let rec private run() =
         createLogFolder()
-        showMenu()
+        showMainMenu()
 
-        match Console.ReadLine() |> getOptionToRun menuOptions with
+        match Console.ReadLine() |> getOptionToRun mainMenuOptions with
         | Some option -> 
             runOption option
             run()

@@ -4,11 +4,11 @@ open System
 
 module internal Menu =
     
-    type MenuOption =
+    type MenuOption<'a> =
         {
             Value : string
             Name : string
-            Action : unit -> unit
+            Action : unit -> 'a
         }
 
     let private getMenuOptionAction menuOption =

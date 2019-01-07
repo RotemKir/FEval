@@ -17,34 +17,35 @@ module Factorial =
         x
 
     let private runFactorialWithInspections inspections =
+        Console.WriteLine()
         Console.WriteLine("Enter a number to calculate factorial for:")
         let number = Int32.Parse <| Console.ReadLine()
         let result = evalWith "Examples" <@ factorial number @> inspections
         Console.WriteLine("Result is: {0}", result)
         
-    let runFactorialWithPerformance() =
-        inspectionOf Performance <| LogToTextFile @"Logs\Perfromance.txt"
+    let runFactorialWithPerformance loggerCreator =
+        inspectionOf Performance <| loggerCreator @"Logs\Perfromance"
         |> Array.singleton
         |> runFactorialWithInspections
 
-    let runFactorialWithSetValue() =
-        inspectionOf SettingValues <| LogToTextFile @"Logs\SetValue.txt"
+    let runFactorialWithSetValue loggerCreator =
+        inspectionOf SettingValues <| loggerCreator @"Logs\SetValue"
         |> Array.singleton
         |> runFactorialWithInspections
 
-    let runFactorialWithMethodCall() =
-        inspectionOf MethodCalls <| LogToTextFile @"Logs\MethodCall.txt"
+    let runFactorialWithMethodCall loggerCreator =
+        inspectionOf MethodCalls <| loggerCreator @"Logs\MethodCall"
         |> Array.singleton
         |> runFactorialWithInspections
 
-    let runFactorialWithMethodCallAndSetValue() =
+    let runFactorialWithMethodCallAndSetValue loggerCreator =
         [| 
-            inspectionOf SettingValues <| LogToTextFile @"Logs\MethodCallAndSetValue.txt"
-            inspectionOf MethodCalls <| LogToTextFile @"Logs\MethodCallAndSetValue.txt"
+            inspectionOf SettingValues <| loggerCreator @"Logs\MethodCallAndSetValue."
+            inspectionOf MethodCalls <| loggerCreator @"Logs\MethodCallAndSetValue"
         |]
         |> runFactorialWithInspections
 
-    let runFactorialWithInputValidations() =
+    let runFactorialWithInputValidations loggerCreator =
         [| 
             inspectionOf 
                 <| Validation 
@@ -52,12 +53,12 @@ module Factorial =
                         ifVariable "number" (Is <| Value 1) ``Return Warning``
                         ifVariable "number" (``Is Less Than`` <| Value 1) ``Return Error``
                     |]
-                <| LogToTextFile @"Logs\Validations.txt"
+                <| loggerCreator @"Logs\Validations"
         |]
         |> runFactorialWithInspections
 
-    let runFactorialWithAllInspections() =
-        let logger = LogToTextFile @"Logs\FullLog.txt"
+    let runFactorialWithAllInspections loggerCreator =
+        let logger = loggerCreator @"Logs\FullLog"
         [| 
             inspectionOf Performance logger 
             inspectionOf SettingValues logger 
