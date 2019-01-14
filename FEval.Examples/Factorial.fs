@@ -40,7 +40,7 @@ module Factorial =
 
     let runFactorialWithMethodCallAndSetValue loggerCreator =
         [| 
-            inspectionOf SettingValues <| loggerCreator @"Logs\MethodCallAndSetValue."
+            inspectionOf SettingValues <| loggerCreator @"Logs\MethodCallAndSetValue"
             inspectionOf MethodCalls <| loggerCreator @"Logs\MethodCallAndSetValue"
         |]
         |> runFactorialWithInspections

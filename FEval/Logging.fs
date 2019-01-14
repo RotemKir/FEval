@@ -65,7 +65,9 @@ module internal Logging =
 
     let setFileHeader fileConfig fileName =
         if fileConfig.Header.IsSome && not <| File.Exists(fileName)
-        then appendLineToFile id fileName fileConfig.Header.Value
+        then 
+            appendLineToFile id fileName fileConfig.Header.Value
+            syncLoggers()
 
     let createStringLogPrefix logEvent =
         sprintf "%s - %A - %s (%i) - Thread %i - %s - %s"
