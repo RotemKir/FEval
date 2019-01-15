@@ -9,19 +9,19 @@ open FEval.EvaluationTypes
 [<TestClass>]
 type EvaluationsTest() =
     let assertEval expr expectedResult =
-        Assert.AreEqual(expectedResult, eval "test" expr)
+        Assert.AreEqual(expectedResult, eval expr)
         
     let collectionAssertEval expr expectedResult =
-        CollectionAssert.AreEqual(expectedResult, eval "test" expr)
+        CollectionAssert.AreEqual(expectedResult, eval expr)
 
     let listAssertEval expr expectedResult =
         CollectionAssert.AreEqual(
             expectedResult |> List.toArray, 
-            eval "test" expr |> List.toArray)
+            eval expr |> List.toArray)
             
     let evalWithTry expr exceptionHandler =
         try 
-            eval "test" expr |> ignore
+            eval expr |> ignore
         with
         | EvaluationException(ex, _) -> exceptionHandler ex
 

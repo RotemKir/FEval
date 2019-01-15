@@ -326,5 +326,5 @@ module Evaluations =
         finally
             disposeInspectors inspectors
 
-    let eval<'a> name (expr : Expr<'a>) : 'a = 
-        evalWith name expr Seq.empty
+    let eval<'a> (expr : Expr<'a>) : 'a = 
+        evalWith String.Empty expr Seq.empty
