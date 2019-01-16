@@ -32,17 +32,17 @@ Another type of inspection performs validations:
 ```F#
 // Warnings will only log when invalid
 let result1 = evalWith "Example" <@ 1 + 1 @> [| 
+	// Check that when a variable named "number" is 1 then we log a warning 
 	inspectionOf 
-		// Check that when a variable named "number" is 1 then we log a warning 
 		<| Validation [| ifVariable "number" (Is <| Value 1) ``Return Warning`` |]
         <| LogToTextFile "Log.txt"
 	|]
 
 // Errors will also raise exceptions
 let result2 = evalWith "Example" <@ 1 + 1 @> [| 
+	// Check that when a variable named "number" equals other variable called "other" 
+	// then we log and raise exception
 	inspectionOf 
-		// Check that when a variable named "number" equals other variable called "other" 
-		// then we log and raise exception
 		<| Validation [| ifVariable "number" (Is <| Variable "other") ``Return Error`` |]
         <| LogToTextFile "Log.txt"
 	|]
@@ -51,12 +51,11 @@ let result2 = evalWith "Example" <@ 1 + 1 @> [|
 ```
 
 Validations include the following checks:
-1. Is (as seen above)
+1. ``Is`` (as seen above)
 2. ``Is Zero``
 3. ``Is Negative``
 4. ``Is Empty``
 5. ``Is Less Than`` value / variable
 6. ``Is More Than`` value / variable
 
-You can also combine validation using &&& and ||| to create complex conditions.
-
+You can also combine validation using ``&&&`` and ``|||`` to create complex conditions.
